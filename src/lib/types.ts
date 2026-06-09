@@ -161,14 +161,16 @@ export interface AppNotification {
 // ---- Scheduled tasks (6.4) -------------------------------------------------
 
 export type TaskStatus = 'idle' | 'running' | 'success' | 'failed' | 'paused'
-export type ScheduleKind = 'daily' | 'interval' | 'weekly' | 'once'
+export type ScheduleKind = 'daily' | 'interval' | 'weekly' | 'once' | 'dates'
 
 export interface Schedule {
   kind: ScheduleKind
   timeOfDay?: string // 'HH:MM'
   intervalMinutes?: number
+  startAt?: number // interval: anchor (first occurrence) epoch ms; absent = "from now"
   weekday?: number // legacy single weekday 0 (Sun) - 6 (Sat); kept for back-compat
   weekdays?: number[] // weekly: selected weekdays (0=Sun..6=Sat) — supports multi-select
+  dates?: number[] // 'dates': full date+time epoch ms, each runs once, stored ascending
   humanZh: string
   humanEn: string
 }

@@ -104,13 +104,23 @@ export function formatRelative(ts: number, lang: Lang): string {
   return formatDateTime(ts, lang)
 }
 
-/** Compute the next run timestamp for a schedule, relative to `from`. */
-export function computeNextRun(schedule: Schedule, from = Date.now()): number {
+/** Compute the next run timestamp for a schedule, relative to `from`.
+ *  Returns undefined when there is no future run (e.g. all 'dates' entries are past). */
+export function computeNextRun(schedule: Schedule, from = Date.now()): number | undefined {
   const base = new Date(from)
   switch (schedule.kind) {
     case 'interval': {
-      const mins = schedule.intervalMinutes || 30
-      return from + mins * 60 * 1000
+      const intervalMs = (schedule.intervalMinutes || 30) * 60 * 1000
+      if (schedule.startAt == null) return from + intervalMs // legacy: from now
+      if (schedule.startAt > from) return schedule.startAt // hasn't started yet
+      // align to the next tick on the startAt cadence, strictly in the future
+      const ticks = Math.ceil((from - schedule.startAt) / intervalMs)
+      const cand = schedule.startAt + ticks * intervalMs
+      return cand <= from ? cand + intervalMs : cand
+    }
+    case 'dates': {
+      const fut = (schedule.dates ?? []).filter((d) => d > from)
+      return fut.length ? Math.min(...fut) : undefined
     }
     case 'daily': {
       const [h, m] = (schedule.timeOfDay || '09:00').split(':').map(Number)
