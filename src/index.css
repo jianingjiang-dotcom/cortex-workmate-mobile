@@ -1,0 +1,274 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Smooth whole-page palette crossfade when switching theme. The theme flip runs inside
+   document.startViewTransition() (see App.tsx); these pseudo-elements are the old/new
+   page snapshots — cross-dissolving them gives the gradual color change. */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 0.42s;
+  animation-timing-function: ease;
+}
+
+@layer base {
+  /* ---- Semantic color tokens (light) — switched under .dark ---- */
+  :root {
+    color-scheme: light;
+    --surface: #ffffff; /* cards, sheets, bubbles, solid headers */
+    --grouped: #f2f2f7; /* grouped page background */
+    --fill: #f2f2f7; /* search fields, secondary buttons, code, tiles */
+    --fill-press: #e5e5ea; /* pressed state on a fill */
+    --bubble-user: #e9e9eb; /* user chat bubble */
+    --hairline: rgba(60, 60, 67, 0.18); /* nav/header hairlines */
+    --divider: rgba(0, 0, 0, 0.06); /* list-row dividers, card borders */
+    --label-primary: rgba(0, 0, 0, 0.92);
+    --label-secondary: rgba(60, 60, 67, 0.6);
+    --label-tertiary: rgba(60, 60, 67, 0.3);
+    --glass: rgba(255, 255, 255, 0.72); /* frosted nav bars / tab bar */
+    --stage: #e9e9ee; /* desktop backdrop behind the phone */
+    --blue: #007aff;
+    --green: #34c759;
+    --red: #ff3b30;
+    --orange: #ff9500;
+    --skeleton-a: #ececf0;
+    --skeleton-b: #f6f6f8;
+  }
+
+  .dark {
+    color-scheme: dark;
+    --surface: #1c1c1e;
+    --grouped: #000000;
+    --fill: #2c2c2e;
+    --fill-press: #3a3a3c;
+    --bubble-user: #3a3a3c;
+    --hairline: rgba(255, 255, 255, 0.16);
+    --divider: rgba(255, 255, 255, 0.1);
+    --label-primary: rgba(255, 255, 255, 0.96);
+    --label-secondary: rgba(235, 235, 245, 0.6);
+    --label-tertiary: rgba(235, 235, 245, 0.32);
+    --glass: rgba(30, 30, 32, 0.72);
+    --stage: #08080a;
+    /* iOS dark-mode accents read brighter for contrast */
+    --blue: #0a84ff;
+    --green: #30d158;
+    --red: #ff453a;
+    --orange: #ff9f0a;
+    --skeleton-a: #1f1f22;
+    --skeleton-b: #2a2a2e;
+  }
+
+  * {
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  html,
+  body,
+  #root {
+    height: 100%;
+    /* native-app touch behavior: no double-tap-to-zoom, no 300ms tap delay */
+    touch-action: manipulation;
+  }
+
+  body {
+    margin: 0;
+    font-family: theme('fontFamily.sans');
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+    background: var(--stage);
+    color: var(--label-primary);
+    /* The desktop stage that holds the phone frame */
+    overflow: hidden;
+    overscroll-behavior: none;
+  }
+
+  input,
+  textarea,
+  button {
+    font-family: inherit;
+  }
+
+  /* Native-app feel: UI chrome isn't text-selectable (prevents accidental
+     word selection on double-tap); form fields stay editable. Content is
+     copied via explicit copy buttons. */
+  #root {
+    -webkit-user-select: none;
+    user-select: none;
+  }
+  input,
+  textarea {
+    -webkit-user-select: text;
+    user-select: text;
+  }
+}
+
+@layer components {
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .scroll-y {
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
+  }
+
+  /* fade-in for the full-screen expanded chat input */
+  @keyframes inputRise {
+    from {
+      opacity: 0;
+      transform: translateY(8px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  .input-rise {
+    animation: inputRise 0.22s ease-out;
+  }
+
+  /* iOS hairline separators */
+  .hairline-b {
+    box-shadow: inset 0 -0.5px 0 var(--hairline);
+  }
+  .hairline-t {
+    box-shadow: inset 0 0.5px 0 var(--hairline);
+  }
+
+  .card {
+    @apply rounded-ios-lg shadow-ios;
+    background: var(--surface);
+  }
+
+  .list-group {
+    @apply rounded-ios-lg overflow-hidden;
+    background: var(--surface);
+  }
+  .list-row {
+    @apply flex items-center gap-3 px-4 min-h-[44px] active:bg-black/[0.04] transition-colors;
+  }
+
+  .brand-text {
+    background: theme('backgroundImage.brand-gradient');
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  .press {
+    @apply transition-transform active:scale-[0.97];
+  }
+
+  .glass {
+    background: var(--glass);
+    backdrop-filter: saturate(180%) blur(20px);
+    -webkit-backdrop-filter: saturate(180%) blur(20px);
+  }
+
+  .skeleton {
+    background: linear-gradient(90deg, var(--skeleton-a) 25%, var(--skeleton-b) 37%, var(--skeleton-a) 63%);
+    background-size: 800px 100%;
+    @apply animate-shimmer rounded-md;
+  }
+
+  /* Markdown rendering scope for AI replies / summaries */
+  .md {
+    @apply text-[15px] leading-[1.55] text-label-primary;
+  }
+  .md > *:first-child {
+    margin-top: 0;
+  }
+  .md > *:last-child {
+    margin-bottom: 0;
+  }
+  .md h1 {
+    @apply text-[19px] font-bold mt-4 mb-2;
+  }
+  .md h2 {
+    @apply text-[17px] font-bold mt-4 mb-1.5;
+  }
+  .md h3 {
+    @apply text-[15px] font-semibold mt-3 mb-1;
+  }
+  .md p {
+    @apply my-2;
+  }
+  .md ul {
+    @apply my-2 pl-5 list-disc space-y-1;
+  }
+  .md ol {
+    @apply my-2 pl-5 list-decimal space-y-1;
+  }
+  .md li {
+    @apply pl-0.5;
+  }
+  .md li::marker {
+    color: var(--label-secondary);
+  }
+  .md a {
+    @apply text-ios-blue underline underline-offset-2;
+  }
+  .md strong {
+    @apply font-semibold;
+  }
+  .md code {
+    @apply font-mono text-[13px] px-1.5 py-0.5 rounded-md;
+    background: var(--fill);
+  }
+  .md pre {
+    @apply font-mono text-[13px] p-3 rounded-ios my-2 overflow-x-auto;
+    background: var(--fill);
+  }
+  .md pre code {
+    @apply bg-transparent p-0;
+  }
+  .md blockquote {
+    @apply border-l-2 border-ios-gray3 pl-3 my-2 text-label-secondary;
+  }
+  .md hr {
+    @apply my-3 border-ios-gray5;
+  }
+  /* GFM task list checkboxes */
+  .md ul:has(> li > input[type='checkbox']) {
+    @apply list-none pl-0 space-y-1.5;
+  }
+  .md li:has(> input[type='checkbox']) {
+    @apply flex items-start gap-2 pl-0;
+  }
+  .md input[type='checkbox'] {
+    @apply mt-1 h-[16px] w-[16px] rounded-[5px] border border-ios-gray3 appearance-none shrink-0;
+  }
+  .md input[type='checkbox']:checked {
+    background: theme('backgroundImage.brand-gradient');
+    border-color: transparent;
+  }
+  .md input[type='checkbox']:checked::after {
+    content: '✓';
+    @apply text-white text-[11px] flex items-center justify-center h-full leading-none;
+  }
+  .md table {
+    @apply my-2 w-full text-[13px] border-collapse;
+  }
+  .md th,
+  .md td {
+    @apply border border-ios-gray5 px-2 py-1 text-left;
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+  .pt-safe {
+    padding-top: env(safe-area-inset-top);
+  }
+  .pb-safe {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+}
