@@ -66,7 +66,7 @@ export function MeetingListScreen({ onBack }: OverlayScreenProps) {
           {formatTimeOnly(m.createdAt)} · {formatDuration(m.durationMs, lang)}
         </div>
       </div>
-      <MeetingStatusPill status={m.status} />
+      <MeetingStatusPill meeting={m} />
     </button>
   )
 

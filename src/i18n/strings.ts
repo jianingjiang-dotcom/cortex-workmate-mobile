@@ -420,6 +420,12 @@ export const STRINGS: Record<Lang, Dict> = {
     'meet.analyzing.stage4': '正在生成总结…',
     'meet.analyzing.summaryOnly': '正在重新生成总结…',
     'meet.failedReason': '音频质量较低，转写未能完成',
+    // cloud upload stage (after save/import, before transcription)
+    'meet.upload.uploading': '上传中',
+    'meet.upload.failed': '上传失败',
+    'meet.upload.retry': '重试上传',
+    'meet.upload.interrupted': '上传中断，请重试',
+    'meet.upload.failedReason': '网络连接不稳定，上传未完成',
     // transcribe template picker
     'meet.template.title': '选择总结模板',
     'meet.template.start': '开始转译',
@@ -961,6 +967,12 @@ export const STRINGS: Record<Lang, Dict> = {
     'meet.analyzing.stage4': 'Generating summary…',
     'meet.analyzing.summaryOnly': 'Regenerating summary…',
     'meet.failedReason': 'Audio quality was too low to transcribe',
+    // cloud upload stage (after save/import, before transcription)
+    'meet.upload.uploading': 'Uploading',
+    'meet.upload.failed': 'Upload failed',
+    'meet.upload.retry': 'Retry upload',
+    'meet.upload.interrupted': 'Upload interrupted — please retry',
+    'meet.upload.failedReason': 'Network unstable, upload incomplete',
     // transcribe template picker
     'meet.template.title': 'Choose a summary template',
     'meet.template.start': 'Start',

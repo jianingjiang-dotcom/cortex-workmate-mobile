@@ -16,6 +16,7 @@ import {
   type TranscriptSegment,
 } from '../lib/types'
 import { computeNextRun } from '../lib/time'
+import { buildSchedule } from '../lib/schedule'
 import { uid } from '../lib/util'
 
 const MIN = 60 * 1000
@@ -519,24 +520,20 @@ export function buildSeed(): SeedData {
   const watchTask: ScheduledTask = {
     id: uid('task_'),
     name: '竞品动态巡检',
-    instruction: '每 60 分钟检索一次设定关键词（竞品名 + "发布"/"融资"），有新动态时汇总要点。',
-    schedule: {
-      kind: 'interval',
-      intervalMinutes: 60,
-      humanZh: '每 60 分钟',
-      humanEn: 'Every 60 minutes',
-    },
-    status: 'paused',
-    paused: true,
+    instruction: '每 4 小时检索一次设定关键词（竞品名 + "发布"/"融资"），有新动态时汇总要点。',
+    schedule: buildSchedule({ mode: 'interval', intervalMinutes: 240, startAt: now - 2 * DAY }),
+    status: 'success',
+    paused: false,
     source: 'chat',
     sourceLabel: 'Workmate 对话',
     capabilities: ['web'],
     mcpServerNames: [],
     createdAt: now - 3 * DAY,
     runs: [],
-    lastRunAt: now - 40 * MIN,
-    nextRunAt: now + 20 * MIN,
+    lastRunAt: now - 2 * HR,
+    nextRunAt: 0,
   }
+  watchTask.nextRunAt = computeNextRun(watchTask.schedule, now)
 
   const weeklyTask: ScheduledTask = {
     id: uid('task_'),
@@ -649,16 +646,61 @@ export function buildSeed(): SeedData {
   ]
 
   watchTask.runs = [
-    {
-      id: uid('run_'),
-      status: 'success',
-      startedAt: now - 40 * MIN,
-      durationMs: 9000,
-      resultSummary: '无新增动态',
-    },
+    { id: uid('run_'), status: 'success', startedAt: now - 2 * HR, durationMs: 9000, resultSummary: '无新增动态' },
+    { id: uid('run_'), status: 'success', startedAt: now - 6 * HR, durationMs: 11000, resultSummary: '发现 1 条竞品融资动态，已汇总' },
+    { id: uid('run_'), status: 'success', startedAt: now - 10 * HR, durationMs: 8000, resultSummary: '无新增动态' },
+    { id: uid('run_'), status: 'failed', startedAt: now - 14 * HR, durationMs: 5000, failureReason: '数据源请求超时' },
+    { id: uid('run_'), status: 'success', startedAt: now - 18 * HR, durationMs: 10000, resultSummary: '发现 2 条新品发布动态' },
+    { id: uid('run_'), status: 'success', startedAt: now - 22 * HR, durationMs: 9500, resultSummary: '无新增动态' },
   ]
 
-  const tasks = [ghTask, watchTask, weeklyTask]
+  // ---- A 'dates' task (runs once on each specific date) ----
+  const reviewTask: ScheduledTask = {
+    id: uid('task_'),
+    name: '季度业务复盘',
+    instruction: '在指定日期生成一份季度业务复盘报告：汇总关键指标、目标达成情况与下一步建议，并发送给我。',
+    schedule: buildSchedule({ mode: 'dates', dates: [now - 4 * DAY, now + 6 * DAY, now + 13 * DAY] }),
+    status: 'success',
+    paused: false,
+    source: 'chat',
+    sourceLabel: 'Workmate 对话',
+    capabilities: ['web'],
+    mcpServerNames: ['Notion'],
+    createdAt: now - 20 * DAY,
+    runs: [
+      { id: uid('run_'), status: 'success', startedAt: now - 4 * DAY, durationMs: 42000, resultSummary: '生成 Q2 业务复盘报告，覆盖 5 项核心指标' },
+    ],
+    lastRunAt: now - 4 * DAY,
+    nextRunAt: 0,
+  }
+  reviewTask.nextRunAt = computeNextRun(reviewTask.schedule, now)
+
+  // ---- A weekly multi-day task (paused) ----
+  const standupTask: ScheduledTask = {
+    id: uid('task_'),
+    name: '站会纪要推送',
+    instruction: '每周一、三、五早上 9:30，汇总昨日进展与今日计划，整理成站会纪要推送到团队群。',
+    schedule: buildSchedule({ mode: 'recurring', time: '09:30', weekdays: [1, 3, 5] }),
+    status: 'paused',
+    paused: true,
+    source: 'chat',
+    sourceLabel: 'Workmate 对话',
+    capabilities: ['email'],
+    mcpServerNames: ['飞书 Lark'],
+    createdAt: now - 15 * DAY,
+    runs: [
+      { id: uid('run_'), status: 'success', startedAt: now - 1 * DAY, durationMs: 16000, resultSummary: '已推送站会纪要给 8 位成员' },
+      { id: uid('run_'), status: 'success', startedAt: now - 3 * DAY, durationMs: 15000, resultSummary: '已推送站会纪要给 8 位成员' },
+      { id: uid('run_'), status: 'success', startedAt: now - 5 * DAY, durationMs: 17000, resultSummary: '已推送站会纪要给 7 位成员' },
+      { id: uid('run_'), status: 'success', startedAt: now - 8 * DAY, durationMs: 15000, resultSummary: '已推送站会纪要给 8 位成员' },
+      { id: uid('run_'), status: 'success', startedAt: now - 10 * DAY, durationMs: 14000, resultSummary: '已推送站会纪要给 8 位成员' },
+    ],
+    lastRunAt: now - 1 * DAY,
+    nextRunAt: 0,
+  }
+  standupTask.nextRunAt = computeNextRun(standupTask.schedule, now)
+
+  const tasks = [ghTask, watchTask, weeklyTask, reviewTask, standupTask]
 
   // Every run gets a viewable result conversation (success → result, failed → diagnosis)
   // so the run-records list can always offer 打开对话 — including failures, to investigate.
@@ -884,6 +926,18 @@ export function buildSeed(): SeedData {
       summaryMarkdown: review.summary,
       template: 'meeting',
       summaryUpdatedAt: now - 1 * DAY - 2 * HR,
+    },
+    {
+      // cloud-upload failure demo: red 上传失败 pill in the list → retry in detail →
+      // becomes 未转写 → transcribe unlocks
+      id: uid('meet_'),
+      title: '客户拜访沟通',
+      createdAt: now - 3 * HR,
+      durationMs: 65000,
+      status: 'pending',
+      source: 'recording',
+      uploadStatus: 'failed',
+      uploadFailReason: 'meet.upload.failedReason',
     },
     {
       id: uid('meet_'),
