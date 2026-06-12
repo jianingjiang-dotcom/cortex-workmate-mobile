@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { AudioLines, Check, Copy, MoreHorizontal, Pause, Play, RotateCcw, RotateCw, Search } from 'lucide-react'
+import { AudioLines, Check, CloudOff, Copy, MoreHorizontal, Pause, Play, RotateCcw, RotateCw, Search } from 'lucide-react'
 import type { Meeting, OverlayScreenProps, SummaryTemplate } from '../../lib/types'
 import { useStore } from '../../store/useStore'
 import { useLang, useT } from '../../i18n'
@@ -26,6 +26,7 @@ export function MeetingDetailScreen({ params, onBack }: OverlayScreenProps) {
   const lang = useLang()
   const meeting = useStore((s) => s.meetings.find((m) => m.id === params?.id))
   const transcribe = useStore((s) => s.transcribeMeeting)
+  const uploadMeeting = useStore((s) => s.uploadMeeting)
   const renameMeeting = useStore((s) => s.renameMeeting)
   const deleteMeeting = useStore((s) => s.deleteMeeting)
   const askConfirm = useStore((s) => s.askConfirm)
@@ -305,11 +306,10 @@ export function MeetingDetailScreen({ params, onBack }: OverlayScreenProps) {
         ) : (
           <div className="flex-1 min-h-0">
             <NonDone
-              status={meeting.status}
-              progress={meeting.analyzeProgress}
-              stage={meeting.analyzeStage}
+              meeting={meeting}
               failure={failureText}
               onTranscribe={() => openTranscribe('first')}
+              onRetryUpload={() => uploadMeeting(meeting.id)}
             />
           </div>
         )}
@@ -436,19 +436,60 @@ export function MeetingDetailScreen({ params, onBack }: OverlayScreenProps) {
 }
 
 function NonDone({
-  status,
-  progress,
-  stage,
+  meeting,
   failure,
   onTranscribe,
+  onRetryUpload,
 }: {
-  status: string
-  progress?: number
-  stage?: string
-  failure?: string
+  meeting: Meeting
+  failure?: string // resolved transcription-failure text (from the parent)
   onTranscribe: () => void
+  onRetryUpload: () => void
 }) {
   const t = useT()
+  const { status, analyzeProgress: progress, analyzeStage: stage } = meeting
+
+  // ---- cloud-upload stage (gates everything below) ----
+  if (meeting.uploadStatus === 'uploading') {
+    return (
+      <div className="flex flex-col items-center justify-center h-full px-10 text-center">
+        <Spinner size={34} className="text-ios-blue" />
+        <div className="text-[16px] font-semibold mt-4">
+          {t('meet.upload.uploading')} {meeting.uploadProgress ?? 0}%
+        </div>
+        <div className="w-full max-w-[240px] h-1.5 rounded-full bg-ios-gray5 overflow-hidden mt-4">
+          <div
+            className="h-full rounded-full bg-ios-blue transition-all duration-300"
+            style={{ width: `${meeting.uploadProgress ?? 0}%` }}
+          />
+        </div>
+      </div>
+    )
+  }
+  if (meeting.uploadStatus === 'failed') {
+    const reason = meeting.uploadFailReason
+    return (
+      <div className="flex flex-col items-center justify-center h-full px-10 text-center">
+        <div
+          className="w-[72px] h-[72px] rounded-[20px] flex items-center justify-center text-white mb-4"
+          style={{ background: gradientFor('sunset') }}
+        >
+          <CloudOff size={30} />
+        </div>
+        <div className="text-[17px] font-semibold">{t('meet.upload.failed')}</div>
+        {reason && (
+          <div className="text-[14px] text-ios-red mt-1.5">{reason.startsWith('meet.') ? t(reason) : reason}</div>
+        )}
+        <button
+          onClick={onRetryUpload}
+          className="mt-6 h-11 px-6 rounded-ios-lg text-white font-semibold text-[15px] press bg-brand-primary"
+        >
+          {t('meet.upload.retry')}
+        </button>
+      </div>
+    )
+  }
+
   if (status === 'analyzing') {
     return (
       <div className="flex flex-col items-center justify-center h-full px-10 text-center">

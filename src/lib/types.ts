@@ -235,6 +235,13 @@ export interface Meeting {
   summaryNote?: string // optional background note the user gave the AI for the summary
   summaryUpdatedAt?: number // last time the summary was (re)generated — used to surface
   // "only the summary was updated" even when the transcript is byte-identical
+
+  // Cloud upload stage (orthogonal to the transcription status machine). Absent =
+  // already uploaded (legacy/seed data degrades gracefully); only freshly created
+  // 'pending' meetings ever carry these. Transcription is gated until upload clears.
+  uploadStatus?: 'uploading' | 'failed'
+  uploadProgress?: number // 0–100 while uploading
+  uploadFailReason?: string // i18n key (e.g. 'meet.upload.interrupted')
 }
 
 // ---- Account ---------------------------------------------------------------

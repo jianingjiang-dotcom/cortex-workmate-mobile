@@ -1,4 +1,4 @@
-// Capture every screen of Cortex Workmate to docs/screens/*.png + a requirements gallery doc.
+// Capture every screen of Cortex Workmate to docs/screens/*.png + a gallery doc.
 // Drives the running dev server (localhost:5173) with the system Chrome via puppeteer-core.
 //   pnpm dev        (in another terminal)
 //   node scripts/shoot.mjs            # capture all screenshots + write docs/app-screens.md
@@ -11,6 +11,8 @@ const CHROME = '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome'
 const URL = 'http://localhost:5173'
 const OUT = path.resolve('docs/screens')
 const DOC_ONLY = process.argv.includes('--doc-only')
+// --only=<substring> re-shoots just the matching screens (doc is always fully rewritten)
+const ONLY = (process.argv.find((a) => a.startsWith('--only=')) || '').slice(7)
 fs.mkdirSync(OUT, { recursive: true })
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms))
 
@@ -31,8 +33,10 @@ const ST = (over = {}) =>
 
 const GROUP_ORDER = [
   '登录与引导',
-  '对话',
-  '助手（任务 / 会议 / 通知）',
+  '对话（Workmate / Agents）',
+  '助手 · 定时任务',
+  '助手 · 会议记录',
+  '通知中心',
   '我的（账号 / 配置）',
   '深色模式',
   '更多界面与交互态',
@@ -40,362 +44,384 @@ const GROUP_ORDER = [
 
 // each screen: { file, group, desc, req:[...], state, steps?:[{text|aria|svg|type, nth?, wait?}] }
 const screens = [
+  // ---- 登录与引导 ----
   {
     file: '01_登录页.png', group: '登录与引导', desc: '登录页',
     state: ST({ authStatus: 'loggedOut' }),
     req: [
       '**定位**：未登录用户的入口，传达产品定位（随身的 AI 工作搭子）。',
-      '**元素**：产品 Logo + 名称「Cortex Workmate」+ 一句话副标题；主按钮「使用 Google 登录」、次按钮「扫码登录」；底部《服务条款》《隐私政策》同意说明。',
-      '**交互**：点 Google 登录走 OAuth（mock 直接成功）；点扫码登录进入扫码界面。',
-      '**流转**：首次登录 → 进入新手引导；已完成引导的用户 → 直接进入主界面。',
+      '**元素**：Logo + 「Cortex Workmate」+ 副标题；「使用 Google 登录」主按钮、「扫码登录」次入口；底部条款说明。',
+      '**交互**：登录成功后首次进引导、老用户直接进主界面。',
     ],
   },
   {
     file: '02_引导页-1.png', group: '登录与引导', desc: '新手引导 · 第 1 页（欢迎）',
     state: ST({ authStatus: 'onboarding', hasOnboarded: false }),
     req: [
-      '**定位**：首次登录后的 3 页横滑引导第 1 页，品牌欢迎。',
-      '**元素**：Logo hero + 漂浮装饰（Sparkles / 对话气泡）；底部页码圆点（当前页加宽高亮）；右上「跳过」；底部「下一步」。',
-      '**交互**：左右滑动或点「下一步」翻页；「跳过」直接完成引导。',
+      '**定位**：3 页横滑引导的品牌欢迎页。',
+      '**元素**：Logo hero + 漂浮装饰；页码圆点；右上「跳过」、底部「下一步」。',
     ],
   },
   {
     file: '03_引导页-2.png', group: '登录与引导', desc: '新手引导 · 第 2 页（智能助手）',
     state: ST({ authStatus: 'onboarding', hasOnboarded: false }),
     steps: [{ text: '下一步', wait: 800 }],
-    req: [
-      '**定位**：第 2 页，介绍 Workmate 是有记忆、能跨工具替你执行的 AI 助手。',
-      '**元素**：Sparkles hero + 模拟对话气泡示意。',
-      '**交互**：滑动 / 下一步 / 跳过。',
-    ],
+    req: ['**定位**：介绍 Workmate 是有记忆、能跨工具替你执行的持续助理。'],
   },
   {
     file: '04_引导页-3.png', group: '登录与引导', desc: '新手引导 · 第 3 页（核心能力）',
     state: ST({ authStatus: 'onboarding', hasOnboarded: false }),
     steps: [{ text: '下一步', wait: 700 }, { text: '下一步', wait: 800 }],
     req: [
-      '**定位**：第 3 页，用卡片列出三大能力：定时任务、会议记录、授权审批。',
-      '**元素**：三张能力卡（图标 + 标题 + 一句话描述）；底部按钮变为「开始体验」。',
-      '**交互**：点「开始体验」完成引导（标记 hasOnboarded，后续不再出现）→ 进入主界面。',
+      '**定位**：三大能力卡（定时任务 / 会议记录 / 授权审批），按钮变「开始体验」。',
+      '**交互**：完成引导后不再出现。',
     ],
   },
 
+  // ---- 对话 ----
   {
-    file: '05_Workmate对话主界面.png', group: '对话', desc: 'Workmate 对话主界面',
+    file: '05_Workmate对话主界面.png', group: '对话（Workmate / Agents）', desc: 'Workmate 对话主界面',
     state: ST({ activeTab: 'chat', chatMode: 'workmate' }),
     req: [
-      '**定位**：产品核心 —— 与 Workmate 的一条**连续、不分 session** 的对话流。',
-      '**元素**：顶部 [收藏入口] · [Workmate / 普通对话 分段] · [搜索][通知]；消息区（用户气泡靠右；助手回复带头像 + 名称，可含工具调用卡 / 任务创建卡 / MCP 连接卡）；底部输入框（+ 附件、文本、语音）。',
-      '**交互**：发送后助手流式回复（思考 → 工具调用 → 正文）；新提问会**顶到页面顶部**（类 ChatGPT 渐进滚动）；助手回复下方有 复制 / 赞 / 踩 / 收藏。',
-      '**行为**：消息本地持久化；长流靠搜索 / 收藏回看。',
+      '**定位**：产品核心 —— 与 Workmate 的一条**连续、不分 session**的对话流。',
+      '**元素**：顶部 [收藏] · [Workmate / Agents 分段] · [搜索][通知]；消息流（含工具调用卡 / 审批卡 / MCP 连接卡）；底部输入框（附件 / 全屏编辑）。',
+      '**交互**：流式回复（思考 → 工具调用 → 正文）；回复下方 复制 / 赞 / 踩 / 收藏。',
     ],
   },
   {
-    file: '06_Workmate历史搜索.png', group: '对话', desc: 'Workmate 历史搜索',
+    file: '06_Workmate历史搜索.png', group: '对话（Workmate / Agents）', desc: 'Workmate 历史搜索',
     state: ST({ activeTab: 'chat', chatMode: 'workmate' }),
     steps: [{ aria: 'search', wait: 600 }, { type: '分页', wait: 600 }],
     req: [
       '**定位**：在连续对话流里按关键词检索历史消息。',
-      '**元素**：顶部搜索框（自动聚焦）+ 取消；结果列表（头像 + 角色 + 时间 + 高亮片段 + 结果计数）。',
-      '**交互**：输入即时过滤；点结果 → 关闭搜索并**跳回该消息** + 1.8s 高亮脉冲。',
-      '**边界**：空查询显示引导文案；无结果显示空提示。',
+      '**交互**：输入即时过滤；点结果跳回该消息并高亮 1.8s。',
     ],
   },
   {
-    file: '07_Workmate收藏中心.png', group: '对话', desc: '收藏中心',
+    file: '07_Workmate收藏中心.png', group: '对话（Workmate / Agents）', desc: '收藏中心',
     state: ST({ activeTab: 'chat', chatMode: 'workmate' }),
     steps: [{ aria: 'favorites', wait: 700 }],
     req: [
-      '**定位**：集中查看收藏的 Workmate 回复，解决长对话流找回难。',
-      '**元素**：标题「收藏」+ 副标题；右上搜索；列表按**收藏时间倒序**（头像 + 名称 + 收藏时间 + 两行摘要）；行尾取消收藏（实心书签）。',
-      '**交互**：点条目 → 跳回原对话 + 高亮；搜索过滤；取消收藏即时移除。',
-      '**边界**：无收藏显示空态与引导。',
+      '**定位**：集中查看收藏的 Workmate 回复（按收藏时间倒序）。',
+      '**交互**：点条目跳回原对话并高亮；行尾实心书签取消收藏；支持搜索。',
     ],
   },
   {
-    file: '08_普通对话.png', group: '对话', desc: '普通对话模式',
+    file: '08_通知跳回-审批卡.png', group: '对话（Workmate / Agents）', desc: '通知跳回 · 对话内授权审批卡',
+    state: ST({ activeTab: 'chat', chatMode: 'workmate' }),
+    steps: [{ svg: 'bell', wait: 700 }, { text: '授权请求 · 日历', wait: 1100 }],
+    req: [
+      '**定位**：点「授权请求」通知 → 跳回 Workmate 对话内的审批卡（带高亮框，外框与图标留有安全间距）。',
+      '**元素**：审批卡**第一级（折叠态）即可操作**：拒绝 / 同意（同意默认授予 7 天有效期，已同意态展示「已同意 · 有效期 7 天」）；展开仅追加函数与参数。',
+      '**交互**：同意 / 拒绝后卡片状态与通知中心药丸同步更新。',
+    ],
+  },
+  {
+    file: '09_通知跳回-连接卡.png', group: '对话（Workmate / Agents）', desc: '通知跳回 · 对话内 MCP 连接卡',
+    state: ST({ activeTab: 'chat', chatMode: 'workmate' }),
+    steps: [{ svg: 'bell', wait: 700 }, { text: '连接请求 · Slack', wait: 1100 }],
+    req: [
+      '**定位**：点「连接请求」通知 → 跳回对话内的 MCP 连接卡，在原上下文完成 OAuth 连接。',
+      '**元素**：连接卡（服务 Logo + 名称 + 描述 + 「连接」按钮）；连接成功后变绿色「已连接」并继续任务。',
+    ],
+  },
+  {
+    file: '10_Agents对话主界面.png', group: '对话（Workmate / Agents）', desc: 'Agents 对话主界面',
     state: ST({ activeTab: 'chat', chatMode: 'normal' }),
     req: [
-      '**定位**：像通用 AI 助手一样、**按会话 / 项目**组织的对话（与 Workmate 连续流互补）。',
-      '**元素**：顶部 [历史] · 分段 · [通知]；会话消息区；输入框。',
-      '**交互**：可新建会话、切换历史会话；用户消息可编辑重发。',
+      '**定位**：与 Workmate 连续流互补的**多智能体对话**，按会话 / 项目组织。',
+      '**元素**：顶部 [历史] · 分段 · [通知]；输入框上方 **Agent 栏**（左：当前智能体选择 pill；右：MCP 服务器 pill + 已启用计数）；助手回复带智能体署名。',
+      '**交互**：可切换智能体 / 快捷管理 MCP；用户消息可编辑重发。',
     ],
   },
   {
-    file: '09_普通对话历史.png', group: '对话', desc: '普通对话历史',
+    file: '11_智能体选择器.png', group: '对话（Workmate / Agents）', desc: '选择智能体',
+    state: ST({ activeTab: 'chat', chatMode: 'normal' }),
+    steps: [{ text: 'Auto Agent', wait: 800 }],
+    req: [
+      '**定位**：在 Agents 模式切换当前智能体。',
+      '**元素**：底部弹窗「选择智能体」+ 搜索；按组织分组（内置智能体 / Cobo / Sales & BD / Operation & Growth / RD / Default）；行 = 头像 + 名称 + 描述，当前项打勾。',
+      '**交互**：点选即切换（toast 提示），后续回复以该智能体署名。',
+    ],
+  },
+  {
+    file: '12_MCP快捷面板.png', group: '对话（Workmate / Agents）', desc: 'MCP 服务器快捷面板',
+    state: ST({ activeTab: 'chat', chatMode: 'normal' }),
+    steps: [{ text: '服务器$', wait: 800 }],
+    req: [
+      '**定位**：对话内快捷启停 MCP 服务器，不必跳设置页。',
+      '**元素**：底部弹窗（服务 Logo + 名称 + 描述 + 开关 / 「连接」按钮；共享 / 已授权徽标）。',
+      '**交互**：未授权的先连接（OAuth mock）再启用；启用数实时回显在 pill 上。',
+    ],
+  },
+  {
+    file: '13_普通对话历史.png', group: '对话（Workmate / Agents）', desc: '会话历史（项目 / 会话）',
     state: ST({ activeTab: 'chat', chatMode: 'normal' }),
     steps: [{ aria: 'history', wait: 700 }],
     req: [
-      '**定位**：浏览普通对话的项目与会话列表。',
-      '**元素**：项目分组 + 会话条目（标题 / 时间）；新建会话入口。',
-      '**交互**：点会话进入；面板从左侧滑出。',
+      '**定位**：浏览 Agents 模式的项目与会话。',
+      '**交互**：点会话切换；支持 新建 / 重命名 / 移动到项目 / 删除。',
     ],
   },
 
+  // ---- 助手 · 定时任务 ----
   {
-    file: '10_助手工作台.png', group: '助手（任务 / 会议 / 通知）', desc: '助手工作台',
+    file: '14_助手工作台.png', group: '助手 · 定时任务', desc: '助手工作台',
     state: ST({ activeTab: 'assistant' }),
     req: [
       '**定位**：Workmate 的功能入口聚合页。',
-      '**元素**：「进入对话」hero 卡；「定时任务」「会议记录」入口卡（各带一句话描述 + 计数 / 状态）；右上通知。',
-      '**交互**：点卡进入对应功能。',
+      '**元素**：「进入对话」hero 卡；「定时任务」「会议记录」入口卡（一句话描述 + 计数）。',
     ],
   },
   {
-    file: '11_定时任务列表.png', group: '助手（任务 / 会议 / 通知）', desc: '定时任务列表',
+    file: '15_定时任务列表.png', group: '助手 · 定时任务', desc: '定时任务列表',
     state: ST({ activeTab: 'assistant' }),
     steps: [{ text: '托付给 Workmate', wait: 700 }],
     req: [
       '**定位**：查看 / 管理托付给 Workmate 周期执行的任务。',
-      '**元素**：标题 + 副标题 + 右上「+」；卡片（能力色块图标 + 名称 + 规则 chip + 下次运行 + 上次结果 ✓/✗）；启用任务在前按下次运行升序，**已暂停**分组置灰下沉。',
-      '**交互**：整卡点进详情；「+」通过对话创建（预填提示词跳 Workmate）；运行中显示 spinner。',
+      '**元素**：卡片（名称 + 调度规则 chip + 下次运行 + 上次结果 ✓/✗）；已暂停分组置灰下沉。',
+      '**交互**：整卡进详情；「+」走对话创建。',
     ],
   },
   {
-    file: '12_定时任务详情.png', group: '助手（任务 / 会议 / 通知）', desc: '定时任务详情',
+    file: '16_定时任务详情.png', group: '助手 · 定时任务', desc: '定时任务详情',
     state: ST({ activeTab: 'assistant' }),
     steps: [{ text: '托付给 Workmate', wait: 600 }, { text: '产品组 OKR 周报', wait: 700 }],
     req: [
-      '**定位**：单个任务的总览与操作。',
-      '**元素**：概览（状态 生效中 / 已暂停、计划、上次 / 下次运行）；「需要的 MCP 服务器」（已连接 / 未连接，可点进详情）；任务指令全文；运行记录（成功 / 失败 + 时长 + 打开对话）。',
-      '**交互**：底部操作栏 —— 主按钮 暂停 / 继续、副按钮 立即运行（等宽）；右上 ⋯ 编辑 / 删除。即时运行**不解除暂停**。',
+      '**元素**：概览（状态 / 计划 / 上次 / 下次运行）；需要的 MCP 服务器；任务指令；运行记录（每行可「打开对话」）。',
+      '**交互**：底部 暂停/继续 + 立即运行（暂停任务也可立即运行且**保持暂停**）；右上 ⋯ 编辑 / 删除。',
     ],
   },
   {
-    file: '13_定时任务编辑.png', group: '助手（任务 / 会议 / 通知）', desc: '编辑任务',
+    file: '17_定时任务编辑.png', group: '助手 · 定时任务', desc: '编辑任务',
     state: ST({ activeTab: 'assistant' }),
     steps: [{ text: '托付给 Workmate', wait: 600 }, { text: '产品组 OKR 周报', wait: 600 }, { aria: 'more', wait: 400 }, { text: '^编辑$', wait: 600 }],
     req: [
-      '**定位**：修改任务名称、指令、触发时机。',
-      '**元素**：名称输入、指令多行输入、触发时机（每天 / 每周 / 每隔一段时间）；每周支持**周内多选**；时间 / 间隔选择；底部 取消 / 保存。',
-      '**交互**：**未改动前「保存」不可点**（dirty 门控，空名字不算改动）；保存提示成功；可取消返回。',
+      '**元素**：名称 / 指令 / 触发时机三模式：周期重复（周内多选 + 每天快捷）· 指定日期（多选具体日期时间，各运行一次）· 每隔一段时间（N 分钟/小时/天，可设开始时间）。',
+      '**交互**：未改动「保存」不可点（dirty 门控）；空名保存时回退原名称。',
     ],
   },
   {
-    file: '14_执行结果-成功.png', group: '助手（任务 / 会议 / 通知）', desc: '执行结果 · 成功',
+    file: '18_执行结果-成功.png', group: '助手 · 定时任务', desc: '执行结果 · 成功',
     state: ST({ activeTab: 'assistant' }),
     steps: [{ text: '托付给 Workmate', wait: 600 }, { text: '整理 GitHub PR', wait: 600 }, { text: '打开对话', wait: 700 }],
     req: [
-      '**定位**：查看某次成功执行的完整结果。',
-      '**元素**：来源横幅（由定时任务于…触发 + 查看任务）；Workmate 结果消息（工具调用卡 + 结果正文）；**只读**（无输入框），仅保留**复制**按钮；底部「引用提问」。',
-      '**交互**：复制结果；点「引用提问」跳回 Workmate 并把该结果**引用进输入框**继续追问。',
+      '**元素**：来源横幅（由定时任务于…触发）；结果消息（工具调用卡 + 正文）；**只读** + 复制；底部「引用提问」。',
+      '**交互**：「引用提问」把该结果引用进 Workmate 输入框继续追问。',
     ],
   },
   {
-    file: '15_执行结果-失败.png', group: '助手（任务 / 会议 / 通知）', desc: '执行结果 · 失败',
+    file: '19_执行结果-失败.png', group: '助手 · 定时任务', desc: '执行结果 · 失败',
     state: ST({ activeTab: 'assistant' }),
     steps: [{ text: '托付给 Workmate', wait: 600 }, { text: '整理 GitHub PR', wait: 600 }, { text: '打开对话', nth: 2, wait: 700 }],
     req: [
-      '**定位**：查看失败执行以便排查。',
-      '**元素**：来源横幅；错误工具卡（红色 ✗）+ 失败原因 + 重试 / 检查授权提示；只读 + 复制 + 引用提问。',
-      '**交互**：可「引用提问」让 Workmate 协助排查。',
-      '**说明**：每次运行（成功 / 失败）都生成可查看的结果对话，列表每行都有「打开对话」。',
+      '**元素**：错误工具卡（红 ✗）+ 失败原因；同样支持 复制 / 引用提问 协助排查。',
     ],
   },
+
+  // ---- 助手 · 会议记录 ----
   {
-    file: '16_会议记录列表.png', group: '助手（任务 / 会议 / 通知）', desc: '会议记录列表',
+    file: '20_会议记录列表.png', group: '助手 · 会议记录', desc: '会议记录列表',
     state: ST({ activeTab: 'assistant' }),
     steps: [{ text: '会议记录', wait: 700 }],
     req: [
-      '**定位**：管理录音 / 上传的会议及其纪要。',
-      '**元素**：标题 + 副标题；按 今天 / 昨天 / 更早 分组的会议列表（图标 + 标题 + 时间·时长 + 状态药丸）；**底部居中「开始录制」录像机式按钮**；**右上「上传音频」**（搜索图标左侧）。',
-      '**交互**：点会议进详情；点录制进录音页；上传选本地音频文件。',
+      '**元素**：按 今天 / 昨天 / 更早 分组；行 = 来源图标（录音/导入配色区分）+ 标题 + 时间·时长 + 状态药丸（未完成统一中性「未转写」，已完成无药丸；**云端上传阶段例外**：上传中=蓝色药丸内嵌进度填充，上传失败=红色「上传失败」，详情内重试）；底部居中「开始录制」；右上「上传音频」。',
+      '**行为**：录音保存 / 导入后自动上传云盘（mock）；上传完成前转译被门控；刷新中断标记上传失败，详情「重试上传」。',
     ],
   },
   {
-    file: '17_会议记录详情.png', group: '助手（任务 / 会议 / 通知）', desc: '会议记录详情',
+    file: '21_会议详情-逐字稿.png', group: '助手 · 会议记录', desc: '会议详情 · 逐字稿',
     state: ST({ activeTab: 'assistant' }),
-    steps: [{ text: '会议记录', wait: 600 }, { text: '产品评审会|用户访谈|团队周会', wait: 800 }],
+    steps: [{ text: '会议记录', wait: 600 }, { text: '产品评审会', wait: 800 }],
     req: [
-      '**定位**：单场会议的转写、纪要与回放。',
-      '**元素**：音频播放器（进度 / 波形）；说话人区分的同步转写；会议摘要（Markdown）；状态（转写中 / 完成 / 失败）。',
-      '**交互**：播放联动转写高亮；转写与摘要分区查看。',
+      '**元素**：常驻播放器（进度 / ±15s / 倍速）；转写 | 总结 分段；说话人着色的逐字稿，点击可定位播放。',
+      '**交互**：右上搜索可检索转写内容；⋯ 菜单含 重新转译 / 复制全文 / 重命名 / 删除。',
     ],
   },
   {
-    file: '18_录音页.png', group: '助手（任务 / 会议 / 通知）', desc: '录音中',
+    file: '22_会议详情-总结.png', group: '助手 · 会议记录', desc: '会议详情 · AI 总结（模板 chip + 更新时间）',
     state: ST({ activeTab: 'assistant' }),
-    steps: [{ text: '会议记录', wait: 600 }, { text: '开始录制', wait: 800 }],
+    steps: [{ text: '会议记录', wait: 600 }, { text: '产品评审会', wait: 700 }, { text: '^总结$', wait: 600 }],
     req: [
-      '**定位**：实时录音并转写成会议。',
-      '**元素**：镜像波形动效 + 计时器；录制控制（停止 / 完成）。',
-      '**交互**：完成 → 生成会议并进入转写流程；权限被拒时降级为模拟波形并提示改用上传。',
+      '**元素**：总结卡上方显示**当前模板 chip**（如 会议纪要）与「总结更新于 …」时间；Markdown 总结 + 复制按钮。',
+      '**说明**：时间戳让「仅重新生成总结」也有可见变化。',
     ],
   },
   {
-    file: '19_通知中心.png', group: '助手（任务 / 会议 / 通知）', desc: '通知中心',
+    file: '23_转译模板选择.png', group: '助手 · 会议记录', desc: '转译 · 选择总结模板（含总结备注）',
     state: ST({ activeTab: 'assistant' }),
-    steps: [{ svg: 'bell', wait: 700 }],
+    steps: [{ text: '会议记录', wait: 600 }, { text: '用户访谈', wait: 700 }, { text: '^转译$', wait: 800 }],
     req: [
-      '**定位**：集中处理授权审批与任务状态通知。',
-      '**元素**：待处理（授权审批卡：请求方 / 用途 / 权限范围 / 有效期选择 + 拒绝 / 同意）；更早（任务 完成 / 失败 / 创建 状态）；右上「全部已读」。',
-      '**交互**：审批 通过 / 拒绝 并与对话内卡片同步；点任务状态跳到对应运行结果对话。',
+      '**定位**：点「转译」先选总结模板，不同模板 = 不同的总结内容格式。',
+      '**元素**：5 个模板单选（会议纪要 / 客户总结 / 面试记录 / 通用 / 行动项清单，各带一行描述，默认按标题智能推荐）；**「总结备注（可选）」**输入框（给 AI 补背景，会以“背景补充”写进总结）；底部「开始转译」。',
+    ],
+  },
+  {
+    file: '24_重新转译.png', group: '助手 · 会议记录', desc: '重新转译（重选模板 + 可选重生成逐字稿）',
+    state: ST({ activeTab: 'assistant' }),
+    steps: [{ text: '会议记录', wait: 600 }, { text: '产品评审会', wait: 700 }, { aria: 'more', wait: 500 }, { text: '^重新转译$', wait: 800 }],
+    req: [
+      '**定位**：已完成的会议可重跑：**总结一定重新生成**；逐字稿是否重生成由开关决定（默认关）。',
+      '**元素**：模板单选（预选当前模板）+「同时重新生成逐字稿」开关 + hint + 总结备注（回填上次）+「开始」。',
+      '**交互**：仅总结 → toast「已更新总结」；含逐字稿 → toast「已重新生成逐字稿与总结」。',
+    ],
+  },
+  {
+    file: '25_录音页.png', group: '助手 · 会议记录', desc: '录音中',
+    state: ST({ activeTab: 'assistant' }),
+    // headless Chrome has no mic → walk the denied path into the simulated-waveform demo
+    steps: [
+      { text: '会议记录', wait: 600 },
+      { text: '开始录制', wait: 800 },
+      { text: '允许使用麦克风', wait: 2200 },
+      { text: '用模拟波形继续', wait: 2000 },
+    ],
+    req: [
+      '**元素**：滚动镜像波形 + 大号计时器；中间 暂停/继续 大圆钮 + 右侧「结束」。',
+      '**交互**：结束 → 命名保存 → 回列表（未转写态，再进详情转译）。',
     ],
   },
 
+  // ---- 通知中心 ----
   {
-    file: '20_我的-浅色.png', group: '我的（账号 / 配置）', desc: '我的',
-    state: ST({ activeTab: 'me' }),
+    file: '26_通知中心.png', group: '通知中心', desc: '通知中心（按时间聚合）',
+    state: ST({ activeTab: 'chat' }),
+    steps: [{ svg: 'bell', wait: 800 }],
     req: [
-      '**定位**：账号与 Workmate 配置中心。',
-      '**元素**：账号卡（头像 + 姓名 + 邮箱，可点进个人信息）；「Workmate」配置区（基础配置 / MCP 服务器 / 记忆 / 技能，各带一行说明）；偏好（语言 / 模式）；支持（版本 / 重置演示数据）；退出登录。',
-      '**交互**：点各行进入对应页 / 选择器。',
+      '**定位**：三类通知 —— 定时任务状态 / Tool Call 审批 / MCP 连接请求，各自点击跳到处理页。',
+      '**元素**：按 今天 / 昨天 / 具体日期 分组；行 = 未读蓝点 + 分类图标 + **结构化稳定标题**（定时任务·名 / 授权请求·能力 / 连接请求·服务）+ 时间，第二行为**状态药丸**（待审批 / 已同意 / 待连接 / 执行成功…）。',
+      '**说明**：状态变化只改药丸、**不改标题**；审批 / 连接跳回 Workmate 对话内卡片完成。',
     ],
   },
   {
-    file: '21_个人信息.png', group: '我的（账号 / 配置）', desc: '个人信息中心',
+    file: '27_通知筛选.png', group: '通知中心', desc: '通知筛选（多选）',
+    state: ST({ activeTab: 'chat' }),
+    steps: [{ svg: 'bell', wait: 700 }, { aria: 'filter', wait: 800 }],
+    req: [
+      '**元素**：底部弹窗「筛选通知」：定时任务完成 / Tool Call 审批 / 连接请求 三类多选（勾选显示）+「完成」。',
+      '**交互**：取消勾选即时过滤，漏斗图标高亮带点；右上「全部已读」需二次确认。',
+    ],
+  },
+
+  // ---- 我的 ----
+  {
+    file: '28_我的.png', group: '我的（账号 / 配置）', desc: '我的',
+    state: ST({ activeTab: 'me' }),
+    req: [
+      '**元素**：账号卡（可点进个人信息）；Workmate 配置（基础配置 / MCP 服务器 / 记忆 / 技能）；偏好（语言 / 模式）；版本 / 重置演示数据 / 退出。',
+    ],
+  },
+  {
+    file: '29_个人信息.png', group: '我的（账号 / 配置）', desc: '个人信息中心',
     state: ST({ activeTab: 'me' }),
     steps: [{ text: 'jianing.jiang@cobo.com', wait: 700 }],
     req: [
-      '**定位**：查看用户 ID、编辑姓名与头像。',
-      '**元素**：大头像（相机角标，可 上传 / 更换 / 移除照片）；可编辑「姓名」；只读「用户 ID」（点击复制）、「邮箱」。',
-      '**交互**：右上「保存」**未改动不可点**；返回有未保存确认；保存后「我的」卡片即时同步。',
+      '**元素**：大头像（可上传 / 更换 / 移除）；可编辑姓名；只读 用户 ID（点击复制）/ 邮箱。',
+      '**交互**：未改动「保存」不可点；返回有未保存确认。',
     ],
   },
   {
-    file: '22_基础配置.png', group: '我的（账号 / 配置）', desc: 'Workmate 基础配置（人设）',
+    file: '30_基础配置.png', group: '我的（账号 / 配置）', desc: 'Workmate 基础配置（人设）',
     state: ST({ activeTab: 'me' }),
     steps: [{ text: '基础配置', wait: 700 }],
     req: [
-      '**定位**：定制 Workmate 的人设、系统提示词与模型。',
-      '**元素**：头像（可上传）；人设名称、描述、系统提示词；模型选择（真实厂商 Logo）。',
-      '**交互**：右上「保存」**未改动不可点**；返回有未保存确认。',
+      '**元素**：头像 / 名称 / 描述 / 系统提示词 / 模型选择（真实厂商 Logo）。',
+      '**交互**：未改动「保存」不可点。',
     ],
   },
   {
-    file: '23_MCP服务器列表.png', group: '我的（账号 / 配置）', desc: 'MCP 服务器列表',
+    file: '31_MCP服务器列表.png', group: '我的（账号 / 配置）', desc: 'MCP 服务器列表',
     state: ST({ activeTab: 'me' }),
     steps: [{ text: 'MCP 服务器', wait: 700 }],
     req: [
-      '**定位**：连接外部工具 / 数据源，扩展 Workmate 能力。',
-      '**元素**：标题 + 副标题 + 搜索；服务器列表（真实 Logo + 名称 + 徽章[团队共享 / 已授权] + 描述 + 右侧 开关 或「连接」）。',
-      '**交互**：需 OAuth 的先「连接」（浏览器授权流 + 连接中 loading）后才出现开关；无需授权的直接开关；开关切换带渐变动效。',
+      '**元素**：真实 Logo + 名称 + 徽章（团队共享 / 已授权）+ 描述 + 开关或「连接」。',
+      '**交互**：OAuth 服务先连接再启用。',
     ],
   },
   {
-    file: '24_MCP服务器详情.png', group: '我的（账号 / 配置）', desc: 'MCP 服务器详情（已连接）',
+    file: '32_MCP服务器详情.png', group: '我的（账号 / 配置）', desc: 'MCP 服务器详情（已连接）',
     state: ST({ activeTab: 'me' }),
     steps: [{ text: 'MCP 服务器', wait: 600 }, { text: '飞书', wait: 700 }],
-    req: [
-      '**定位**：单个 MCP 服务器的说明与能力。',
-      '**元素**：头部（Logo + 名称 + 发布方·授权类型）；启用 / 连接控制；「关于」；「工具」列表（函数名 + 说明）。',
-      '**交互**：已授权只显示开关（不再出现连接按钮，除非授权失效）。',
-    ],
+    req: ['**元素**：头部（Logo / 发布方）+ 启用开关 + 关于 + 工具列表（函数名 + 说明）。'],
   },
   {
-    file: '25_记忆列表.png', group: '我的（账号 / 配置）', desc: '记忆',
+    file: '33_记忆列表.png', group: '我的（账号 / 配置）', desc: '记忆',
     state: ST({ activeTab: 'me' }),
     steps: [{ text: '^记忆$', wait: 700 }],
     req: [
-      '**定位**：查看 Workmate 长期记住的偏好与事实。',
-      '**元素**：标题 + 副标题 + 搜索；记忆条目（文本 + 删除）；右上「+」（通过对话新增记忆）；底部「回收站(N)」入口。',
-      '**交互**：删除为**软删除**（移入回收站，无需确认）；「+」跳 Workmate 预填「请帮我把以下的内容保存为我的记忆：」并触发 save_memory 工具调用。',
+      '**元素**：记忆条目 + 删除（软删除入回收站）；右上「+」走对话保存记忆；底部回收站入口。',
     ],
   },
   {
-    file: '26_记忆回收站.png', group: '我的（账号 / 配置）', desc: '记忆回收站',
+    file: '34_记忆回收站.png', group: '我的（账号 / 配置）', desc: '记忆回收站',
     state: ST({ activeTab: 'me' }),
     steps: [{ text: '^记忆$', wait: 600 }, { aria: 'delete', wait: 500 }, { text: '回收站', wait: 700 }],
-    req: [
-      '**定位**：找回或彻底删除已删除的记忆。',
-      '**元素**：标题 + 说明；已删除条目（恢复 / 彻底删除）。',
-      '**交互**：恢复 → 回到记忆列表；彻底删除需二次确认（不可恢复）。',
-    ],
+    req: ['**交互**：恢复 → 回列表；彻底删除需二次确认。'],
   },
   {
-    file: '27_技能列表.png', group: '我的（账号 / 配置）', desc: '技能',
+    file: '35_技能列表.png', group: '我的（账号 / 配置）', desc: '技能',
     state: ST({ activeTab: 'me' }),
     steps: [{ text: '^技能$', wait: 700 }],
-    req: [
-      '**定位**：管理可复用的自动化能力。',
-      '**元素**：标题 + 副标题 + 搜索；技能条目（图标 + 名称 + 描述 + 开关）。',
-      '**交互**：开关启用 / 停用，带渐变动效。',
-    ],
+    req: ['**元素**：技能条目（图标 + 名称 + 描述 + 开关）。'],
   },
   {
-    file: '28_模式选择.png', group: '我的（账号 / 配置）', desc: '主题模式选择',
+    file: '36_模式选择.png', group: '我的（账号 / 配置）', desc: '主题模式选择',
     state: ST({ activeTab: 'me' }),
     steps: [{ text: '^模式', wait: 600 }],
     req: [
-      '**定位**：切换 浅色 / 深色 / 跟随系统 主题。',
-      '**元素**：底部选择表「模式」：白天模式 / 黑夜模式 / 跟随系统（当前项打勾）+ 取消。',
-      '**交互**：选择后整页配色**渐变切换**（View Transitions 交叉淡入）；「跟随系统」实时跟随 OS、加载时正确解析（无闪白）。',
+      '**元素**：白天模式 / 黑夜模式 / 跟随系统（当前项打勾）。',
+      '**交互**：切换时整页配色**渐变过渡**（View Transitions）；跟随系统实时响应。',
     ],
   },
 
+  // ---- 深色模式 ----
   {
-    file: '29_我的-深色.png', group: '深色模式', desc: '我的（深色模式）',
+    file: '37_我的-深色.png', group: '深色模式', desc: '我的（深色）',
     state: ST({ activeTab: 'me', theme: 'dark', themeMode: 'dark' }),
-    req: [
-      '**说明**：所有界面均支持深色主题（语义色板，由 `.dark` 切换）。',
-      '首屏前由内联脚本应用 `.dark`，避免深色用户刷新闪白。',
-    ],
+    req: ['**说明**：全部界面支持深色主题；首屏前内联脚本应用 `.dark`，无闪白。'],
   },
   {
-    file: '30_Workmate对话-深色.png', group: '深色模式', desc: 'Workmate 对话（深色模式）',
+    file: '38_Workmate对话-深色.png', group: '深色模式', desc: 'Workmate 对话（深色）',
     state: ST({ activeTab: 'chat', chatMode: 'workmate', theme: 'dark', themeMode: 'dark' }),
-    req: ['**说明**：对话流的气泡 / 卡片 / 操作行 / 输入框在深色下均已适配。'],
+    req: ['**说明**：气泡 / 工具卡 / 审批卡 / 连接卡 / 输入框深色全适配。'],
+  },
+  {
+    file: '39_通知中心-深色.png', group: '深色模式', desc: '通知中心（深色）',
+    state: ST({ activeTab: 'chat', theme: 'dark', themeMode: 'dark' }),
+    steps: [{ svg: 'bell', wait: 800 }],
+    req: ['**说明**：分组标题 / 状态药丸（语义色）在深色下保持对比度。'],
   },
 
+  // ---- 更多 ----
   {
-    file: '31_扫码登录.png', group: '更多界面与交互态', desc: '扫码登录',
+    file: '40_扫码登录.png', group: '更多界面与交互态', desc: '扫码登录',
     state: ST({ authStatus: 'loggedOut' }),
     steps: [{ text: '扫码登录', wait: 700 }],
-    req: [
-      '**定位**：登录的备选方式（扫码）。',
-      '**元素**：扫码界面（深色背景 + 二维码 / 扫描提示）。',
-      '**交互**：扫码完成 → 进入与 Google 登录一致的后续流程。',
-    ],
+    req: ['**元素**：相机取景框 + 扫描线动画 + 相册 / 手电筒；识别成功走统一登录流程。'],
   },
   {
-    file: '32_附件选择.png', group: '更多界面与交互态', desc: '添加附件',
+    file: '41_附件选择.png', group: '更多界面与交互态', desc: '添加附件',
     state: ST({ activeTab: 'chat', chatMode: 'workmate' }),
     steps: [{ aria: 'add attachment', wait: 600 }],
-    req: [
-      '**定位**：在对话中添加附件。',
-      '**元素**：底部 ActionSheet「照片 / 文件」+ 取消。',
-      '**交互**：选择后调系统选择器；图片生成缩略图、文件显示类型；待发送区可逐个移除。',
-    ],
+    req: ['**元素**：底部弹窗「照片 / 文件」；图片出缩略图、文件显类型，可逐个移除。'],
   },
   {
-    file: '33_语音输入.png', group: '更多界面与交互态', desc: '语音输入',
-    state: ST({ activeTab: 'chat', chatMode: 'workmate' }),
-    steps: [{ svg: 'mic', wait: 700 }],
-    req: [
-      '**定位**：语音听写输入。',
-      '**元素**：底部语音面板（动态波形 + 计时 + 取消 / 完成）。',
-      '**交互**：完成 → 把识别文本填入输入框（mock 预置短语）。',
-    ],
-  },
-  {
-    file: '34_全屏输入.png', group: '更多界面与交互态', desc: '全屏输入编辑器',
+    file: '42_全屏输入.png', group: '更多界面与交互态', desc: '全屏输入编辑器',
     state: ST({ activeTab: 'chat', chatMode: 'workmate' }),
     steps: [{ type: '帮我把这周的进展整理成一段周报', wait: 300 }, { aria: 'expand input', wait: 600 }],
-    req: [
-      '**定位**：长文本输入的全屏编辑态，**保留顶部头部与底部标签栏**。',
-      '**元素**：编辑区填充对话区（头部下、标签栏上）；右上收起；底部 + 与 发送。',
-      '**交互**：输入框有内容时出现展开入口；展开 / 收起为渐变；草稿在展开 / 收起间保留。',
-    ],
+    req: ['**交互**：输入有内容时出现展开入口；全屏编辑保留头部与标签栏；草稿在展开 / 收起间保留。'],
   },
   {
-    file: '35_MCP授权连接.png', group: '更多界面与交互态', desc: 'MCP 服务器详情（未授权）',
+    file: '43_MCP授权连接.png', group: '更多界面与交互态', desc: 'MCP 服务器详情（未授权）',
     state: ST({ activeTab: 'me' }),
     steps: [{ text: 'MCP 服务器', wait: 600 }, { text: 'Slack', wait: 700 }],
-    req: [
-      '**定位**：未授权 MCP 服务器的授权入口态。',
-      '**元素**：头部 + 「授权并连接」主按钮 + 关于 + 工具列表。',
-      '**交互**：点「授权并连接」走浏览器授权流（mock）→ 连接中 loading → 显示开关。',
-    ],
+    req: ['**元素**：「授权并连接」主按钮；点按走浏览器授权（mock）→ 连接中 → 出现开关。'],
   },
   {
-    file: '36_语言选择.png', group: '更多界面与交互态', desc: '语言选择',
+    file: '44_语言选择.png', group: '更多界面与交互态', desc: '语言选择',
     state: ST({ activeTab: 'me' }),
     steps: [{ text: '语言', wait: 700 }],
-    req: [
-      '**定位**：切换界面语言。',
-      '**元素**：底部选择表「语言」：简体中文 / English（当前项打勾）+ 取消。',
-      '**交互**：切换即时生效（界面 chrome 全量 i18n；已生成内容保留原语言）。',
-    ],
+    req: ['**元素**：简体中文 / English（当前项打勾）；切换即时生效，界面全量双语。'],
   },
 ]
 
@@ -436,16 +462,19 @@ async function capture() {
   })
   const page = await browser.newPage()
   for (const s of screens) {
+    if (ONLY && !s.file.includes(ONLY)) continue
     try {
       await page.goto(URL, { waitUntil: 'load' })
       await page.evaluate((st) => localStorage.setItem('cortex-workmate-v1', st), s.state)
       await page.reload({ waitUntil: 'networkidle2' })
       await sleep(750)
       for (const step of s.steps || []) {
-        if (step.text) await clickText(page, step.text, step.nth || 0)
-        if (step.aria) await clickAria(page, step.aria)
-        if (step.svg) await clickSvg(page, step.svg)
-        if (step.type) await typeInto(page, step.type)
+        let ok = true
+        if (step.text) ok = await clickText(page, step.text, step.nth || 0)
+        if (step.aria) ok = await clickAria(page, step.aria)
+        if (step.svg) ok = await clickSvg(page, step.svg)
+        if (step.type) ok = await typeInto(page, step.type)
+        if (!ok) console.warn('  step missed:', s.file, JSON.stringify(step))
         await sleep(step.wait || 600)
       }
       await sleep(250)
@@ -460,9 +489,9 @@ async function capture() {
 
 function writeDoc() {
   const md = [
-    '# Cortex Workmate · 全界面截图与需求说明',
+    '# Cortex Workmate · 全界面截图与说明',
     '',
-    `> 共 ${screens.length} 个界面，按场景分组；每个界面含截图 + 需求要点（定位 / 元素 / 交互 / 边界）。`,
+    `> 共 ${screens.length} 个界面，按场景分组；每个界面含截图 + 要点说明（定位 / 元素 / 交互）。`,
     '> 纯前端高保真原型（mock，无后端）；中文为默认、界面全量双语。截图与文档由 \`scripts/shoot.mjs\` 生成。',
     '',
   ]
