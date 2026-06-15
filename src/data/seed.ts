@@ -149,6 +149,16 @@ export const SUMMARY_TEMPLATES: { key: SummaryTemplate }[] = [
   { key: 'actions' },
 ]
 
+// Guess a summary template from the recording title (keyword routing). Used to pre-select
+// a sensible template both for the auto-转译 kicked off at save and for the detail-page
+// template picker's default. Mirrors analysisFor()'s scenario routing.
+export function guessTemplate(title: string): SummaryTemplate {
+  if (/面试|访谈|interview/i.test(title)) return 'interview'
+  if (/客户|customer|client/i.test(title)) return 'customer'
+  if (/评审|会议|周会|review|meeting/i.test(title)) return 'meeting'
+  return 'generic'
+}
+
 // Mock summary generator — each template returns a visibly different markdown FORMAT.
 // `m.title` is woven into the heading so the summary reads as belonging to this recording;
 // an optional `note` (user-provided background) is surfaced as a blockquote under the heading
@@ -928,16 +938,34 @@ export function buildSeed(): SeedData {
       summaryUpdatedAt: now - 1 * DAY - 2 * HR,
     },
     {
-      // cloud-upload failure demo: red 上传失败 pill in the list → retry in detail →
-      // becomes 未转写 → transcribe unlocks
+      // 转译失败 demo: red 转译失败 pill in the list → 重试转译 in detail → 转译中 → done.
+      // (转译 = upload + transcribe unified; a failure in either stage surfaces here.)
       id: uid('meet_'),
       title: '客户拜访沟通',
       createdAt: now - 3 * HR,
       durationMs: 65000,
-      status: 'pending',
+      status: 'failed',
       source: 'recording',
-      uploadStatus: 'failed',
-      uploadFailReason: 'meet.upload.failedReason',
+      failureReason: 'meet.fail.network',
+    },
+    {
+      // another 转译失败 — an imported file, different reason
+      id: uid('meet_'),
+      title: '导入音频 · 季度复盘',
+      createdAt: now - 4 * HR,
+      durationMs: 143000,
+      status: 'failed',
+      source: 'import',
+      failureReason: 'meet.fail.quota',
+    },
+    {
+      id: uid('meet_'),
+      title: '电话沟通 · 供应商对接',
+      createdAt: now - 5 * HR,
+      durationMs: 38000,
+      status: 'failed',
+      source: 'recording',
+      failureReason: 'meet.fail.timeout',
     },
     {
       id: uid('meet_'),
