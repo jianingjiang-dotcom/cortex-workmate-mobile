@@ -37,6 +37,7 @@ import {
   buildSeed,
   MODELS,
   genericAnalysis,
+  guessTemplate,
   interviewAnalysis,
   reviewAnalysis,
   summaryForTemplate,
@@ -62,6 +63,7 @@ interface AppState {
   authStatus: 'loggedOut' | 'onboarding' | 'ready'
   hasOnboarded: boolean
   scanLoginOpen: boolean
+  updateDismissed: boolean // user chose to update (tapped the App Store CTA); just viewing keeps the marker
   // account
   account: Account
   // navigation (ephemeral)
@@ -103,6 +105,7 @@ interface AppState {
   login: () => void
   setScanLogin: (open: boolean) => void
   completeOnboarding: () => void
+  dismissUpdate: () => void // user chose to update → clear the new-version marker
   logout: () => void
   updateAccount: (patch: Partial<Account>) => void
 
@@ -166,8 +169,9 @@ interface AppState {
   togglePauseTask: (id: string) => void
   runTaskNow: (id: string) => void
 
-  createRecording: (input: { title: string; durationMs: number; source: 'recording' | 'import' }) => Meeting
-  uploadMeeting: (id: string) => void // simulated cloud upload; also the retry entry
+  // `transcribe`: when true, kicks off 转译 (the unified upload + transcribe flow) right
+  // after creating the meeting. When false the meeting stays 未转写 until the user starts it.
+  createRecording: (input: { title: string; durationMs: number; source: 'recording' | 'import'; transcribe: boolean }) => Meeting
   renameMeeting: (id: string, title: string) => void
   deleteMeeting: (id: string) => void
   transcribeMeeting: (
@@ -231,6 +235,7 @@ export const useStore = create<AppState>()(
       authStatus: 'loggedOut',
       hasOnboarded: false,
       scanLoginOpen: false,
+      updateDismissed: false,
       activeTab: 'chat',
       overlays: [],
       chatMode: 'workmate',
@@ -248,6 +253,7 @@ export const useStore = create<AppState>()(
         set((s) => ({ authStatus: s.hasOnboarded ? 'ready' : 'onboarding', scanLoginOpen: false })),
       setScanLogin: (open) => set({ scanLoginOpen: open }),
       completeOnboarding: () => set({ hasOnboarded: true, authStatus: 'ready' }),
+      dismissUpdate: () => set({ updateDismissed: true }),
       logout: () =>
         set({ authStatus: 'loggedOut', overlays: [], activeTab: 'chat', scanLoginOpen: false }),
       updateAccount: (patch) => set((s) => ({ account: { ...s.account, ...patch } })),
@@ -535,49 +541,10 @@ export const useStore = create<AppState>()(
           source: input.source,
         }
         set((s) => ({ meetings: [m, ...s.meetings] }))
-        // created WITHOUT uploadStatus, then upload kicks in (pre-setting 'uploading'
-        // here would trip uploadMeeting's re-entry guard and stall at 0%)
-        get().uploadMeeting(m.id)
+        // opt-in 转译: kick off the unified upload + transcribe flow with a template
+        // guessed from the title (the user never picked one at save time).
+        if (input.transcribe) get().transcribeMeeting(m.id, { template: guessTemplate(input.title) })
         return m
-      },
-
-      // Simulated cloud upload — runs right after save/import, and serves as the
-      // detail-page retry. Quiet on success (the list pill is the only feedback).
-      uploadMeeting: (id) => {
-        const m = get().meetings.find((x) => x.id === id)
-        if (!m || m.uploadStatus === 'uploading' || m.status === 'done') return
-        set((s) => ({
-          meetings: s.meetings.map((x) =>
-            x.id === id
-              ? { ...x, uploadStatus: 'uploading', uploadProgress: 4, uploadFailReason: undefined }
-              : x,
-          ),
-        }))
-        const steps = 14
-        let step = 0
-        const tick = () => {
-          step += 1
-          const cur = get().meetings.find((x) => x.id === id)
-          // delete / interrupt-reset cancels the ticker naturally
-          if (!cur || cur.uploadStatus !== 'uploading') return
-          if (step < steps) {
-            const progress = Math.min(97, Math.round((step / steps) * 100))
-            set((s) => ({
-              meetings: s.meetings.map((x) =>
-                x.id === id && x.uploadStatus === 'uploading' ? { ...x, uploadProgress: progress } : x,
-              ),
-            }))
-            setTimeout(tick, 320)
-          } else {
-            // uploaded: clear the upload fields entirely (absent = uploaded)
-            set((s) => ({
-              meetings: s.meetings.map((x) =>
-                x.id === id ? { ...x, uploadStatus: undefined, uploadProgress: undefined } : x,
-              ),
-            }))
-          }
-        }
-        setTimeout(tick, 320)
       },
 
       renameMeeting: (id, title) =>
@@ -586,18 +553,26 @@ export const useStore = create<AppState>()(
 
       transcribeMeeting: (id, opts) => {
         const m = get().meetings.find((x) => x.id === id)
-        // gated until the upload stage clears (uploading or upload-failed → no transcribe)
-        if (!m || m.status === 'analyzing' || m.uploadStatus) return
+        // 转译 is the unified upload + transcribe flow; only block a run already in flight.
+        if (!m || m.status === 'analyzing') return
         const { template } = opts
         const firstRun = m.status !== 'done' // pending / failed → no usable transcript yet
         // Re-transcribe a done meeting: only the summary regenerates unless the user opted
         // to also rebuild the transcript (or, defensively, it's somehow missing).
         const summaryOnly = !firstRun && !!m.transcript && opts.regenerateTranscript !== true
 
+        // A first 转译 starts by uploading to the cloud (背后 = 上传 + 转写), so prepend the
+        // upload stage; a re-transcribe reuses the already-uploaded audio and skips it.
         const stages = summaryOnly
           ? ['meet.analyzing.summaryOnly']
-          : ['meet.analyzing.stage1', 'meet.analyzing.stage2', 'meet.analyzing.stage3', 'meet.analyzing.stage4']
-        const steps = summaryOnly ? 6 : 16
+          : [
+              ...(firstRun ? ['meet.transcribe.uploading'] : []),
+              'meet.analyzing.stage1',
+              'meet.analyzing.stage2',
+              'meet.analyzing.stage3',
+              'meet.analyzing.stage4',
+            ]
+        const steps = summaryOnly ? 6 : firstRun ? 18 : 16
 
         set((s) => ({
           meetings: s.meetings.map((x) =>
@@ -714,6 +689,7 @@ export const useStore = create<AppState>()(
           overlays: [],
           toasts: [],
           confirmDialog: null,
+          updateDismissed: false, // re-arm the new-version marker after a reset
         }),
     }),
     {
@@ -745,6 +721,7 @@ export const useStore = create<AppState>()(
         themeMode: s.themeMode,
         authStatus: s.authStatus === 'onboarding' ? 'loggedOut' : s.authStatus,
         hasOnboarded: s.hasOnboarded,
+        updateDismissed: s.updateDismissed,
         account: s.account,
         activeTab: s.activeTab,
         chatMode: s.chatMode,
@@ -795,24 +772,36 @@ export const useStore = create<AppState>()(
         })
         state.meetings = (state.meetings || []).map((m) => {
           let nm = m
-          if (nm.status === 'analyzing') {
+          // Legacy persisted blobs (pre-unification) carried a separate cloud-upload status.
+          // Fold it into the single 转译 status machine and drop the now-dead fields
+          // (undefined is omitted when zustand re-persists).
+          const legacy = m as { uploadStatus?: 'uploading' | 'failed'; uploadFailReason?: string }
+          if (legacy.uploadStatus) {
             nm = {
               ...nm,
-              // a refresh aborts the in-flight analyze. If the meeting already had content
-              // (a re-transcribe of a done meeting), fall back to 'done' so its intact
-              // transcript/summary stay visible — only a genuine first-run reverts to 'pending'.
-              status: nm.transcript || nm.summaryMarkdown ? ('done' as const) : ('pending' as const),
+              status: 'failed',
+              failureReason:
+                legacy.uploadStatus === 'uploading'
+                  ? 'meet.transcribe.interrupted'
+                  : legacy.uploadFailReason && !legacy.uploadFailReason.startsWith('meet.upload.')
+                    ? legacy.uploadFailReason
+                    : 'meet.fail.network', // removed meet.upload.* reason keys → map to a current one
+              uploadStatus: undefined,
+              uploadProgress: undefined,
+              uploadFailReason: undefined,
+            } as Meeting
+          }
+          if (nm.status === 'analyzing') {
+            const hasContent = !!(nm.transcript || nm.summaryMarkdown)
+            nm = {
+              ...nm,
+              // a refresh aborts the in-flight 转译. A re-transcribe of a done meeting keeps its
+              // intact transcript/summary ('done'); a never-finished first run becomes a
+              // retryable 转译失败 so the user can pick it back up.
+              status: hasContent ? ('done' as const) : ('failed' as const),
+              failureReason: hasContent ? nm.failureReason : 'meet.transcribe.interrupted',
               analyzeProgress: undefined,
               analyzeStage: undefined,
-            }
-          }
-          // a refresh also aborts an in-flight upload → surface as a retryable failure
-          if (nm.uploadStatus === 'uploading') {
-            nm = {
-              ...nm,
-              uploadStatus: 'failed' as const,
-              uploadProgress: undefined,
-              uploadFailReason: 'meet.upload.interrupted',
             }
           }
           return nm
