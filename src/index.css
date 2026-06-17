@@ -12,31 +12,38 @@
 }
 
 @layer base {
-  /* ---- Semantic color tokens (light) — switched under .dark ---- */
+  /* ---- Cortex semantic color tokens (light) — switched under .dark ---- */
   :root {
     color-scheme: light;
     --surface: #ffffff; /* cards, sheets, bubbles, solid headers */
     --grouped: #f2f2f7; /* grouped page background */
     --fill: #f2f2f7; /* search fields, secondary buttons, code, tiles */
     --fill-press: #e5e5ea; /* pressed state on a fill */
-    --bubble-user: #e9e9eb; /* user chat bubble */
+    --bubble-user: #f4f4f4; /* user chat bubble */
     --hairline: rgba(60, 60, 67, 0.18); /* nav/header hairlines */
     --divider: rgba(0, 0, 0, 0.06); /* list-row dividers, card borders */
+    --input-border: #dcdcdf; /* outline on inputs / chips / outlined buttons */
     --label-primary: rgba(0, 0, 0, 0.92);
     --label-secondary: rgba(60, 60, 67, 0.6);
     --label-tertiary: rgba(60, 60, 67, 0.3);
-    --glass: rgba(255, 255, 255, 0.72); /* frosted nav bars / tab bar */
+    --glass: rgba(250, 250, 250, 0.85); /* frosted nav bars / floating tab bar */
+    --glass-border: rgba(255, 255, 255, 0.6);
     --stage: #e9e9ee; /* desktop backdrop behind the phone */
-    --blue: #007aff;
-    --green: #34c759;
-    --red: #ff3b30;
-    --orange: #ff9500;
+
+    /* DS palette: single purple accent (#CC79FF). The "blue" tokens drive the app's
+       accent (back / selection / toggle / active state), so they resolve to PURPLE.
+       Genuine links use --link. */
+    --blue: #cc79ff;
+    --link: #407cff;
+    --green: #22c55e;
+    --red: #ef4444;
+    --orange: #ffa03b;
     /* RGB channel triplets of the accents — Tailwind alpha modifiers (bg-ios-blue/10 …)
        need an <alpha-value> slot, which plain hex vars can't provide */
-    --blue-rgb: 0 122 255;
-    --green-rgb: 52 199 89;
-    --red-rgb: 255 59 48;
-    --orange-rgb: 255 149 0;
+    --blue-rgb: 204 121 255;
+    --green-rgb: 34 197 94;
+    --red-rgb: 239 68 68;
+    --orange-rgb: 255 160 59;
     --skeleton-a: #ececf0;
     --skeleton-b: #f6f6f8;
   }
@@ -50,26 +57,34 @@
     --bubble-user: #3a3a3c;
     --hairline: rgba(255, 255, 255, 0.16);
     --divider: rgba(255, 255, 255, 0.1);
+    --input-border: #3a3a3c;
     --label-primary: rgba(255, 255, 255, 0.96);
     --label-secondary: rgba(235, 235, 245, 0.6);
     --label-tertiary: rgba(235, 235, 245, 0.32);
-    --glass: rgba(30, 30, 32, 0.72);
+    --glass: rgba(28, 28, 30, 0.78);
+    --glass-border: rgba(255, 255, 255, 0.1);
     --stage: #08080a;
-    /* iOS dark-mode accents read brighter for contrast */
-    --blue: #0a84ff;
-    --green: #30d158;
-    --red: #ff453a;
-    --orange: #ff9f0a;
-    --blue-rgb: 10 132 255;
-    --green-rgb: 48 209 88;
-    --red-rgb: 255 69 58;
-    --orange-rgb: 255 159 10;
+    /* dark-mode accents read brighter for contrast */
+    --blue: #cc79ff;
+    --link: #6fa0ff;
+    --green: #3dd68c;
+    --red: #ff6166;
+    --orange: #ffb45e;
+    --blue-rgb: 204 121 255;
+    --green-rgb: 61 214 140;
+    --red-rgb: 255 97 102;
+    --orange-rgb: 255 180 94;
     --skeleton-a: #1f1f22;
     --skeleton-b: #2a2a2e;
   }
 
   * {
     -webkit-tap-highlight-color: transparent;
+  }
+
+  /* Cortex iconography: line icons render at 1.5px stroke (overrides Lucide's 2px attr) */
+  svg.lucide {
+    stroke-width: 1.5px;
   }
 
   html,
@@ -164,11 +179,9 @@
     @apply flex items-center gap-3 px-4 min-h-[44px] active:bg-black/[0.04] transition-colors;
   }
 
+  /* brand wordmark / accent text — solid Cortex purple (gradient is logo/hero only) */
   .brand-text {
-    background: theme('backgroundImage.brand-gradient');
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
+    color: #cc79ff;
   }
 
   .press {
@@ -222,7 +235,8 @@
     color: var(--label-secondary);
   }
   .md a {
-    @apply text-ios-blue underline underline-offset-2;
+    @apply underline underline-offset-2;
+    color: var(--link);
   }
   .md strong {
     @apply font-semibold;
@@ -255,7 +269,7 @@
     @apply mt-1 h-[16px] w-[16px] rounded-[5px] border border-ios-gray3 appearance-none shrink-0;
   }
   .md input[type='checkbox']:checked {
-    background: theme('backgroundImage.brand-gradient');
+    background: #cc79ff;
     border-color: transparent;
   }
   .md input[type='checkbox']:checked::after {
@@ -281,4 +295,22 @@
   .pb-safe {
     padding-bottom: env(safe-area-inset-bottom);
   }
+}
+
+/* Grouped-list dividers: hairline BETWEEN items within a card, inset to the content
+   edge (not full-bleed). Categories separate by header + gap, not a rule. Non-layered
+   so it overrides Tailwind's full-width `divide-y` border. */
+.list-group > :not([hidden]) ~ :not([hidden]) {
+  border-top-color: transparent !important;
+  position: relative;
+}
+.list-group > :not([hidden]) ~ :not([hidden])::before {
+  content: '';
+  position: absolute;
+  top: -0.5px;
+  left: 16px;
+  right: 0;
+  height: 1px;
+  background: var(--divider);
+  pointer-events: none;
 }

@@ -152,7 +152,7 @@ function ProjectGroup({
         className="flex items-center px-1 pb-1.5 select-none [-webkit-touch-callout:none] rounded-lg active:bg-black/[0.03]"
       >
         <div className="flex items-center gap-1.5 flex-1 min-w-0 text-[13px] font-medium text-label-secondary">
-          <Folder size={14} className="text-brand-violet shrink-0" />
+          <Folder size={14} className="text-label-tertiary shrink-0" />
           <span className="truncate">{p.name}</span>
           <span className="text-label-tertiary shrink-0">· {items.length}</span>
         </div>

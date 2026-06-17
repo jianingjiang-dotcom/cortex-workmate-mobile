@@ -1,4 +1,3 @@
-import { Key, Users } from 'lucide-react'
 import type { McpServer } from '../../lib/types'
 import { useStore } from '../../store/useStore'
 import { useT } from '../../i18n'
@@ -47,9 +46,10 @@ export function McpQuickSheet({ open, onClose }: { open: boolean; onClose: () =>
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-1.5 min-w-0">
                   <span className="text-[16px] font-medium truncate">{m.name}</span>
-                  {m.shared && <Users size={13} className="text-brand-violet shrink-0" aria-label={t('mcp.badge.shared')} />}
-                  {m.auth === 'oauth' && m.authorized && (
-                    <Key size={13} className="text-ios-green shrink-0" aria-label={t('mcp.badge.key')} />
+                  {m.shared && (
+                    <span className="shrink-0 inline-flex items-center rounded-full bg-ios-gray6 px-2 py-0.5 text-[12px] font-medium text-label-secondary">
+                      {t('mcp.badge.shared')}
+                    </span>
                   )}
                 </div>
                 <div className="text-[13px] text-label-secondary truncate mt-0.5">{m.desc}</div>

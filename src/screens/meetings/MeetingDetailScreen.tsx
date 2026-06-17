@@ -9,7 +9,7 @@ import { ActionSheet, CenterModal, Sheet } from '../../components/ui/Sheet'
 import { Markdown } from '../../components/chat/parts'
 import { guessTemplate, SUMMARY_TEMPLATES } from '../../data/seed'
 import { formatClock, formatDateTime, formatDuration } from '../../lib/time'
-import { clamp, cn, gradientFor, speakerColor } from '../../lib/util'
+import { clamp, cn, solidFor, speakerColor } from '../../lib/util'
 
 // Suggest a template: re-transcribe keeps the current one; first transcribe guesses by title.
 function defaultTemplate(m: Meeting): SummaryTemplate {
@@ -173,7 +173,7 @@ export function MeetingDetailScreen({ params, onBack }: OverlayScreenProps) {
         <div className="px-5 pt-3 pb-3 border-b border-divider">
           <div ref={trackRef} onPointerDown={startDrag} className="relative h-9 flex items-center cursor-pointer touch-none">
             <div className="w-full h-1.5 rounded-full bg-ios-gray5 overflow-hidden">
-              <div className="h-full rounded-full" style={{ width: `${duration ? (pos / duration) * 100 : 0}%`, background: gradientFor('brand') }} />
+              <div className="h-full rounded-full" style={{ width: `${duration ? (pos / duration) * 100 : 0}%`, background: solidFor('brand') }} />
             </div>
             <div
               className="absolute w-3.5 h-3.5 rounded-full bg-surface shadow-md -ml-1.5"
@@ -451,7 +451,7 @@ function NonDone({
   }
   return (
     <div className="flex flex-col items-center justify-center h-full px-10 text-center">
-      <div className="w-[72px] h-[72px] rounded-[20px] flex items-center justify-center text-white mb-4" style={{ background: gradientFor(status === 'failed' ? 'sunset' : 'violet') }}>
+      <div className="w-[72px] h-[72px] rounded-[20px] flex items-center justify-center text-white mb-4" style={{ background: solidFor(status === 'failed' ? 'sunset' : 'violet') }}>
         <AudioLines size={30} />
       </div>
       <div className="text-[17px] font-semibold">

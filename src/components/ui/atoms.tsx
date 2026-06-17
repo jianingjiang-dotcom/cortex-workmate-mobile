@@ -1,7 +1,7 @@
 import { motion } from 'framer-motion'
 import { useState, type ReactNode } from 'react'
-import { Search, X } from 'lucide-react'
-import { cn, gradientFor } from '../../lib/util'
+import { ChevronRight, Search, X } from 'lucide-react'
+import { cn, solidFor } from '../../lib/util'
 
 // ---- Spinner ---------------------------------------------------------------
 
@@ -41,13 +41,22 @@ export function Avatar({
 }) {
   const radius = shape === 'circle' ? size / 2 : size * 0.28
   if (src) {
+    // The bundled Workmate mascot art has a pale halo / built-in padding that makes
+    // it read smaller than sibling glyph tiles — crop it to fill. Uploaded photos
+    // (data URLs) are already full-bleed, so they render untouched.
+    const isMascot = src === '/workmate-avatar.png'
     return (
-      <img
-        src={src}
-        alt={name || ''}
-        className={cn('object-cover shrink-0', className)}
+      <div
+        className={cn('overflow-hidden shrink-0', className)}
         style={{ width: size, height: size, borderRadius: radius }}
-      />
+      >
+        <img
+          src={src}
+          alt={name || ''}
+          className="w-full h-full object-cover"
+          style={isMascot ? { transform: 'scale(1.34)' } : undefined}
+        />
+      </div>
     )
   }
   return (
@@ -57,7 +66,7 @@ export function Avatar({
         width: size,
         height: size,
         borderRadius: radius,
-        background: gradientFor(gradient),
+        background: solidFor(gradient),
         fontSize: size * 0.4,
       }}
     >
@@ -101,7 +110,7 @@ export function ServerLogo({
   return (
     <div
       className="flex items-center justify-center text-white font-semibold shrink-0"
-      style={{ width: size, height: size, borderRadius: radius, background: gradientFor(gradient), fontSize: size * 0.4 }}
+      style={{ width: size, height: size, borderRadius: radius, background: solidFor(gradient), fontSize: size * 0.4 }}
     >
       {name ? name.trim().charAt(0).toUpperCase() : null}
     </div>
@@ -181,7 +190,7 @@ export function IconButton({
       aria-label={ariaLabel}
       onClick={onClick}
       className={cn(
-        'relative w-9 h-9 flex items-center justify-center rounded-full text-ios-blue active:bg-black/[0.05] press',
+        'relative w-9 h-9 flex items-center justify-center rounded-full text-label-secondary active:bg-black/[0.05] press',
         className,
       )}
     >
@@ -214,8 +223,8 @@ export function Segmented<T extends string>({
             key={opt.value}
             onClick={() => onChange(opt.value)}
             className={cn(
-              'relative flex-1 h-8 flex items-center justify-center text-[14px] font-semibold z-10 transition-colors',
-              active ? 'text-label-primary' : 'text-label-secondary',
+              'relative flex-1 h-8 flex items-center justify-center text-[14px] z-10 transition-colors',
+              active ? 'text-brand-primary font-semibold' : 'text-label-secondary font-medium',
             )}
           >
             {active && (
@@ -249,7 +258,7 @@ export function Switch({ checked, onChange }: { checked: boolean; onChange: (v: 
           background-color transition between var() and rgba, which can snap) */}
       <span
         className="absolute inset-0 rounded-full transition-opacity duration-300 ease-in-out"
-        style={{ backgroundColor: 'var(--green)', opacity: checked ? 1 : 0 }}
+        style={{ backgroundColor: 'var(--blue)', opacity: checked ? 1 : 0 }}
       />
       {/* knob slides via a GPU transform */}
       <span
@@ -328,8 +337,10 @@ export function Row({
     >
       {icon && (
         <div
-          className="w-[29px] h-[29px] rounded-[7px] flex items-center justify-center text-white shrink-0"
-          style={{ background: iconBg || '#8E8E93' }}
+          className={cn(
+            'w-[29px] h-[29px] flex items-center justify-center shrink-0',
+            danger ? 'text-ios-red' : 'text-label-secondary',
+          )}
         >
           {icon}
         </div>
@@ -341,9 +352,7 @@ export function Row({
       {value && <div className="text-[15px] text-label-secondary shrink-0 max-w-[55%] truncate">{value}</div>}
       {right}
       {chevron && (
-        <svg width="8" height="14" viewBox="0 0 8 14" className="text-ios-gray3 shrink-0" fill="none">
-          <path d="M1 1l6 6-6 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-        </svg>
+        <ChevronRight size={18} className="text-ios-gray2 shrink-0" />
       )}
     </button>
   )
@@ -364,10 +373,7 @@ export function EmptyState({
 }) {
   return (
     <div className="flex flex-col items-center justify-center text-center px-10 py-16">
-      <div
-        className="w-[72px] h-[72px] rounded-[20px] flex items-center justify-center mb-4 text-white"
-        style={{ background: gradientFor('brand') }}
-      >
+      <div className="w-[72px] h-[72px] rounded-[20px] flex items-center justify-center mb-4 bg-ios-gray6 text-label-secondary">
         {icon}
       </div>
       <div className="text-[17px] font-semibold text-label-primary">{title}</div>
@@ -423,7 +429,7 @@ export function Highlight({ text, query }: { text: string; query: string }) {
   while (idx !== -1) {
     if (idx > i) parts.push(text.slice(i, idx))
     parts.push(
-      <mark key={key++} className="bg-brand-primary/25 text-brand-violet rounded px-0.5">
+      <mark key={key++} className="bg-brand-primary/20 text-brand-primary rounded px-0.5">
         {text.slice(idx, idx + ql.length)}
       </mark>,
     )
@@ -460,7 +466,7 @@ export function SearchField({
           value={value}
           onChange={(e) => onChange(e.target.value)}
           placeholder={placeholder}
-          className="w-full h-9 bg-ios-gray6 rounded-[10px] pl-9 pr-8 text-[15px] outline-none placeholder:text-label-tertiary"
+          className="w-full h-9 bg-surface border border-input rounded-[12px] pl-9 pr-8 text-[15px] outline-none placeholder:text-label-tertiary"
         />
         {value && (
           <button
@@ -473,7 +479,7 @@ export function SearchField({
         )}
       </div>
       {onClose && (
-        <button onClick={onClose} className="text-[15px] text-ios-blue active:opacity-60 shrink-0">
+        <button onClick={onClose} className="text-[15px] text-label-secondary active:opacity-60 shrink-0">
           {closeLabel}
         </button>
       )}

@@ -54,13 +54,13 @@ export function TaskListScreen({ onBack }: OverlayScreenProps) {
             )}
           </div>
           <div className="mt-1">
-            <span className="inline-block px-2 py-0.5 rounded-md bg-brand-violet/10 text-brand-violet font-medium text-[12.5px]">
+            <span className="inline-block px-2 py-0.5 rounded-md bg-ios-gray6 text-label-secondary font-medium text-[12.5px]">
               {scheduleHuman(task.schedule, lang)}
             </span>
           </div>
           <div className="flex items-center gap-2.5 mt-1 text-[12px] min-w-0">
             {task.lastRunAt && task.status !== 'running' && (
-              <span className="flex items-center gap-1 shrink-0 text-label-tertiary">
+              <span className="flex items-center gap-1 shrink-0 text-label-secondary">
                 {lastResult === 'success' && <CheckCircle2 size={12} className="text-ios-green" />}
                 {lastResult === 'failed' && <XCircle size={12} className="text-ios-red" />}
                 {t('tasks.lastShort')} · {formatRelative(task.lastRunAt, lang)}

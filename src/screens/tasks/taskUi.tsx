@@ -24,8 +24,8 @@ export function TaskIcon({ cap, size = 38 }: { cap?: string; size?: number }) {
   const Icon = m.Icon
   return (
     <div
-      className="rounded-[11px] flex items-center justify-center text-white shrink-0"
-      style={{ width: size, height: size, background: m.bg }}
+      className="flex items-center justify-center text-label-secondary shrink-0"
+      style={{ width: size, height: size }}
     >
       <Icon size={Math.round(size * 0.5)} />
     </div>

@@ -1,28 +1,23 @@
-# dependencies
-node_modules/
-
-# build output
-dist/
-dist-ssr/
-
-# logs
+# Logs
+logs
 *.log
 npm-debug.log*
-pnpm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+pnpm-debug.log*
 
-# editor / OS
-.DS_Store
-.idea/
-.vscode/*
-!.vscode/extensions.json
-
-# env
-.env
-.env.local
-.env.*.local
+node_modules
+dist
+dist-ssr
 *.local
 
-# Claude Code (keep shared launch.json, ignore local-only settings)
-.claude/settings.local.json
+# Editor
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?

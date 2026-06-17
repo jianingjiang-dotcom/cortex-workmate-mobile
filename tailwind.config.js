@@ -23,17 +23,19 @@ export default {
           gray5: 'var(--fill-press)',
           gray6: 'var(--fill)',
         },
-        // Cortex brand gradient stops (theme-independent)
+        // Cortex DS: single purple accent (#CC79FF). All the historical "brand.*"
+        // stops collapse to it; blue is links-only, orange is the warn/CTA hue.
         brand: {
-          primary: '#A855F7', // solid color for all core primary buttons
-          blue: '#5B7CFA',
-          indigo: '#6D6AF0',
-          violet: '#A06AF0',
-          purple: '#B96AE8',
-          pink: '#E07AD0',
-          orange: '#FF9F5A',
-          amber: '#FFB259',
+          primary: '#CC79FF',
+          blue: '#407CFF',
+          indigo: '#CC79FF',
+          violet: '#CC79FF',
+          purple: '#CC79FF',
+          pink: '#CC79FF',
+          orange: '#FFA03B',
+          amber: '#FFA03B',
         },
+        link: 'var(--link)',
         label: {
           primary: 'var(--label-primary)',
           secondary: 'var(--label-secondary)',
@@ -43,27 +45,32 @@ export default {
         surface: 'var(--surface)',
         grouped: 'var(--grouped)',
         divider: 'var(--divider)',
+        input: 'var(--input-border)',
         hairline: 'var(--hairline)',
       },
       fontFamily: {
+        // Cortex DS typeface: Inter, with a native fallback chain
         sans: [
+          'Inter',
           '-apple-system',
           'BlinkMacSystemFont',
-          'SF Pro Text',
-          'SF Pro Display',
-          'PingFang SC',
+          'Segoe UI',
+          'Roboto',
           'Helvetica Neue',
-          'Helvetica',
+          'PingFang SC',
+          'Microsoft YaHei',
+          'Noto Sans SC',
           'Arial',
           'sans-serif',
         ],
         mono: ['SF Mono', 'ui-monospace', 'Menlo', 'Monaco', 'monospace'],
       },
       backgroundImage: {
+        // Cortex Linear — brand gradient (logo / hero / brand moments only)
         'brand-gradient':
-          'linear-gradient(135deg, #5B7CFA 0%, #8A6AF0 45%, #C76AE0 70%, #FF9F5A 100%)',
+          'linear-gradient(135deg, #407CFF 0%, #CC79FF 60%, #FFA03B 100%)',
         'brand-gradient-soft':
-          'linear-gradient(135deg, rgba(91,124,250,0.14) 0%, rgba(160,106,240,0.14) 50%, rgba(255,159,90,0.14) 100%)',
+          'linear-gradient(135deg, rgba(64,124,255,0.12) 0%, rgba(204,121,255,0.12) 55%, rgba(255,160,59,0.12) 100%)',
       },
       boxShadow: {
         ios: '0 1px 2px rgba(0,0,0,0.04), 0 1px 3px rgba(0,0,0,0.06)',

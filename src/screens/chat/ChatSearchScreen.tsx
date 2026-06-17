@@ -3,7 +3,7 @@ import { Search, Sparkles, User, X } from 'lucide-react'
 import type { Message, OverlayScreenProps } from '../../lib/types'
 import { useStore } from '../../store/useStore'
 import { useLang, useT } from '../../i18n'
-import { Avatar } from '../../components/ui/atoms'
+import { Avatar, EmptyState } from '../../components/ui/atoms'
 import { formatRelative } from '../../lib/time'
 
 // strip light markdown + collapse whitespace for a clean one-line snippet
@@ -64,7 +64,7 @@ export function ChatSearchScreen({ onBack }: OverlayScreenProps) {
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder={t('chat.search.placeholder')}
-            className="w-full h-9 bg-ios-gray6 rounded-[10px] pl-9 pr-8 text-[15px] outline-none placeholder:text-label-tertiary"
+            className="w-full h-9 bg-surface border border-input rounded-[12px] pl-9 pr-8 text-[15px] outline-none placeholder:text-label-tertiary"
           />
           {query && (
             <button
@@ -75,7 +75,7 @@ export function ChatSearchScreen({ onBack }: OverlayScreenProps) {
             </button>
           )}
         </div>
-        <button onClick={onBack} className="text-[16px] text-ios-blue px-1 active:opacity-50 shrink-0">
+        <button onClick={onBack} className="text-[15px] text-label-secondary px-1 active:opacity-50 shrink-0">
           {t('common.cancel')}
         </button>
       </div>
@@ -83,14 +83,12 @@ export function ChatSearchScreen({ onBack }: OverlayScreenProps) {
       {/* body */}
       <div className="absolute top-[102px] inset-x-0 bottom-0 scroll-y no-scrollbar">
         {!q ? (
-          <div className="flex flex-col items-center justify-center text-center px-12 pt-24 text-label-tertiary">
-            <Search size={34} className="mb-3" />
-            <div className="text-[14px]">{t('chat.search.empty')}</div>
+          <div className="h-full flex items-center justify-center -mt-12">
+            <EmptyState icon={<Search size={30} />} title={t('chat.search.empty')} />
           </div>
         ) : results.length === 0 ? (
-          <div className="flex flex-col items-center justify-center text-center px-12 pt-24 text-label-tertiary">
-            <Search size={34} className="mb-3" />
-            <div className="text-[14px]">{t('chat.search.noResults')}</div>
+          <div className="h-full flex items-center justify-center -mt-12">
+            <EmptyState icon={<Search size={30} />} title={t('chat.search.noResults')} />
           </div>
         ) : (
           <div>
@@ -103,7 +101,7 @@ export function ChatSearchScreen({ onBack }: OverlayScreenProps) {
                   className="w-full flex items-start gap-3 px-4 py-3 text-left active:bg-black/[0.04]"
                 >
                   {m.role === 'assistant' ? (
-                    <Avatar src={persona.avatarImage} gradient={persona.avatarGradient} size={30} icon={<Sparkles size={14} />} />
+                    <Avatar src={persona.avatarImage} gradient={persona.avatarGradient} size={30} shape="circle" icon={<Sparkles size={14} />} />
                   ) : (
                     <div className="w-[30px] h-[30px] rounded-[9px] bg-ios-gray5 flex items-center justify-center shrink-0">
                       <User size={16} className="text-label-secondary" />

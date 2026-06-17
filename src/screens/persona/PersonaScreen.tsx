@@ -118,7 +118,7 @@ export function PersonaScreen({ onBack }: OverlayScreenProps) {
       {/* avatar (tap to upload) */}
       <div className="flex flex-col items-center pt-4 pb-6">
         <button onClick={() => setAvatarSheet(true)} className="relative active:opacity-90">
-          <Avatar src={avatarImage} gradient={persona.avatarGradient} size={88} icon={<SparkleIcon />} />
+          <Avatar src={avatarImage} gradient={persona.avatarGradient} size={88} shape="circle" icon={<SparkleIcon />} />
           <div className="absolute -bottom-0.5 -right-0.5 w-7 h-7 rounded-full bg-ios-blue ring-2 ring-ios-gray6 flex items-center justify-center">
             <Camera size={14} className="text-white" />
           </div>
@@ -204,7 +204,7 @@ export function PersonaScreen({ onBack }: OverlayScreenProps) {
               >
                 <VendorLogo vendor={m.vendor} size={38} />
                 <div className="flex-1 min-w-0">
-                  <div className="text-[15px] font-semibold">{m.name}</div>
+                  <div className="text-[15px] font-medium">{m.name}</div>
                   <div className="text-[12px] text-label-secondary">
                     {m.vendor}
                     {m.desc ? ` · ${m.desc}` : ''}

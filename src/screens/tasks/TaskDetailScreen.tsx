@@ -147,6 +147,16 @@ export function TaskDetailScreen({ params, onBack }: OverlayScreenProps) {
         <Button
           variant="secondary"
           className="flex-1"
+          onClick={() => {
+            togglePause(task.id)
+            toast(task.paused ? t('tasks.resumed') : t('tasks.paused'))
+          }}
+        >
+          {task.paused ? <Play size={17} /> : <Pause size={17} />}
+          {task.paused ? t('tasks.resume') : t('tasks.pause')}
+        </Button>
+        <Button
+          className="flex-1"
           disabled={!canRun}
           onClick={() => {
             runTaskNow(task.id)
@@ -155,16 +165,6 @@ export function TaskDetailScreen({ params, onBack }: OverlayScreenProps) {
         >
           <Play size={17} />
           {t('tasks.runNow')}
-        </Button>
-        <Button
-          className="flex-1"
-          onClick={() => {
-            togglePause(task.id)
-            toast(task.paused ? t('tasks.resumed') : t('tasks.paused'))
-          }}
-        >
-          {task.paused ? <Play size={17} /> : <Pause size={17} />}
-          {task.paused ? t('tasks.resume') : t('tasks.pause')}
         </Button>
       </div>
     </>
@@ -370,13 +370,13 @@ function TaskEditSheet({ open, onClose, taskId }: { open: boolean; onClose: () =
                 ))}
               </div>
               <div className="flex items-center gap-2">
+                <span className="text-[14px] text-label-secondary shrink-0 min-w-[48px]">{t('tasks.edit.time')}</span>
                 <input
                   type="time"
                   value={time}
                   onChange={(e) => setTime(e.target.value)}
-                  className="h-10 px-3 rounded-ios bg-ios-gray6 text-[15px] outline-none"
+                  className="h-9 px-3 rounded-ios bg-ios-gray6 text-[15px] outline-none"
                 />
-                <span className="text-[14px] text-label-secondary">{t('tasks.edit.time')}</span>
               </div>
             </div>
           )}
@@ -392,7 +392,7 @@ function TaskEditSheet({ open, onClose, taskId }: { open: boolean; onClose: () =
                     <div key={i} className="flex items-center gap-2">
                       <button
                         onClick={() => setPicker(i)}
-                        className="flex-1 h-10 px-3 rounded-ios bg-ios-gray6 text-[15px] text-left active:opacity-60"
+                        className="flex-1 h-9 px-3 rounded-ios bg-ios-gray6 text-[15px] text-left active:opacity-60"
                       >
                         {formatDateShort(d, lang)}
                       </button>
@@ -400,7 +400,7 @@ function TaskEditSheet({ open, onClose, taskId }: { open: boolean; onClose: () =
                         type="time"
                         value={hhmm(d)}
                         onChange={(e) => setDateTime(i, e.target.value)}
-                        className="h-10 px-2.5 rounded-ios bg-ios-gray6 text-[15px] outline-none"
+                        className="h-9 px-2.5 rounded-ios bg-ios-gray6 text-[15px] outline-none"
                       />
                       <button
                         onClick={() => removeDate(i)}
@@ -415,7 +415,7 @@ function TaskEditSheet({ open, onClose, taskId }: { open: boolean; onClose: () =
               )}
               <button
                 onClick={() => setPicker('add')}
-                className="flex items-center gap-1.5 h-10 px-3 text-[15px] font-medium text-ios-blue active:opacity-60"
+                className="flex items-center gap-1.5 h-9 px-3 text-[15px] font-medium text-ios-blue active:opacity-60"
               >
                 <Plus size={18} /> {t('tasks.edit.addDate')}
               </button>
@@ -426,13 +426,13 @@ function TaskEditSheet({ open, onClose, taskId }: { open: boolean; onClose: () =
           {mode === 'interval' && (
             <div className="mt-3 space-y-2.5">
               <div className="flex items-center gap-2">
-                <span className="text-[14px] text-label-secondary shrink-0">{t('tasks.edit.intervalEvery')}</span>
+                <span className="text-[14px] text-label-secondary shrink-0 min-w-[48px]">{t('tasks.edit.intervalEvery')}</span>
                 <input
                   type="number"
                   value={count}
                   min={1}
                   onChange={(e) => setCount(Math.max(1, Math.floor(+e.target.value || 1)))}
-                  className="w-16 h-10 px-3 rounded-ios bg-ios-gray6 text-[15px] outline-none"
+                  className="w-16 h-9 px-3 rounded-ios bg-ios-gray6 text-[15px] outline-none"
                 />
                 <div className="flex-1">
                   <Segmented
@@ -448,10 +448,10 @@ function TaskEditSheet({ open, onClose, taskId }: { open: boolean; onClose: () =
                 </div>
               </div>
               <div className="flex items-center gap-2">
-                <span className="text-[14px] text-label-secondary shrink-0">{t('tasks.edit.startTime')}</span>
+                <span className="text-[14px] text-label-secondary shrink-0 min-w-[48px]">{t('tasks.edit.startTime')}</span>
                 <button
                   onClick={() => setPicker('start')}
-                  className="flex-1 h-10 px-3 rounded-ios bg-ios-gray6 text-[15px] text-left active:opacity-60"
+                  className="flex-1 h-9 px-3 rounded-ios bg-ios-gray6 text-[15px] text-left active:opacity-60"
                 >
                   {startAt != null ? formatDateShort(startAt, lang) : t('tasks.edit.startNow')}
                 </button>
@@ -461,7 +461,7 @@ function TaskEditSheet({ open, onClose, taskId }: { open: boolean; onClose: () =
                       type="time"
                       value={hhmm(startAt)}
                       onChange={(e) => setStartAt(combine(startAt, e.target.value))}
-                      className="h-10 px-2.5 rounded-ios bg-ios-gray6 text-[15px] outline-none"
+                      className="h-9 px-2.5 rounded-ios bg-ios-gray6 text-[15px] outline-none"
                     />
                     <button
                       onClick={() => setStartAt(undefined)}

@@ -52,11 +52,11 @@ export const SAMPLE_FILES: SampleFile[] = [
 
 // Brand-ish colors for file-type badges.
 export const EXT_COLOR: Record<string, string> = {
-  pdf: '#FF3B30',
-  xlsx: '#34C759',
-  docx: '#007AFF',
+  pdf: '#EF4444',
+  xlsx: '#22C55E',
+  docx: '#407CFF',
   md: '#8E8E93',
-  fig: '#A06AF0',
-  ppt: '#FF9500',
-  pptx: '#FF9500',
+  fig: '#CC79FF',
+  ppt: '#FFA03B',
+  pptx: '#FFA03B',
 }

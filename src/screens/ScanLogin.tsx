@@ -8,8 +8,8 @@ import { cn } from '../lib/util'
 
 type Phase = 'scanning' | 'detected' | 'authorizing'
 
-const VIOLET = '#A06AF0'
-const GREEN = '#30D158'
+const VIOLET = '#CC79FF'
+const GREEN = '#22C55E'
 const WINDOW = 248
 
 /** Deterministic QR-like graphic — what the "camera" is pointed at. */

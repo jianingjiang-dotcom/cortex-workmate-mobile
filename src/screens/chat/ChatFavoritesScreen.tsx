@@ -53,7 +53,7 @@ export function ChatFavoritesScreen({ onBack }: OverlayScreenProps) {
         {items.map((m) => (
           <div key={m.id} className="flex items-start gap-2 px-4 py-3">
             <button onClick={() => open(m)} className="flex items-start gap-3 flex-1 min-w-0 text-left active:opacity-60">
-              <Avatar src={persona.avatarImage} gradient={persona.avatarGradient} size={30} icon={<Sparkles size={14} />} />
+              <Avatar src={persona.avatarImage} gradient={persona.avatarGradient} size={30} shape="circle" icon={<Sparkles size={14} />} />
               <div className="flex-1 min-w-0">
                 <div className="flex items-center justify-between gap-2 mb-0.5">
                   <span className="text-[13px] font-semibold text-label-primary truncate">{persona.name}</span>

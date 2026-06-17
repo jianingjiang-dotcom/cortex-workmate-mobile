@@ -6,7 +6,7 @@ import { useLang, useT } from '../../i18n'
 import { Page } from '../../components/Page'
 import { EmptyState, Highlight, IconButton, SearchField } from '../../components/ui/atoms'
 import { dayBucket, formatDuration, formatTimeOnly } from '../../lib/time'
-import { gradientFor } from '../../lib/util'
+import { solidFor } from '../../lib/util'
 import { MeetingStatusPill } from './meetingUi'
 import { NameRecordingModal } from './NameRecordingModal'
 
@@ -64,7 +64,7 @@ export function MeetingListScreen({ onBack }: OverlayScreenProps) {
     >
       <div
         className="w-11 h-11 rounded-[13px] flex items-center justify-center text-white shrink-0"
-        style={{ background: gradientFor(m.source === 'import' ? 'mint' : 'violet') }}
+        style={{ background: solidFor(m.source === 'import' ? 'mint' : 'violet') }}
       >
         <AudioLines size={20} />
       </div>

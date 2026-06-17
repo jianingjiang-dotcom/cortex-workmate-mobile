@@ -6,9 +6,9 @@ import { useT } from '../i18n'
 export function BackButton({ label, onClick }: { label?: string; onClick: () => void }) {
   const t = useT()
   return (
-    <button onClick={onClick} className="flex items-center text-ios-blue -ml-1 pr-2 active:opacity-50 press">
-      <ChevronLeft size={26} strokeWidth={2.4} className="-mr-0.5" />
-      <span className="text-[17px] truncate max-w-[120px]">{label ?? t('common.back')}</span>
+    <button onClick={onClick} className="flex items-center text-label-primary -ml-1 pr-2 active:opacity-50 press">
+      <ChevronLeft size={26} strokeWidth={2.2} className="-mr-0.5" />
+      <span className="text-[17px] font-semibold truncate max-w-[120px]">{label ?? t('common.back')}</span>
     </button>
   )
 }

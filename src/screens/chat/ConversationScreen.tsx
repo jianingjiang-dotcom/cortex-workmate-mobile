@@ -5,7 +5,7 @@ import { BackButton } from '../../components/Page'
 import { ChatThread } from '../../components/chat/ChatThread'
 import { SourceBanner } from '../../components/chat/SourceBanner'
 import { Button, EmptyState } from '../../components/ui/atoms'
-import { MessageSquare, Quote } from 'lucide-react'
+import { MessageSquare } from 'lucide-react'
 
 export function ConversationScreen({ params, onBack }: OverlayScreenProps) {
   const convId = params?.id as string | undefined
@@ -51,7 +51,6 @@ export function ConversationScreen({ params, onBack }: OverlayScreenProps) {
           isTaskRun ? (
             <div className="shrink-0 glass hairline-t px-4 pt-2.5 pb-[26px]">
               <Button full onClick={() => quoteRunInChat(conv.sourceTaskId!, conv.sourceRunId!)}>
-                <Quote size={17} />
                 {t('tasks.run.quoteAsk')}
               </Button>
             </div>

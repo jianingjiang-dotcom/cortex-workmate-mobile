@@ -10,9 +10,14 @@ export function Bell({ color = 'blue' }: { color?: 'blue' | 'white' }) {
       onClick={() => push('notifications')}
       className="relative w-9 h-9 flex items-center justify-center rounded-full active:bg-black/[0.05] press"
     >
-      <BellIcon size={22} strokeWidth={2} className={color === 'white' ? 'text-white' : 'text-ios-blue'} />
+      {/* Utility icon → neutral --text-2 (ghost). White only on the gradient header. */}
+      <BellIcon size={22} className={color === 'white' ? 'text-white' : 'text-label-secondary'} />
       {unread > 0 && (
-        <span className="absolute top-1 right-1 min-w-[16px] h-[16px] px-1 rounded-full bg-ios-red text-white text-[10px] font-bold flex items-center justify-center ring-2 ring-white">
+        // Count badge: --accent purple circle, white 600 number, 18px min, 9+ cap (DS §4).
+        <span
+          className="absolute -top-0.5 -right-0.5 min-w-[17px] h-[17px] px-[5px] rounded-full text-white text-[11px] font-semibold flex items-center justify-center"
+          style={{ background: '#CC79FF' }}
+        >
           {unread > 9 ? '9+' : unread}
         </span>
       )}

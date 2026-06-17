@@ -40,6 +40,7 @@ import {
   guessTemplate,
   interviewAnalysis,
   reviewAnalysis,
+  setSeedLang,
   summaryForTemplate,
 } from '../data/seed'
 
@@ -196,8 +197,8 @@ interface AppState {
   resetDemo: () => void
 }
 
-function freshSeedSlices() {
-  const s = buildSeed()
+function freshSeedSlices(lang?: Lang) {
+  const s = buildSeed(lang ?? useStore.getState().lang)
   return {
     account: s.account,
     persona: s.persona,
@@ -217,7 +218,7 @@ function freshSeedSlices() {
   }
 }
 
-const initialSeed = freshSeedSlices()
+const initialSeed = freshSeedSlices('zh')
 
 // Pick a plausible analysis for a meeting being transcribed.
 function analysisFor(m: Meeting) {
@@ -245,7 +246,18 @@ export const useStore = create<AppState>()(
       confirmDialog: null,
       _hydrated: false,
 
-      setLang: (l) => set({ lang: l }),
+      setLang: (l) => {
+        setSeedLang(l)
+        // demo content is generated per-language; switching re-seeds it so every
+        // screen reads in the selected language (resets the showcase, not prefs).
+        set({
+          lang: l,
+          ...freshSeedSlices(l),
+          chatMode: 'workmate',
+          overlays: [],
+          activeConversationId: undefined,
+        })
+      },
       setTheme: (t) => set({ theme: t }),
       setThemeMode: (m) => set({ themeMode: m, theme: m === 'system' ? systemTheme() : m }),
 
@@ -694,7 +706,7 @@ export const useStore = create<AppState>()(
     }),
     {
       name: 'cortex-workmate-v1',
-      version: 4,
+      version: 6,
       // v2: scheduled-task showcase seed changed (OKR weekly report + multi-weekday).
       // v3: every run now has a linked result/failure conversation (so 打开对话 shows on
       // every run row). Both bumps re-seed the task graph by dropping only those slices
@@ -706,12 +718,22 @@ export const useStore = create<AppState>()(
       // (daily / interval+startAt / weekly-Sunday / specific-dates / weekly-MWF), so the
       // task graph is re-seeded again (same drop set keeps task↔conv↔notif↔project consistent).
       migrate: (persisted, version) => {
-        if (version < 4 && persisted) {
-          const p = persisted as Record<string, unknown>
+        const p = persisted as Record<string, unknown>
+        if (p && version < 4) {
           for (const k of ['tasks', 'conversations', 'notifications', 'projects']) {
             delete p[k]
           }
-          return p
+        }
+        // v5: ship the Workmate mascot as the default persona avatar.
+        if (p && version < 5 && p.persona && typeof p.persona === 'object') {
+          ;(p.persona as Record<string, unknown>).avatarImage = '/workmate-avatar.png'
+        }
+        // v6: demo content is now bilingual & language-aware. Re-seed every demo slice
+        // in the persisted language so existing (Chinese-only) installs switch correctly.
+        if (p && version < 6) {
+          const lang = (p.lang as Lang) || 'zh'
+          setSeedLang(lang)
+          Object.assign(p, freshSeedSlices(lang))
         }
         return persisted
       },
@@ -740,6 +762,9 @@ export const useStore = create<AppState>()(
       }),
       onRehydrateStorage: () => (state) => {
         if (!state) return
+        // keep the seed language in sync with the restored preference so runtime
+        // demo content (meeting transcribe, mcp rebuild) localizes correctly.
+        setSeedLang(state.lang)
         // Sanitize anything left mid-flight by a refresh.
         const fixMsgs = (arr: Message[]) =>
           arr.map((m) =>
@@ -809,7 +834,7 @@ export const useStore = create<AppState>()(
         // Re-seed the MCP catalog (logo/about/tools/publisher/auth) from the latest
         // seed while preserving the user's connect state by name — persisted servers
         // predate these fields, so a plain merge would leave logos/tools missing.
-        const fresh = freshSeedSlices()
+        const fresh = freshSeedSlices(state.lang)
         const prevMcp = (state.mcpServers as McpServer[] | undefined) || []
         state.mcpServers = fresh.mcpServers.map((f) => {
           const prev = prevMcp.find((p) => p.name === f.name)

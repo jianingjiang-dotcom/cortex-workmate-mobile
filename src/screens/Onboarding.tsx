@@ -4,7 +4,7 @@ import { Clock, MessageCircle, Mic, ShieldCheck, Sparkles } from 'lucide-react'
 import { useStore } from '../store/useStore'
 import { useT } from '../i18n'
 import { Button } from '../components/ui/atoms'
-import { gradientFor } from '../lib/util'
+import { gradientFor, solidFor } from '../lib/util'
 
 const float = (delay = 0) => ({
   animate: { y: [0, -10, 0] },
@@ -20,7 +20,7 @@ function HeroOne() {
       />
       <motion.img
         {...float(0)}
-        src="/cortex-logo.png"
+        src="/cortex-logo.svg"
         className="relative w-[132px] h-[132px] rounded-[32px] shadow-ios-lg"
       />
       <motion.div {...float(0.6)} className="absolute -top-1 right-4 w-10 h-10 rounded-2xl glass shadow-ios flex items-center justify-center">
@@ -39,7 +39,7 @@ function HeroTwo() {
       <motion.div
         {...float(0)}
         className="relative w-[104px] h-[104px] rounded-[28px] flex items-center justify-center shadow-ios-lg"
-        style={{ background: gradientFor('brand') }}
+        style={{ background: solidFor('brand') }}
       >
         <Sparkles size={44} className="text-white" />
       </motion.div>
@@ -70,7 +70,7 @@ function HeroThree() {
           transition={{ delay: 0.1 + i * 0.1 }}
           className="card flex items-center gap-3.5 px-4 py-3.5"
         >
-          <div className="w-11 h-11 rounded-[13px] flex items-center justify-center text-white shrink-0" style={{ background: gradientFor(f.g) }}>
+          <div className="w-11 h-11 rounded-[13px] flex items-center justify-center text-white shrink-0" style={{ background: solidFor(f.g) }}>
             {f.icon}
           </div>
           <div>
@@ -111,7 +111,7 @@ export function Onboarding() {
     <div className="absolute inset-0 bg-surface overflow-hidden">
       <div
         className="absolute -top-20 right-0 w-64 h-64 rounded-full blur-[100px] opacity-25 pointer-events-none"
-        style={{ background: 'radial-gradient(circle,#8A6AF0,#5B7CFA 60%,transparent)' }}
+        style={{ background: 'radial-gradient(circle,#CC79FF,#407CFF 60%,transparent)' }}
       />
 
       {/* skip */}
@@ -148,7 +148,7 @@ export function Onboarding() {
               className="h-2 rounded-full transition-all duration-300"
               style={{
                 width: i === index ? 22 : 8,
-                background: i === index ? gradientFor('brand') : 'rgba(60,60,67,0.18)',
+                background: i === index ? solidFor('brand') : 'rgba(60,60,67,0.18)',
               }}
             />
           ))}

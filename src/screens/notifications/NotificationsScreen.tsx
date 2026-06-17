@@ -29,7 +29,7 @@ function NotifStatusPill({ n }: { n: AppNotification }) {
     const map: Record<string, [PillColor, string]> = {
       completed: ['green', 'notif.st.completed'],
       failed: ['red', 'notif.st.failed'],
-      created: ['gray', 'notif.st.created'],
+      created: ['blue', 'notif.st.created'],
       started: ['blue', 'notif.st.started'],
     }
     ;[color, key] = map[n.taskStatusKind ?? 'created'] ?? map.created
@@ -45,16 +45,17 @@ function NotifStatusPill({ n }: { n: AppNotification }) {
     color = serverEnabled ? 'green' : 'orange'
     key = serverEnabled ? 'notif.st.connected' : 'notif.st.toConnect'
   }
-  const VARS: Record<PillColor, string | null> = { gray: null, blue: '--blue', green: '--green', red: '--red', orange: '--orange' }
-  const v = VARS[color]
+  const COLORS: Record<PillColor, string | null> = { gray: null, blue: '#407CFF', green: 'var(--green)', red: 'var(--red)', orange: 'var(--orange)' }
+  const c = COLORS[color]
   return (
     <span
       className={cn(
-        'inline-flex items-center px-2 py-0.5 rounded-full text-[12px] font-medium',
-        !v && 'bg-black/[0.06] dark:bg-white/[0.12] text-label-secondary',
+        'inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[12px] font-medium',
+        c ? 'text-label-primary' : 'bg-black/[0.06] dark:bg-white/[0.12] text-label-secondary',
       )}
-      style={v ? { color: `var(${v})`, backgroundColor: `color-mix(in srgb, var(${v}) 14%, transparent)` } : undefined}
+      style={c ? { backgroundColor: `color-mix(in srgb, ${c} 14%, transparent)` } : undefined}
     >
+      {c && <span className="w-1.5 h-1.5 rounded-full shrink-0" style={{ background: c }} />}
       {t(key)}
     </span>
   )
@@ -70,14 +71,14 @@ function NotifIcon({ n }: { n: AppNotification }) {
   }
   if (n.type === 'approval') {
     return (
-      <div className="w-9 h-9 rounded-[10px] bg-brand-violet/10 flex items-center justify-center shrink-0">
-        <ShieldCheck size={20} className="text-brand-violet" />
+      <div className="w-9 h-9 rounded-[10px] bg-ios-gray6 flex items-center justify-center shrink-0">
+        <ShieldCheck size={20} className="text-label-secondary" />
       </div>
     )
   }
   return (
-    <div className="w-9 h-9 rounded-[10px] bg-ios-blue/10 flex items-center justify-center shrink-0">
-      <CalendarClock size={20} className="text-ios-blue" />
+    <div className="w-9 h-9 rounded-[10px] bg-ios-gray6 flex items-center justify-center shrink-0">
+      <CalendarClock size={20} className="text-label-secondary" />
     </div>
   )
 }
@@ -168,32 +169,33 @@ export function NotificationsScreen({ onBack }: OverlayScreenProps) {
     })
 
   const FILTERS: { key: NotificationType; label: string; icon: React.ReactNode }[] = [
-    { key: 'task_status', label: t('notif.filter.task'), icon: <CalendarClock size={18} className="text-ios-blue" /> },
-    { key: 'approval', label: t('notif.filter.approval'), icon: <ShieldCheck size={18} className="text-brand-violet" /> },
-    { key: 'mcp_connect', label: t('notif.filter.mcp'), icon: <Filter size={18} className="text-ios-orange" /> },
+    { key: 'task_status', label: t('notif.filter.task'), icon: <CalendarClock size={18} className="text-label-secondary" /> },
+    { key: 'approval', label: t('notif.filter.approval'), icon: <ShieldCheck size={18} className="text-label-secondary" /> },
+    { key: 'mcp_connect', label: t('notif.filter.mcp'), icon: <Filter size={18} className="text-label-secondary" /> },
   ]
 
   // One notification row: title + time on line 1, status pill on line 2 (no body).
   const Row = ({ n }: { n: AppNotification }) => (
     <button
       onClick={() => navigate(n)}
-      className="w-full flex items-start gap-2.5 px-4 py-3 text-left active:bg-black/[0.04]"
+      className="w-full flex items-start gap-3 px-4 py-3 text-left active:bg-black/[0.04]"
     >
-      {/* unread dot — fixed column so read/unread rows align */}
-      <span className="w-2 shrink-0 flex justify-center mt-[14px]">
-        {!n.read && <span className="w-2 h-2 rounded-full bg-ios-blue" />}
-      </span>
-      <NotifIcon n={n} />
+      <div className="relative shrink-0">
+        <NotifIcon n={n} />
+        {!n.read && (
+          <span className="absolute -top-1 -left-1 w-2.5 h-2.5 rounded-full bg-ios-blue ring-2 ring-surface" />
+        )}
+      </div>
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-2">
           <div className="flex-1 min-w-0 text-[15px] font-medium leading-snug truncate">{n.title}</div>
-          <span className="text-[12px] text-label-tertiary shrink-0">{formatNotifTime(n.createdAt, lang)}</span>
+          <span className="text-[12px] text-label-secondary shrink-0">{formatNotifTime(n.createdAt, lang)}</span>
         </div>
         <div className="mt-1.5">
           <NotifStatusPill n={n} />
         </div>
       </div>
-      <ChevronRight size={16} className="text-ios-gray3 mt-1 shrink-0" />
+      <ChevronRight size={18} className="text-ios-gray2 mt-1 shrink-0" />
     </button>
   )
 
@@ -214,7 +216,7 @@ export function NotificationsScreen({ onBack }: OverlayScreenProps) {
               {filtering && <span className="absolute top-1.5 right-1.5 w-1.5 h-1.5 rounded-full bg-brand-violet" />}
             </IconButton>
             {unread > 0 && (
-              <button onClick={confirmMarkAll} className="text-[14px] font-medium text-ios-blue px-2 active:opacity-50 whitespace-nowrap">
+              <button onClick={confirmMarkAll} className="text-[14px] font-semibold text-label-secondary -ml-1.5 pr-1 active:opacity-50 whitespace-nowrap">
                 {t('notif.markAllRead')}
               </button>
             )}
@@ -262,7 +264,7 @@ export function NotificationsScreen({ onBack }: OverlayScreenProps) {
                   onClick={() => toggleType(f.key)}
                   className="w-full flex items-center gap-3 px-4 py-3.5 text-left active:bg-black/[0.04]"
                 >
-                  <div className="w-7 h-7 rounded-[8px] bg-ios-gray6 flex items-center justify-center shrink-0">{f.icon}</div>
+                  <div className="w-7 h-7 flex items-center justify-center shrink-0 text-label-secondary">{f.icon}</div>
                   <span className="flex-1 text-[16px] text-label-primary">{f.label}</span>
                   {on && <Check size={20} className="text-ios-blue shrink-0" strokeWidth={2.5} />}
                 </button>

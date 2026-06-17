@@ -92,11 +92,11 @@ export function PhoneFrame({ children }: { children: ReactNode }) {
       {/* ambient brand glow */}
       <div
         className="absolute w-[520px] h-[520px] rounded-full blur-[120px] opacity-25 pointer-events-none"
-        style={{ background: 'radial-gradient(circle, #8A6AF0 0%, #5B7CFA 40%, transparent 70%)' }}
+        style={{ background: 'radial-gradient(circle, #CC79FF 0%, #407CFF 40%, transparent 70%)' }}
       />
       <div
         className="absolute w-[420px] h-[420px] rounded-full blur-[120px] opacity-20 pointer-events-none translate-x-40 translate-y-40"
-        style={{ background: 'radial-gradient(circle, #FF9F5A 0%, #C76AE0 50%, transparent 70%)' }}
+        style={{ background: 'radial-gradient(circle, #FFA03B 0%, #CC79FF 50%, transparent 70%)' }}
       />
       <div style={{ transform: `scale(${scale})` }} className="relative">
         {/* bezel */}

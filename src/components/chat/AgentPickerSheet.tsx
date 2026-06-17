@@ -3,7 +3,7 @@ import { Bot, Check } from 'lucide-react'
 import type { Agent, AgentOrg } from '../../lib/types'
 import { useStore } from '../../store/useStore'
 import { useT } from '../../i18n'
-import { Avatar, Highlight, SearchField, Section } from '../ui/atoms'
+import { Highlight, SearchField, Section } from '../ui/atoms'
 import { Sheet } from '../ui/Sheet'
 
 // Display order of the organization/team groups in the picker.
@@ -31,7 +31,7 @@ export function AgentPickerSheet({ open, onClose }: { open: boolean; onClose: ()
         onClick={() => pick(a.id)}
         className={`flex w-full items-center gap-3 px-4 py-2.5 text-left active:opacity-60 ${active ? 'bg-brand-primary/[0.06]' : ''}`}
       >
-        <Avatar gradient={a.avatarGradient} size={32} icon={<Bot size={17} />} />
+        <Bot size={20} className="text-brand-primary shrink-0" />
         <div className="flex-1 min-w-0">
           <div className="text-[16px] font-medium truncate">
             {q ? <Highlight text={a.name} query={query} /> : a.name}
@@ -42,7 +42,7 @@ export function AgentPickerSheet({ open, onClose }: { open: boolean; onClose: ()
             </div>
           )}
         </div>
-        {active && <Check size={19} className="text-brand-violet shrink-0" />}
+        {active && <Check size={19} className="text-brand-primary shrink-0" />}
       </button>
     )
   }
