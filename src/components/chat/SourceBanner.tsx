@@ -1,4 +1,4 @@
-import { CalendarClock } from 'lucide-react'
+import { CalendarClock, ChevronRight } from 'lucide-react'
 import { useStore } from '../../store/useStore'
 import { useLang, useT } from '../../i18n'
 import { formatDateTime } from '../../lib/time'
@@ -11,22 +11,20 @@ export function SourceBanner({ conversationId }: { conversationId: string }) {
   const lang = useLang()
   if (!conv?.sourceTaskId || !conv.sourceTriggeredAt) return null
   return (
-    <div className="shrink-0 mx-4 mt-2.5 rounded-ios-lg bg-brand-violet/[0.08] border border-brand-violet/15 flex items-center gap-2.5 px-3 py-2.5">
-      <CalendarClock size={18} className="text-brand-violet shrink-0" />
-      <div className="flex-1 text-[12.5px] leading-snug text-label-primary">
-        {t('chat.sourceBanner', {
-          name: task?.name || conv.title,
-          time: formatDateTime(conv.sourceTriggeredAt, lang),
-        })}
+    <button
+      onClick={() => push('taskDetail', { id: conv.sourceTaskId })}
+      className="shrink-0 mx-4 mt-2.5 flex items-center gap-3 rounded-ios-lg bg-brand-primary/[0.08] px-3.5 py-2.5 text-left active:opacity-70"
+    >
+      <CalendarClock size={20} className="text-brand-primary shrink-0" />
+      <div className="flex-1 min-w-0">
+        <div className="text-[15px] font-semibold text-label-primary leading-tight truncate">
+          {task?.name || conv.title}
+        </div>
+        <div className="text-[13px] text-label-secondary leading-tight mt-px truncate">
+          {t('chat.sourceBanner.meta', { time: formatDateTime(conv.sourceTriggeredAt, lang) })}
+        </div>
       </div>
-      {conv.sourceTaskId && (
-        <button
-          onClick={() => push('taskDetail', { id: conv.sourceTaskId })}
-          className="text-[13px] font-semibold text-brand-violet active:opacity-60 shrink-0"
-        >
-          {t('chat.sourceBanner.view')}
-        </button>
-      )}
-    </div>
+      <ChevronRight size={18} className="text-label-tertiary shrink-0" />
+    </button>
   )
 }

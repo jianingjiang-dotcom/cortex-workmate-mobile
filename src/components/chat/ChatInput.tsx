@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
-import { ArrowUp, FileText, Image as ImageIcon, Maximize2, Minimize2, Plus, Quote, Square, X } from 'lucide-react'
+import { ArrowUp, ChevronDown, FileText, Image as ImageIcon, Maximize2, Plus, Square, X } from 'lucide-react'
 import type { Attachment, TaskRunRef } from '../../lib/types'
 import { cn, resizeImageToDataUrl, uid } from '../../lib/util'
 import { useT } from '../../i18n'
@@ -123,18 +123,20 @@ export function ChatInput({
 
   // quoted scheduled-task run (a referenced execution result) pinned above the input
   const quoteChip = quote && (
-    <div className="relative mb-2 rounded-[12px] bg-ios-gray6 border-l-[3px] border-brand-violet/70 pl-2.5 pr-9 py-2">
-      <div className="flex items-center gap-1.5 text-[12px] font-medium text-label-secondary">
-        <Quote size={12} className="shrink-0" />
-        <span className="truncate">{t('chat.quote.label')} · {quote.taskName}</span>
+    <div className="relative mb-2 flex gap-2.5 rounded-[12px] bg-brand-primary/[0.07] p-2.5 pr-10">
+      <div className="w-[3px] self-stretch rounded-full bg-brand-primary/70 shrink-0" />
+      <div className="min-w-0 flex-1">
+        <div className="flex items-center gap-1.5 text-[12px] font-semibold text-brand-primary">
+          <span className="truncate">{quote.taskName}</span>
+        </div>
+        <div className="text-[12.5px] text-label-secondary leading-snug line-clamp-2 mt-0.5 whitespace-pre-wrap break-words">{quote.summary}</div>
       </div>
-      <div className="text-[13px] text-label-primary leading-snug line-clamp-2 mt-0.5 whitespace-pre-wrap break-words">{quote.summary}</div>
       <button
         onClick={onClearQuote}
-        className="absolute top-1.5 right-1.5 w-6 h-6 flex items-center justify-center text-label-tertiary active:opacity-50"
+        className="absolute top-2 right-2 w-6 h-6 flex items-center justify-center text-label-tertiary active:opacity-50"
         aria-label="remove quote"
       >
-        <X size={14} strokeWidth={3} />
+        <X size={15} strokeWidth={2.2} />
       </button>
     </div>
   )
@@ -144,15 +146,15 @@ export function ChatInput({
       onClick={() => setSourceOpen(true)}
       disabled={streaming}
       aria-label="add attachment"
-      className="w-9 h-9 shrink-0 rounded-full bg-ios-gray6 flex items-center justify-center text-label-secondary active:bg-ios-gray5 disabled:opacity-40 mb-0.5"
+      className="w-8 h-8 shrink-0 rounded-full flex items-center justify-center text-label-secondary active:bg-ios-gray6 disabled:opacity-40"
     >
       <Plus size={22} />
     </button>
   )
 
   const sendBtn = streaming ? (
-    <button onClick={onStop} className="w-9 h-9 shrink-0 rounded-full bg-label-primary flex items-center justify-center text-surface mb-0.5 press">
-      <Square size={15} fill="currentColor" />
+    <button onClick={onStop} className="w-8 h-8 shrink-0 rounded-full bg-ios-gray flex items-center justify-center text-white press">
+      <Square size={14} fill="currentColor" />
     </button>
   ) : (
     <button
@@ -160,11 +162,11 @@ export function ChatInput({
       disabled={!canSend}
       aria-label={t('chat.send')}
       className={cn(
-        'w-9 h-9 shrink-0 rounded-full flex items-center justify-center mb-0.5',
+        'w-8 h-8 shrink-0 rounded-full flex items-center justify-center',
         canSend ? 'press bg-brand-primary text-white' : 'bg-ios-gray6 text-label-tertiary cursor-default',
       )}
     >
-      <ArrowUp size={20} strokeWidth={2.6} />
+      <ArrowUp size={19} strokeWidth={2.6} />
     </button>
   )
 
@@ -175,36 +177,35 @@ export function ChatInput({
         <>
           {quoteChip}
           {chips}
-          <div className="flex items-end gap-2">
+          {/* one bordered pill: + (left) · field · send (right) */}
+          <div className="flex items-center gap-1 bg-surface rounded-[22px] border border-input px-1.5 py-1 min-h-[44px]">
             {addBtn}
-            <div className="flex-1 bg-surface rounded-[20px] border border-divider relative flex items-end min-h-[38px] px-3 py-[7px]">
-              <textarea
-                ref={taRef}
-                value={text}
-                onChange={(e) => {
-                  setText(e.target.value)
-                  grow()
-                }}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter' && !e.shiftKey) {
-                    e.preventDefault()
-                    send()
-                  }
-                }}
-                rows={1}
-                placeholder={placeholder}
-                className="flex-1 resize-none outline-none text-[16px] leading-[1.4] bg-transparent max-h-[120px] no-scrollbar placeholder:text-label-tertiary pr-6"
-              />
-              {text.trim().length > 0 && (
-                <button
-                  onClick={() => setExpanded(true)}
-                  aria-label="expand input"
-                  className="absolute top-1.5 right-2 w-6 h-6 flex items-center justify-center text-label-tertiary active:opacity-50"
-                >
-                  <Maximize2 size={15} />
-                </button>
-              )}
-            </div>
+            <textarea
+              ref={taRef}
+              value={text}
+              onChange={(e) => {
+                setText(e.target.value)
+                grow()
+              }}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                  e.preventDefault()
+                  send()
+                }
+              }}
+              rows={1}
+              placeholder={placeholder}
+              className="flex-1 resize-none outline-none text-[16px] leading-[1.4] bg-transparent max-h-[120px] no-scrollbar placeholder:text-label-tertiary py-[7px] px-1"
+            />
+            {(text.includes('\n') || text.trim().length > 80) && (
+              <button
+                onClick={() => setExpanded(true)}
+                aria-label="expand input"
+                className="w-8 h-8 shrink-0 flex items-center justify-center text-label-tertiary active:opacity-50"
+              >
+                <Maximize2 size={16} />
+              </button>
+            )}
             {sendBtn}
           </div>
         </>
@@ -242,39 +243,46 @@ export function ChatInput({
         }}
       />
 
-      {/* full-screen expanded editor — fills the chat area, keeps the top header + tab bar visible */}
+      {/* full-screen expanded editor — covers the whole screen (over the header + tab bar),
+          ChatGPT/Claude-style: collapse chevron top-left, big editor, composer pinned bottom */}
       {phoneEl &&
         expanded &&
         createPortal(
           <div
-            className="z-50 flex flex-col input-rise"
-            style={{ position: 'absolute', top: 98, bottom: 83, left: 0, right: 0 }}
+            className="z-50 flex flex-col input-rise bg-surface"
+            style={{ position: 'absolute', top: 54, bottom: 0, left: 0, right: 0 }}
           >
-            {/* top bar: collapse only */}
-            <div className="relative h-11 shrink-0 bg-surface flex items-center justify-end px-1.5">
+            {/* top bar: collapse (chevron-down, left) + centered title */}
+            <div className="relative h-12 shrink-0 flex items-center px-1.5 hairline-b">
               <button
                 onClick={() => setExpanded(false)}
                 aria-label="collapse input"
                 className="w-10 h-10 flex items-center justify-center text-label-secondary active:opacity-50"
               >
-                <Minimize2 size={20} />
+                <ChevronDown size={24} />
               </button>
+              <span className="absolute left-1/2 -translate-x-1/2 text-[16px] font-semibold">
+                {t('chat.compose.title')}
+              </span>
             </div>
 
             {/* editor body */}
-            <div className="flex-1 min-h-0 bg-surface flex flex-col">
-              {quote && <div className="shrink-0 px-4 pt-2">{quoteChip}</div>}
+            <div className="flex-1 min-h-0 flex flex-col">
+              {quote && <div className="shrink-0 px-4 pt-3">{quoteChip}</div>}
               <textarea
                 ref={taRef}
                 value={text}
                 onChange={(e) => setText(e.target.value)}
                 placeholder={placeholder}
                 autoFocus
-                className="flex-1 w-full px-4 pb-3 resize-none outline-none text-[16px] leading-relaxed bg-transparent no-scrollbar placeholder:text-label-tertiary"
+                className="flex-1 w-full px-4 pt-3 pb-3 resize-none outline-none text-[16px] leading-relaxed bg-transparent no-scrollbar placeholder:text-label-tertiary"
               />
-              <div className="shrink-0 hairline-t px-2.5 pt-2 pb-3">
+              <div
+                className="shrink-0 hairline-t px-3 pt-2.5"
+                style={{ paddingBottom: 'calc(env(safe-area-inset-bottom) + 12px)' }}
+              >
                 {chips}
-                <div className="flex items-end gap-2">
+                <div className="flex items-center gap-2">
                   {addBtn}
                   <div className="flex-1" />
                   {sendBtn}

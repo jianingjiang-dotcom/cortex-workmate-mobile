@@ -3,7 +3,6 @@ import { Bot, ChevronUp } from 'lucide-react'
 import { useStore } from '../../store/useStore'
 import { useT } from '../../i18n'
 import { cn } from '../../lib/util'
-import { Avatar } from '../ui/atoms'
 import { AgentPickerSheet } from './AgentPickerSheet'
 import { McpQuickSheet } from './McpQuickSheet'
 
@@ -23,8 +22,8 @@ export function AgentBar() {
 
   return (
     <div className="shrink-0 glass hairline-t px-2.5 py-2 flex items-center gap-2">
-      <button onClick={() => setAgentOpen(true)} className={cn(pill, 'pl-1 pr-2.5 min-w-0 max-w-[58%]')}>
-        <Avatar gradient={active.avatarGradient} size={22} icon={<Bot size={13} />} />
+      <button onClick={() => setAgentOpen(true)} className={cn(pill, 'pl-2.5 pr-2.5 min-w-0 max-w-[58%]')}>
+        <Bot size={17} className="text-brand-primary shrink-0" />
         <span className="text-[14px] font-medium truncate">{active.name}</span>
         <ChevronUp size={14} className="text-label-tertiary shrink-0" />
       </button>

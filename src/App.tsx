@@ -6,6 +6,7 @@ import { Overlays } from './components/Overlays'
 import { Main } from './screens/Main'
 import { Login } from './screens/Login'
 import { Onboarding } from './screens/Onboarding'
+import { Splash } from './components/Splash'
 
 // View Transitions API (Chromium / Safari 18+); typed loosely as it's not in lib.dom yet.
 type DocWithViewTransition = Document & {
@@ -70,6 +71,7 @@ export default function App() {
       <HomeIndicator light={lightChrome} />
       <ToastHost />
       <ConfirmHost />
+      <Splash />
     </PhoneFrame>
   )
 }

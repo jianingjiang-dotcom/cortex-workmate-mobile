@@ -1,6 +1,6 @@
 import { useEffect, useLayoutEffect, useRef, useState, type ReactNode } from 'react'
 import type { ChatMode, Message, TaskRunRef } from '../../lib/types'
-import { cn, gradientFor, uid } from '../../lib/util'
+import { cn, solidFor, uid } from '../../lib/util'
 import { useStore, type MessageTarget } from '../../store/useStore'
 import { useT } from '../../i18n'
 import { abortMessage, generateAssistant } from '../../lib/engine'
@@ -377,9 +377,9 @@ function Greeting({
   return (
     <div className="flex flex-col items-center text-center pt-12 px-2">
       {mode === 'workmate' ? (
-        <Avatar src={personaImage} gradient={personaGradient} size={64} icon={<SparkleIcon />} />
+        <Avatar src={personaImage} gradient={personaGradient} size={64} shape="circle" icon={<SparkleIcon />} />
       ) : (
-        <div className="w-16 h-16 rounded-[20px] flex items-center justify-center" style={{ background: gradientFor('brand') }}>
+        <div className="w-16 h-16 rounded-[20px] flex items-center justify-center" style={{ background: solidFor('brand') }}>
           <SparkleIcon />
         </div>
       )}

@@ -1,5 +1,5 @@
 import { useEffect } from 'react'
-import { Bookmark, PanelLeft, Search, Sparkles, SquarePen } from 'lucide-react'
+import { Bookmark, History, Search, Sparkles, SquarePen } from 'lucide-react'
 import { useStore } from '../../store/useStore'
 import { useT } from '../../i18n'
 import { Bell } from '../../components/Bell'
@@ -35,7 +35,7 @@ export function ChatTab() {
           <div className="flex items-center w-[72px]">
             {mode === 'normal' && (
               <IconButton onClick={() => push('history')} ariaLabel="history">
-                <PanelLeft size={22} />
+                <History size={21} />
               </IconButton>
             )}
             {mode === 'workmate' && (
@@ -69,7 +69,7 @@ export function ChatTab() {
       {/* body */}
       {mode === 'workmate' ? (
         <ChatThread
-          className="absolute top-[98px] bottom-[83px] left-0 right-0"
+          className="absolute top-[98px] bottom-[104px] left-0 right-0"
           target={{ mode: 'workmate' }}
           mode="workmate"
           allowLoadEarlier
@@ -77,19 +77,19 @@ export function ChatTab() {
       ) : activeConv ? (
         <ChatThread
           key={activeConv.id}
-          className="absolute top-[98px] bottom-[83px] left-0 right-0"
+          className="absolute top-[98px] bottom-[104px] left-0 right-0"
           target={{ mode: 'normal', conversationId: activeConv.id }}
           mode="normal"
           banner={activeConv.sourceTaskId ? <SourceBanner conversationId={activeConv.id} /> : undefined}
           accessory={<AgentBar />}
         />
       ) : (
-        <div className="absolute top-[98px] bottom-[83px] left-0 right-0 flex flex-col items-center justify-center text-center px-10">
-          <div className="w-[68px] h-[68px] rounded-[20px] bg-brand-gradient flex items-center justify-center text-white mb-4">
+        <div className="absolute top-[98px] bottom-[104px] left-0 right-0 flex flex-col items-center justify-center text-center px-10">
+          <div className="w-[68px] h-[68px] rounded-[20px] bg-brand-primary flex items-center justify-center text-white mb-4">
             <Sparkles size={30} />
           </div>
           <div className="text-[17px] font-semibold">{t('chat.normal.greetingTitle')}</div>
-          <div className="text-[14px] text-label-secondary mt-1.5 leading-relaxed max-w-[260px]">
+          <div className="text-[14px] text-label-secondary mt-1.5 leading-snug max-w-[260px]">
             {t('chat.normal.greetingBody')}
           </div>
           <div className="flex gap-2.5 mt-5">

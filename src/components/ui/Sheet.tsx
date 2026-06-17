@@ -126,7 +126,7 @@ export function ActionSheet({
             <div className="rounded-[14px] overflow-hidden glass mb-2">
               {(title || message) && (
                 <div className="px-4 py-3 text-center border-b border-divider">
-                  {title && <div className="text-[13px] font-semibold text-label-secondary">{title}</div>}
+                  {title && <div className="text-[13px] font-medium text-label-secondary">{title}</div>}
                   {message && <div className="text-[13px] text-label-secondary mt-0.5">{message}</div>}
                 </div>
               )}
@@ -139,9 +139,9 @@ export function ActionSheet({
                     a.onClick()
                   }}
                   className={cn(
-                    'w-full h-[57px] flex items-center justify-center gap-2 text-[20px] active:bg-black/[0.06] disabled:opacity-40',
+                    'w-full h-[54px] flex items-center justify-center gap-2 text-[17px] active:bg-black/[0.06] disabled:opacity-40',
                     i > 0 && 'border-t border-divider',
-                    a.destructive ? 'text-ios-red' : 'text-ios-blue',
+                    a.destructive ? 'text-ios-red' : 'text-label-primary',
                   )}
                 >
                   {a.icon}
@@ -151,7 +151,7 @@ export function ActionSheet({
             </div>
             <button
               onClick={onClose}
-              className="w-full h-[57px] rounded-[14px] bg-surface text-[20px] font-semibold text-ios-blue active:bg-ios-gray6"
+              className="w-full h-[54px] rounded-[14px] bg-surface text-[17px] font-semibold text-label-primary active:bg-ios-gray6"
             >
               {cancelLabel}
             </button>

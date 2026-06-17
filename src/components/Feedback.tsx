@@ -76,26 +76,42 @@ export function ConfirmHost() {
                   <div className="text-[13px] text-label-secondary mt-1.5 leading-snug">{dialog.message}</div>
                 )}
               </div>
-              <div className="grid grid-cols-2 border-t border-divider">
-                <button
-                  onClick={close}
-                  className="h-[44px] text-[17px] text-ios-blue active:bg-black/[0.04] border-r border-divider"
-                >
-                  {dialog.cancelText || t('common.cancel')}
-                </button>
-                <button
-                  onClick={() => {
-                    close()
-                    dialog.onConfirm()
-                  }}
-                  className={cn(
-                    'h-[44px] text-[17px] font-semibold active:bg-black/[0.04]',
-                    dialog.danger ? 'text-ios-red' : 'text-ios-blue',
-                  )}
-                >
-                  {dialog.confirmText || t('common.confirm')}
-                </button>
-              </div>
+              {(() => {
+                const cancelLabel = dialog.cancelText || t('common.cancel')
+                const confirmLabel = dialog.confirmText || t('common.confirm')
+                // long labels don't fit two-up at 272px → stack vertically (iOS pattern)
+                const stack = cancelLabel.length > 12 || confirmLabel.length > 12
+                const confirmBtn = (
+                  <button
+                    onClick={() => {
+                      close()
+                      dialog.onConfirm()
+                    }}
+                    className={cn(
+                      'h-[44px] text-[17px] font-semibold active:bg-black/[0.04]',
+                      dialog.danger ? 'text-ios-red' : 'text-brand-primary',
+                    )}
+                  >
+                    {confirmLabel}
+                  </button>
+                )
+                const cancelBtn = (
+                  <button onClick={close} className="h-[44px] text-[17px] text-label-primary active:bg-black/[0.04]">
+                    {cancelLabel}
+                  </button>
+                )
+                return stack ? (
+                  <div className="flex flex-col border-t border-divider divide-y divide-divider">
+                    {confirmBtn}
+                    {cancelBtn}
+                  </div>
+                ) : (
+                  <div className="grid grid-cols-2 border-t border-divider divide-x divide-divider">
+                    {cancelBtn}
+                    {confirmBtn}
+                  </div>
+                )
+              })()}
             </motion.div>
           </motion.div>,
         ]}

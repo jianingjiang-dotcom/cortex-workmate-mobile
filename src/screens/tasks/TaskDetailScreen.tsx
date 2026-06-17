@@ -1,22 +1,16 @@
 import { useState } from 'react'
-import { ChevronRight, MoreHorizontal, Pause, Play } from 'lucide-react'
-import type { McpServer, OverlayScreenProps, Schedule, ScheduleKind } from '../../lib/types'
+import { CalendarClock, ChevronRight, MoreHorizontal, Pause, Play, Plus, X } from 'lucide-react'
+import type { McpServer, OverlayScreenProps, Schedule } from '../../lib/types'
 import { useStore } from '../../store/useStore'
 import { useLang, useT } from '../../i18n'
 import { Page } from '../../components/Page'
-import { Button, EmptyState, IconButton, Pill, Row, Section, ServerLogo } from '../../components/ui/atoms'
-import { ActionSheet, Sheet } from '../../components/ui/Sheet'
-import { formatRelative, scheduleHuman, WEEKDAYS_EN, WEEKDAYS_ZH } from '../../lib/time'
+import { Button, EmptyState, IconButton, Pill, Row, Section, Segmented, ServerLogo } from '../../components/ui/atoms'
+import { ActionSheet, CenterModal, Sheet } from '../../components/ui/Sheet'
+import { Calendar } from '../../components/ui/Calendar'
+import { buildSchedule } from '../../lib/schedule'
+import { formatDateShort, formatRelative, formatTimeOnly, scheduleHuman, WEEKDAYS_EN, WEEKDAYS_ZH } from '../../lib/time'
 import { cn } from '../../lib/util'
 import { RunRecordRow, TaskStatusPill } from './taskUi'
-import { CalendarClock } from 'lucide-react'
-
-const KIND_LABEL: Record<ScheduleKind, string> = {
-  daily: 'tasks.edit.everyDay',
-  weekly: 'tasks.edit.everyWeek',
-  interval: 'tasks.edit.interval',
-  once: 'tasks.edit.everyDay',
-}
 
 export function TaskDetailScreen({ params, onBack }: OverlayScreenProps) {
   const t = useT()
@@ -153,6 +147,16 @@ export function TaskDetailScreen({ params, onBack }: OverlayScreenProps) {
         <Button
           variant="secondary"
           className="flex-1"
+          onClick={() => {
+            togglePause(task.id)
+            toast(task.paused ? t('tasks.resumed') : t('tasks.paused'))
+          }}
+        >
+          {task.paused ? <Play size={17} /> : <Pause size={17} />}
+          {task.paused ? t('tasks.resume') : t('tasks.pause')}
+        </Button>
+        <Button
+          className="flex-1"
           disabled={!canRun}
           onClick={() => {
             runTaskNow(task.id)
@@ -162,51 +166,52 @@ export function TaskDetailScreen({ params, onBack }: OverlayScreenProps) {
           <Play size={17} />
           {t('tasks.runNow')}
         </Button>
-        <Button
-          className="flex-1"
-          onClick={() => {
-            togglePause(task.id)
-            toast(task.paused ? t('tasks.resumed') : t('tasks.paused'))
-          }}
-        >
-          {task.paused ? <Play size={17} /> : <Pause size={17} />}
-          {task.paused ? t('tasks.resume') : t('tasks.pause')}
-        </Button>
       </div>
     </>
   )
 }
 
-function buildSchedule(kind: ScheduleKind, time: string, weekdays: number[], minutes: number): Schedule {
-  if (kind === 'interval') {
-    const isHour = minutes % 60 === 0 && minutes >= 60
-    const n = isHour ? minutes / 60 : minutes
-    return {
-      kind: 'interval',
-      intervalMinutes: minutes,
-      humanZh: isHour ? `每 ${n} 小时` : `每 ${n} 分钟`,
-      humanEn: isHour ? `Every ${n} hour${n > 1 ? 's' : ''}` : `Every ${n} minute${n > 1 ? 's' : ''}`,
-    }
-  }
-  if (kind === 'weekly') {
-    const days = (weekdays.length ? weekdays : [1]).slice().sort((a, b) => a - b)
-    const zhDays = days.map((d) => WEEKDAYS_ZH[d].replace('周', '')).join('、')
-    const enDays = days.map((d) => WEEKDAYS_EN[d]).join(', ')
-    return {
-      kind: 'weekly',
-      weekday: days[0], // back-compat single weekday
-      weekdays: days,
-      timeOfDay: time,
-      humanZh: `每周${zhDays} ${time}`,
-      humanEn: `Every ${enDays} at ${time}`,
-    }
-  }
-  return {
-    kind: 'daily',
-    timeOfDay: time,
-    humanZh: `每天 ${time}`,
-    humanEn: `Every day at ${time}`,
-  }
+type EditMode = 'recurring' | 'dates' | 'interval'
+type IntervalUnit = 'min' | 'hour' | 'day'
+
+function startOfDay(ts: number): number {
+  const d = new Date(ts)
+  d.setHours(0, 0, 0, 0)
+  return d.getTime()
+}
+function hhmm(ts: number): string {
+  return formatTimeOnly(ts) // 'HH:MM'
+}
+function combine(dayEpoch: number, time: string): number {
+  const [h, m] = time.split(':').map(Number)
+  return startOfDay(dayEpoch) + ((h || 0) * 60 + (m || 0)) * 60 * 1000
+}
+
+function initMode(s?: Schedule): EditMode {
+  if (!s) return 'recurring'
+  if (s.kind === 'interval') return 'interval'
+  if (s.kind === 'dates' || s.kind === 'once') return 'dates'
+  return 'recurring' // daily | weekly
+}
+function initWeekdays(s?: Schedule): number[] {
+  if (s?.kind === 'daily') return [0, 1, 2, 3, 4, 5, 6]
+  if (s?.weekdays?.length) return s.weekdays.slice().sort((a, b) => a - b)
+  if (s?.weekday != null) return [s.weekday]
+  return [1, 3, 5]
+}
+function initDates(s?: Schedule): number[] {
+  if (s?.kind === 'dates' && s.dates?.length) return s.dates.slice().sort((a, b) => a - b)
+  if (s?.kind === 'once') return [combine(Date.now(), s.timeOfDay ?? '09:00')]
+  return []
+}
+function minsToUnit(mins: number): { count: number; unit: IntervalUnit } {
+  if (mins % 1440 === 0 && mins >= 1440) return { count: mins / 1440, unit: 'day' }
+  if (mins % 60 === 0 && mins >= 60) return { count: mins / 60, unit: 'hour' }
+  return { count: mins, unit: 'min' }
+}
+function unitToMins(count: number, unit: IntervalUnit): number {
+  const c = Math.max(1, Math.floor(count))
+  return unit === 'day' ? c * 1440 : unit === 'hour' ? c * 60 : c
 }
 
 function TaskEditSheet({ open, onClose, taskId }: { open: boolean; onClose: () => void; taskId: string }) {
@@ -216,18 +221,18 @@ function TaskEditSheet({ open, onClose, taskId }: { open: boolean; onClose: () =
   const saveTaskEdit = useStore((s) => s.saveTaskEdit)
   const toast = useStore((s) => s.toast)
 
-  const initWeekdays = (s?: Schedule): number[] => {
-    if (s?.weekdays?.length) return s.weekdays.slice().sort((a, b) => a - b)
-    if (s?.weekday != null) return [s.weekday]
-    return [1]
-  }
-
   const [name, setName] = useState(task?.name ?? '')
   const [instruction, setInstruction] = useState(task?.instruction ?? '')
-  const [kind, setKind] = useState<ScheduleKind>(task?.schedule.kind ?? 'daily')
-  const [time, setTime] = useState(task?.schedule.timeOfDay ?? '09:00')
+  const [mode, setMode] = useState<EditMode>(initMode(task?.schedule))
   const [weekdays, setWeekdays] = useState<number[]>(initWeekdays(task?.schedule))
-  const [minutes, setMinutes] = useState(task?.schedule.intervalMinutes ?? 30)
+  const [time, setTime] = useState(task?.schedule.timeOfDay ?? '09:00')
+  const [dates, setDates] = useState<number[]>(initDates(task?.schedule))
+  const initIv = minsToUnit(task?.schedule.intervalMinutes ?? 60)
+  const [count, setCount] = useState(initIv.count)
+  const [unit, setUnit] = useState<IntervalUnit>(initIv.unit)
+  const [startAt, setStartAt] = useState<number | undefined>(task?.schedule.startAt)
+  // calendar picker target: 'add' (new date) | number (edit date entry) | 'start' (interval start)
+  const [picker, setPicker] = useState<null | 'add' | 'start' | number>(null)
 
   // re-sync when opening for a (possibly) different task
   const [boundId, setBoundId] = useState(taskId)
@@ -235,37 +240,63 @@ function TaskEditSheet({ open, onClose, taskId }: { open: boolean; onClose: () =
     setBoundId(taskId)
     setName(task.name)
     setInstruction(task.instruction)
-    setKind(task.schedule.kind)
-    setTime(task.schedule.timeOfDay ?? '09:00')
+    setMode(initMode(task.schedule))
     setWeekdays(initWeekdays(task.schedule))
-    setMinutes(task.schedule.intervalMinutes ?? 30)
+    setTime(task.schedule.timeOfDay ?? '09:00')
+    setDates(initDates(task.schedule))
+    const iv = minsToUnit(task.schedule.intervalMinutes ?? 60)
+    setCount(iv.count)
+    setUnit(iv.unit)
+    setStartAt(task.schedule.startAt)
   }
 
-  const kinds: ScheduleKind[] = ['daily', 'weekly', 'interval']
   const weekdayLabels = lang === 'zh' ? WEEKDAYS_ZH : WEEKDAYS_EN
+  const everyDay = weekdays.length === 7
 
-  const toggleWeekday = (i: number) => {
-    setWeekdays((prev) => {
-      if (prev.includes(i)) return prev.length === 1 ? prev : prev.filter((d) => d !== i)
-      return [...prev, i].sort((a, b) => a - b)
-    })
+  const toggleWeekday = (i: number) =>
+    setWeekdays((prev) => (prev.includes(i) ? prev.filter((d) => d !== i) : [...prev, i].sort((a, b) => a - b)))
+
+  const onPickDay = (dayEpoch: number) => {
+    if (picker === 'add') {
+      const tod = dates.length ? hhmm(dates[dates.length - 1]) : '09:00'
+      setDates((prev) => [...prev, combine(dayEpoch, tod)].sort((a, b) => a - b))
+    } else if (picker === 'start') {
+      setStartAt(combine(dayEpoch, startAt != null ? hhmm(startAt) : '09:00'))
+    } else if (typeof picker === 'number') {
+      const idx = picker
+      setDates((prev) => prev.map((d, i) => (i === idx ? combine(dayEpoch, hhmm(d)) : d)).sort((a, b) => a - b))
+    }
+    setPicker(null)
   }
+  const setDateTime = (idx: number, tod: string) =>
+    setDates((prev) => prev.map((d, i) => (i === idx ? combine(d, tod) : d)).sort((a, b) => a - b))
+  const removeDate = (idx: number) => setDates((prev) => prev.filter((_, i) => i !== idx))
 
-  // dirty-gate: Save only enabled once something actually changed
-  const sortedWeekdays = weekdays.slice().sort((a, b) => a - b)
-  const dirty =
+  const buildCurrent = (): Schedule =>
+    mode === 'recurring'
+      ? buildSchedule({ mode: 'recurring', time, weekdays })
+      : mode === 'dates'
+        ? buildSchedule({ mode: 'dates', dates })
+        : buildSchedule({ mode: 'interval', intervalMinutes: unitToMins(count, unit), startAt })
+
+  const valid = mode === 'recurring' ? weekdays.length >= 1 : mode === 'dates' ? dates.length >= 1 : count >= 1
+
+  const built = task ? buildCurrent() : null
+  const scheduleChanged =
     !!task &&
-    (name.trim() !== task.name ||
-      instruction.trim() !== task.instruction ||
-      kind !== task.schedule.kind ||
-      (kind !== 'interval' && time !== (task.schedule.timeOfDay ?? '09:00')) ||
-      (kind === 'interval' && Math.max(1, minutes) !== (task.schedule.intervalMinutes ?? 30)) ||
-      (kind === 'weekly' && JSON.stringify(sortedWeekdays) !== JSON.stringify(initWeekdays(task.schedule))))
+    !!built &&
+    (built.kind !== task.schedule.kind ||
+      built.timeOfDay !== task.schedule.timeOfDay ||
+      (built.intervalMinutes ?? 0) !== (task.schedule.intervalMinutes ?? 0) ||
+      (built.startAt ?? -1) !== (task.schedule.startAt ?? -1) ||
+      JSON.stringify(built.weekdays ?? []) !== JSON.stringify(task.schedule.weekdays ?? []) ||
+      JSON.stringify(built.dates ?? []) !== JSON.stringify(task.schedule.dates ?? []))
+  const dirty =
+    !!task && (name.trim() !== task.name || instruction.trim() !== task.instruction || scheduleChanged)
 
   const save = () => {
-    if (!dirty) return
-    const schedule = buildSchedule(kind === 'once' ? 'daily' : kind, time, sortedWeekdays, Math.max(1, minutes))
-    saveTaskEdit(taskId, { name: name.trim() || task!.name, instruction: instruction.trim(), schedule })
+    if (!dirty || !valid) return
+    saveTaskEdit(taskId, { name: name.trim() || task!.name, instruction: instruction.trim(), schedule: buildCurrent() })
     toast(t('tasks.edit.saved'), 'success')
     onClose()
   }
@@ -280,7 +311,7 @@ function TaskEditSheet({ open, onClose, taskId }: { open: boolean; onClose: () =
           <Button variant="secondary" className="flex-1" onClick={onClose}>
             {t('common.cancel')}
           </Button>
-          <Button className="flex-1" disabled={!dirty} onClick={save}>
+          <Button className="flex-1" disabled={!dirty || !valid} onClick={save}>
             {t('common.save')}
           </Button>
         </div>
@@ -294,69 +325,166 @@ function TaskEditSheet({ open, onClose, taskId }: { open: boolean; onClose: () =
           <textarea
             value={instruction}
             onChange={(e) => setInstruction(e.target.value)}
-            rows={8}
+            rows={6}
             className="w-full bg-transparent text-[15px] leading-relaxed outline-none resize-none"
           />
         </Field>
 
         <div>
           <div className="px-1 pb-1.5 text-[13px] font-medium text-label-secondary">{t('tasks.edit.trigger')}</div>
-          <div className="flex gap-1.5">
-            {kinds.map((k) => (
-              <button
-                key={k}
-                onClick={() => setKind(k)}
-                className={cn(
-                  'flex-1 h-9 rounded-[9px] text-[13px] font-medium',
-                  kind === k ? 'bg-ios-blue text-white' : 'bg-ios-gray6 text-label-primary',
-                )}
-              >
-                {t(KIND_LABEL[k])}
-              </button>
-            ))}
-          </div>
+          <Segmented
+            layoutId="task-edit-mode"
+            options={[
+              { value: 'recurring', label: t('tasks.edit.mode.recurring') },
+              { value: 'dates', label: t('tasks.edit.mode.dates') },
+              { value: 'interval', label: t('tasks.edit.mode.interval') },
+            ]}
+            value={mode}
+            onChange={(v) => setMode(v)}
+          />
 
-          {kind === 'weekly' && (
-            <div className="flex gap-1 mt-2.5">
-              {weekdayLabels.map((w, i) => (
+          {/* Mode ①: recurring weekday rule (incl. every day) */}
+          {mode === 'recurring' && (
+            <div className="mt-3 space-y-2.5">
+              <div className="flex gap-1">
                 <button
-                  key={i}
-                  onClick={() => toggleWeekday(i)}
+                  onClick={() => setWeekdays([0, 1, 2, 3, 4, 5, 6])}
                   className={cn(
-                    'flex-1 h-9 rounded-[8px] text-[12px] font-medium transition-colors',
-                    weekdays.includes(i) ? 'bg-brand-violet text-white' : 'bg-ios-gray6 text-label-secondary',
+                    'px-3 h-9 rounded-[8px] text-[12px] font-medium shrink-0',
+                    everyDay ? 'bg-brand-violet text-white' : 'bg-ios-gray6 text-label-secondary',
                   )}
                 >
-                  {w.replace('周', '')}
+                  {t('tasks.edit.everyDayShortcut')}
                 </button>
-              ))}
+                {weekdayLabels.map((w, i) => (
+                  <button
+                    key={i}
+                    onClick={() => toggleWeekday(i)}
+                    className={cn(
+                      'flex-1 h-9 rounded-[8px] text-[12px] font-medium transition-colors',
+                      !everyDay && weekdays.includes(i) ? 'bg-brand-violet text-white' : 'bg-ios-gray6 text-label-secondary',
+                    )}
+                  >
+                    {w.replace('周', '')}
+                  </button>
+                ))}
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="text-[14px] text-label-secondary shrink-0 min-w-[48px]">{t('tasks.edit.time')}</span>
+                <input
+                  type="time"
+                  value={time}
+                  onChange={(e) => setTime(e.target.value)}
+                  className="h-9 px-3 rounded-ios bg-ios-gray6 text-[15px] outline-none"
+                />
+              </div>
             </div>
           )}
 
-          {kind === 'interval' ? (
-            <div className="flex items-center gap-2 mt-2.5">
-              <input
-                type="number"
-                value={minutes}
-                min={1}
-                onChange={(e) => setMinutes(+e.target.value)}
-                className="w-24 h-10 px-3 rounded-ios bg-ios-gray6 text-[15px] outline-none"
-              />
-              <span className="text-[14px] text-label-secondary">{t('tasks.edit.intervalMinutes')}</span>
+          {/* Mode ②: one or more specific date+time entries */}
+          {mode === 'dates' && (
+            <div className="mt-3 space-y-2">
+              {dates.length === 0 ? (
+                <div className="text-[14px] text-label-tertiary py-3 text-center">{t('tasks.edit.dates.empty')}</div>
+              ) : (
+                <div className="space-y-1.5">
+                  {dates.map((d, i) => (
+                    <div key={i} className="flex items-center gap-2">
+                      <button
+                        onClick={() => setPicker(i)}
+                        className="flex-1 h-9 px-3 rounded-ios bg-ios-gray6 text-[15px] text-left active:opacity-60"
+                      >
+                        {formatDateShort(d, lang)}
+                      </button>
+                      <input
+                        type="time"
+                        value={hhmm(d)}
+                        onChange={(e) => setDateTime(i, e.target.value)}
+                        className="h-9 px-2.5 rounded-ios bg-ios-gray6 text-[15px] outline-none"
+                      />
+                      <button
+                        onClick={() => removeDate(i)}
+                        aria-label="remove"
+                        className="w-9 h-9 flex items-center justify-center rounded-full text-label-tertiary active:bg-ios-gray6 shrink-0"
+                      >
+                        <X size={18} />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
+              <button
+                onClick={() => setPicker('add')}
+                className="flex items-center gap-1.5 h-9 px-3 text-[15px] font-medium text-ios-blue active:opacity-60"
+              >
+                <Plus size={18} /> {t('tasks.edit.addDate')}
+              </button>
             </div>
-          ) : (
-            <div className="flex items-center gap-2 mt-2.5">
-              <input
-                type="time"
-                value={time}
-                onChange={(e) => setTime(e.target.value)}
-                className="h-10 px-3 rounded-ios bg-ios-gray6 text-[15px] outline-none"
-              />
-              <span className="text-[14px] text-label-secondary">{t('tasks.edit.time')}</span>
+          )}
+
+          {/* Mode ③: interval + start time */}
+          {mode === 'interval' && (
+            <div className="mt-3 space-y-2.5">
+              <div className="flex items-center gap-2">
+                <span className="text-[14px] text-label-secondary shrink-0 min-w-[48px]">{t('tasks.edit.intervalEvery')}</span>
+                <input
+                  type="number"
+                  value={count}
+                  min={1}
+                  onChange={(e) => setCount(Math.max(1, Math.floor(+e.target.value || 1)))}
+                  className="w-16 h-9 px-3 rounded-ios bg-ios-gray6 text-[15px] outline-none"
+                />
+                <div className="flex-1">
+                  <Segmented
+                    layoutId="task-iv-unit"
+                    options={[
+                      { value: 'min', label: t('tasks.edit.unit.min') },
+                      { value: 'hour', label: t('tasks.edit.unit.hour') },
+                      { value: 'day', label: t('tasks.edit.unit.day') },
+                    ]}
+                    value={unit}
+                    onChange={(v) => setUnit(v)}
+                  />
+                </div>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="text-[14px] text-label-secondary shrink-0 min-w-[48px]">{t('tasks.edit.startTime')}</span>
+                <button
+                  onClick={() => setPicker('start')}
+                  className="flex-1 h-9 px-3 rounded-ios bg-ios-gray6 text-[15px] text-left active:opacity-60"
+                >
+                  {startAt != null ? formatDateShort(startAt, lang) : t('tasks.edit.startNow')}
+                </button>
+                {startAt != null && (
+                  <>
+                    <input
+                      type="time"
+                      value={hhmm(startAt)}
+                      onChange={(e) => setStartAt(combine(startAt, e.target.value))}
+                      className="h-9 px-2.5 rounded-ios bg-ios-gray6 text-[15px] outline-none"
+                    />
+                    <button
+                      onClick={() => setStartAt(undefined)}
+                      aria-label="clear"
+                      className="w-9 h-9 flex items-center justify-center rounded-full text-label-tertiary active:bg-ios-gray6 shrink-0"
+                    >
+                      <X size={18} />
+                    </button>
+                  </>
+                )}
+              </div>
             </div>
           )}
         </div>
       </div>
+
+      <CenterModal open={picker !== null} onClose={() => setPicker(null)}>
+        <Calendar
+          min={startOfDay(Date.now())}
+          value={typeof picker === 'number' ? dates[picker] : picker === 'start' ? startAt : undefined}
+          onSelect={onPickDay}
+        />
+      </CenterModal>
     </Sheet>
   )
 }

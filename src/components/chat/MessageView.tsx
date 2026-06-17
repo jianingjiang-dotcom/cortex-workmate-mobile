@@ -33,12 +33,10 @@ function QuotedRunChip({ run }: { run: TaskRunRef }) {
     <div
       className={cn(
         'max-w-[82%] rounded-[14px] rounded-br-[7px] border-l-[3px] pl-2.5 pr-3 py-2 mb-1',
-        failed ? 'border-ios-red/70' : 'border-brand-violet/70',
+        failed ? 'border-ios-red/70 bg-ios-red/[0.07]' : 'border-brand-primary/70 bg-brand-primary/[0.07]',
       )}
-      style={{ background: USER_BUBBLE }}
     >
       <div className="flex items-center gap-1.5 text-[12px] font-medium text-label-secondary">
-        <Quote size={12} className="shrink-0" />
         <span className="truncate">
           {t('chat.quote.label')} · {run.taskName}
         </span>
@@ -88,16 +86,17 @@ export function MessageView({
   // In Agents (normal) mode the reply is attributed to the active agent, not the Workmate persona.
   const activeAgent = useStore((s) => (mode === 'normal' ? s.agents.find((a) => a.id === s.activeAgentId) : undefined))
 
-  // Give the highlight ring breathing room so it floats around the content instead of
-  // hugging it — otherwise the action icons (which use -ml-1.5 and reach the outer edge)
-  // collide with the purple frame. px-3/-mx-3 expands the ring outward with no horizontal
-  // layout shift; py-2 adds vertical padding. (Thread has px-4, so -mx-3 stays on-screen.)
-  const hl =
-    highlighted && 'rounded-2xl ring-2 ring-brand-primary/50 bg-brand-primary/[0.08] px-3 -mx-3 py-2'
+  // Jump-to highlight: drawn with an OUTLINE (offset) + background so it floats around
+  // the content without affecting layout — no edge-hugging and no content shift when it
+  // clears. Geometry is always present (transparent); only the colors fade.
+  const hl = cn(
+    'rounded-xl outline outline-2 outline-offset-[6px] transition-[background-color,outline-color] duration-500',
+    highlighted ? 'outline-brand-primary/45 bg-brand-primary/[0.07]' : 'outline-transparent',
+  )
 
   if (message.role === 'user') {
     return (
-      <div data-mid={message.id} className={cn('flex flex-col items-end my-2.5 transition-colors duration-500', hl)}>
+      <div data-mid={message.id} className={cn('flex flex-col items-end my-2.5', hl)}>
         {message.attachments && message.attachments.length > 0 && (
           <div className="flex flex-col items-end gap-1.5 mb-1.5">
             {message.attachments.map((a) => (
@@ -136,16 +135,16 @@ export function MessageView({
   const pending = message.status === 'thinking' && !message.text && !(message.toolCalls && message.toolCalls.length)
 
   return (
-    <div data-mid={message.id} className={cn('my-2.5 max-w-[90%] transition-colors duration-500', hl)}>
-      <div className="flex items-center gap-1.5 mb-1.5">
+    <div data-mid={message.id} className={cn('my-2.5 max-w-[90%]', hl)}>
+      <div className="flex items-center gap-2 mb-1.5">
         {activeAgent ? (
           <>
-            <Avatar gradient={activeAgent.avatarGradient} size={20} icon={<Bot size={11} />} />
+            <Bot size={18} className="text-brand-primary shrink-0" />
             <span className="text-[13px] font-semibold brand-text">{activeAgent.name}</span>
           </>
         ) : (
           <>
-            <Avatar src={persona.avatarImage} gradient={persona.avatarGradient} size={20} icon={<Sparkles size={11} />} />
+            <Avatar src={persona.avatarImage} gradient={persona.avatarGradient} size={26} shape="circle" icon={<Sparkles size={14} />} />
             <span className="text-[13px] font-semibold brand-text">{persona.name}</span>
           </>
         )}

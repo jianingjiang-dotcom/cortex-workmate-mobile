@@ -39,6 +39,7 @@ import {
   genericAnalysis,
   interviewAnalysis,
   reviewAnalysis,
+  setSeedLang,
   summaryForTemplate,
 } from '../data/seed'
 
@@ -167,6 +168,7 @@ interface AppState {
   runTaskNow: (id: string) => void
 
   createRecording: (input: { title: string; durationMs: number; source: 'recording' | 'import' }) => Meeting
+  uploadMeeting: (id: string) => void // simulated cloud upload; also the retry entry
   renameMeeting: (id: string, title: string) => void
   deleteMeeting: (id: string) => void
   transcribeMeeting: (
@@ -191,8 +193,8 @@ interface AppState {
   resetDemo: () => void
 }
 
-function freshSeedSlices() {
-  const s = buildSeed()
+function freshSeedSlices(lang?: Lang) {
+  const s = buildSeed(lang ?? useStore.getState().lang)
   return {
     account: s.account,
     persona: s.persona,
@@ -212,7 +214,7 @@ function freshSeedSlices() {
   }
 }
 
-const initialSeed = freshSeedSlices()
+const initialSeed = freshSeedSlices('en')
 
 // Pick a plausible analysis for a meeting being transcribed.
 function analysisFor(m: Meeting) {
@@ -224,7 +226,7 @@ function analysisFor(m: Meeting) {
 export const useStore = create<AppState>()(
   persist(
     (set, get) => ({
-      lang: 'zh',
+      lang: 'en',
       theme: 'light',
       themeMode: 'light',
       authStatus: 'loggedOut',
@@ -239,7 +241,18 @@ export const useStore = create<AppState>()(
       confirmDialog: null,
       _hydrated: false,
 
-      setLang: (l) => set({ lang: l }),
+      setLang: (l) => {
+        setSeedLang(l)
+        // demo content is generated per-language; switching re-seeds it so every
+        // screen reads in the selected language (resets the showcase, not prefs).
+        set({
+          lang: l,
+          ...freshSeedSlices(l),
+          chatMode: 'workmate',
+          overlays: [],
+          activeConversationId: undefined,
+        })
+      },
       setTheme: (t) => set({ theme: t }),
       setThemeMode: (m) => set({ themeMode: m, theme: m === 'system' ? systemTheme() : m }),
 
@@ -534,15 +547,59 @@ export const useStore = create<AppState>()(
           source: input.source,
         }
         set((s) => ({ meetings: [m, ...s.meetings] }))
+        // created WITHOUT uploadStatus, then upload kicks in (pre-setting 'uploading'
+        // here would trip uploadMeeting's re-entry guard and stall at 0%)
+        get().uploadMeeting(m.id)
         return m
       },
+
+      // Simulated cloud upload — runs right after save/import, and serves as the
+      // detail-page retry. Quiet on success (the list pill is the only feedback).
+      uploadMeeting: (id) => {
+        const m = get().meetings.find((x) => x.id === id)
+        if (!m || m.uploadStatus === 'uploading' || m.status === 'done') return
+        set((s) => ({
+          meetings: s.meetings.map((x) =>
+            x.id === id
+              ? { ...x, uploadStatus: 'uploading', uploadProgress: 4, uploadFailReason: undefined }
+              : x,
+          ),
+        }))
+        const steps = 14
+        let step = 0
+        const tick = () => {
+          step += 1
+          const cur = get().meetings.find((x) => x.id === id)
+          // delete / interrupt-reset cancels the ticker naturally
+          if (!cur || cur.uploadStatus !== 'uploading') return
+          if (step < steps) {
+            const progress = Math.min(97, Math.round((step / steps) * 100))
+            set((s) => ({
+              meetings: s.meetings.map((x) =>
+                x.id === id && x.uploadStatus === 'uploading' ? { ...x, uploadProgress: progress } : x,
+              ),
+            }))
+            setTimeout(tick, 320)
+          } else {
+            // uploaded: clear the upload fields entirely (absent = uploaded)
+            set((s) => ({
+              meetings: s.meetings.map((x) =>
+                x.id === id ? { ...x, uploadStatus: undefined, uploadProgress: undefined } : x,
+              ),
+            }))
+          }
+        }
+        setTimeout(tick, 320)
+      },
+
       renameMeeting: (id, title) =>
         set((s) => ({ meetings: s.meetings.map((m) => (m.id === id ? { ...m, title } : m)) })),
       deleteMeeting: (id) => set((s) => ({ meetings: s.meetings.filter((m) => m.id !== id) })),
 
       transcribeMeeting: (id, opts) => {
         const m = get().meetings.find((x) => x.id === id)
-        if (!m || m.status === 'analyzing') return
+        // gated until the upload stage clears (uploading or upload-failed → no transcribe)
+        if (!m || m.status === 'analyzing' || m.uploadStatus) return
         const { template } = opts
         const firstRun = m.status !== 'done' // pending / failed → no usable transcript yet
         // Re-transcribe a done meeting: only the summary regenerates unless the user opted
@@ -673,7 +730,7 @@ export const useStore = create<AppState>()(
     }),
     {
       name: 'cortex-workmate-v1',
-      version: 3,
+      version: 6,
       // v2: scheduled-task showcase seed changed (OKR weekly report + multi-weekday).
       // v3: every run now has a linked result/failure conversation (so 打开对话 shows on
       // every run row). Both bumps re-seed the task graph by dropping only those slices
@@ -681,13 +738,26 @@ export const useStore = create<AppState>()(
       // stay cross-consistent. Everything else (Workmate chat, meetings, memories,
       // persona, prefs) is kept; any stale taskCreatedId/relatedTaskId in preserved data
       // degrades gracefully (TaskCreatedCard / source banners render nothing when absent).
+      // v4: scheduled-task showcase expanded to 5 tasks covering all trigger modes
+      // (daily / interval+startAt / weekly-Sunday / specific-dates / weekly-MWF), so the
+      // task graph is re-seeded again (same drop set keeps task↔conv↔notif↔project consistent).
       migrate: (persisted, version) => {
-        if (version < 3 && persisted) {
-          const p = persisted as Record<string, unknown>
+        const p = persisted as Record<string, unknown>
+        if (p && version < 4) {
           for (const k of ['tasks', 'conversations', 'notifications', 'projects']) {
             delete p[k]
           }
-          return p
+        }
+        // v5: ship the Workmate mascot as the default persona avatar.
+        if (p && version < 5 && p.persona && typeof p.persona === 'object') {
+          ;(p.persona as Record<string, unknown>).avatarImage = '/workmate-avatar.png'
+        }
+        // v6: demo content is now bilingual & language-aware. Re-seed every demo slice
+        // in the persisted language so existing (Chinese-only) installs switch correctly.
+        if (p && version < 6) {
+          const lang = (p.lang as Lang) || 'en'
+          setSeedLang(lang)
+          Object.assign(p, freshSeedSlices(lang))
         }
         return persisted
       },
@@ -715,6 +785,9 @@ export const useStore = create<AppState>()(
       }),
       onRehydrateStorage: () => (state) => {
         if (!state) return
+        // keep the seed language in sync with the restored preference so runtime
+        // demo content (meeting transcribe, mcp rebuild) localizes correctly.
+        setSeedLang(state.lang)
         // Sanitize anything left mid-flight by a refresh.
         const fixMsgs = (arr: Message[]) =>
           arr.map((m) =>
@@ -745,23 +818,34 @@ export const useStore = create<AppState>()(
           nt = { ...nt, nextRunAt: computeNextRun(nt.schedule, Date.now()) }
           return nt
         })
-        state.meetings = (state.meetings || []).map((m) =>
-          m.status === 'analyzing'
-            ? {
-                ...m,
-                // a refresh aborts the in-flight analyze. If the meeting already had content
-                // (a re-transcribe of a done meeting), fall back to 'done' so its intact
-                // transcript/summary stay visible — only a genuine first-run reverts to 'pending'.
-                status: m.transcript || m.summaryMarkdown ? ('done' as const) : ('pending' as const),
-                analyzeProgress: undefined,
-                analyzeStage: undefined,
-              }
-            : m,
-        )
+        state.meetings = (state.meetings || []).map((m) => {
+          let nm = m
+          if (nm.status === 'analyzing') {
+            nm = {
+              ...nm,
+              // a refresh aborts the in-flight analyze. If the meeting already had content
+              // (a re-transcribe of a done meeting), fall back to 'done' so its intact
+              // transcript/summary stay visible — only a genuine first-run reverts to 'pending'.
+              status: nm.transcript || nm.summaryMarkdown ? ('done' as const) : ('pending' as const),
+              analyzeProgress: undefined,
+              analyzeStage: undefined,
+            }
+          }
+          // a refresh also aborts an in-flight upload → surface as a retryable failure
+          if (nm.uploadStatus === 'uploading') {
+            nm = {
+              ...nm,
+              uploadStatus: 'failed' as const,
+              uploadProgress: undefined,
+              uploadFailReason: 'meet.upload.interrupted',
+            }
+          }
+          return nm
+        })
         // Re-seed the MCP catalog (logo/about/tools/publisher/auth) from the latest
         // seed while preserving the user's connect state by name — persisted servers
         // predate these fields, so a plain merge would leave logos/tools missing.
-        const fresh = freshSeedSlices()
+        const fresh = freshSeedSlices(state.lang)
         const prevMcp = (state.mcpServers as McpServer[] | undefined) || []
         state.mcpServers = fresh.mcpServers.map((f) => {
           const prev = prevMcp.find((p) => p.name === f.name)

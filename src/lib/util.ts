@@ -36,24 +36,39 @@ export function formatBytes(bytes: number, lang: 'zh' | 'en' = 'zh'): string {
 
 /** Gradient presets used for avatars / brand moments. */
 export const GRADIENTS: Record<string, string> = {
-  brand: 'linear-gradient(135deg, #5B7CFA 0%, #8A6AF0 45%, #C76AE0 70%, #FF9F5A 100%)',
-  ocean: 'linear-gradient(135deg, #5B7CFA 0%, #4FC3F7 100%)',
-  sunset: 'linear-gradient(135deg, #C76AE0 0%, #FF9F5A 100%)',
-  violet: 'linear-gradient(135deg, #6D6AF0 0%, #B96AE8 100%)',
-  mint: 'linear-gradient(135deg, #34C759 0%, #4FC3F7 100%)',
-  amber: 'linear-gradient(135deg, #FF9F5A 0%, #FFCC00 100%)',
+  // Cortex Linear — the brand gradient (logo / hero / brand moments only)
+  brand: 'linear-gradient(135deg, #407CFF 0%, #CC79FF 60%, #FFA03B 100%)',
+  ocean: 'linear-gradient(135deg, #407CFF 0%, #6FA0FF 100%)',
+  sunset: 'linear-gradient(135deg, #CC79FF 0%, #FFA03B 100%)',
+  violet: 'linear-gradient(135deg, #CC79FF 0%, #407CFF 100%)',
+  mint: 'linear-gradient(135deg, #22C55E 0%, #6FA0FF 100%)',
+  amber: 'linear-gradient(135deg, #FFA03B 0%, #FFCC00 100%)',
 }
 
 export function gradientFor(key: string | undefined): string {
   return GRADIENTS[key || 'brand'] || GRADIENTS.brand
 }
 
+/** Solid identity colors (DS §10: avatars are solid fills, never gradients). */
+export const SOLIDS: Record<string, string> = {
+  brand: '#CC79FF',
+  ocean: '#407CFF',
+  sunset: '#FFA03B',
+  violet: '#CC79FF',
+  mint: '#22C55E',
+  amber: '#FFA03B',
+}
+
+export function solidFor(key: string | undefined): string {
+  return SOLIDS[key || 'brand'] || SOLIDS.brand
+}
+
 /** Deterministic speaker colors for transcript segments. */
 export const SPEAKER_COLORS = [
-  { text: '#5B7CFA', bg: 'rgba(91,124,250,0.10)', dot: '#5B7CFA' },
-  { text: '#C76AE0', bg: 'rgba(199,106,224,0.10)', dot: '#C76AE0' },
-  { text: '#FF9500', bg: 'rgba(255,149,0,0.10)', dot: '#FF9500' },
-  { text: '#34C759', bg: 'rgba(52,199,89,0.10)', dot: '#34C759' },
+  { text: '#407CFF', bg: 'rgba(64,124,255,0.10)', dot: '#407CFF' },
+  { text: '#CC79FF', bg: 'rgba(204,121,255,0.10)', dot: '#CC79FF' },
+  { text: '#FFA03B', bg: 'rgba(255,160,59,0.10)', dot: '#FFA03B' },
+  { text: '#22C55E', bg: 'rgba(34,197,94,0.10)', dot: '#22C55E' },
 ]
 
 export function speakerColor(index: number) {

@@ -6,7 +6,6 @@ import { Page } from '../../components/Page'
 import { Button, EmptyState, IconButton, Spinner } from '../../components/ui/atoms'
 import { formatRelative, scheduleHuman } from '../../lib/time'
 import { cn } from '../../lib/util'
-import { TaskIcon } from './taskUi'
 
 export function TaskListScreen({ onBack }: OverlayScreenProps) {
   const t = useT()
@@ -44,7 +43,6 @@ export function TaskListScreen({ onBack }: OverlayScreenProps) {
         onClick={() => push('taskDetail', { id: task.id })}
         className="w-full card flex items-center gap-3 px-4 py-3 text-left active:bg-black/[0.02]"
       >
-        <TaskIcon cap={task.capabilities[0]} size={40} />
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2">
             <span className="text-[16px] font-semibold truncate flex-1">{task.name}</span>
@@ -55,11 +53,20 @@ export function TaskListScreen({ onBack }: OverlayScreenProps) {
               </span>
             )}
           </div>
-          <div className="flex items-center gap-2 mt-1 text-[12.5px] min-w-0">
-            <span className="px-2 py-0.5 rounded-md bg-brand-violet/10 text-brand-violet font-medium shrink-0">
+          <div className="mt-1">
+            <span className="inline-block px-2 py-0.5 rounded-md bg-ios-gray6 text-label-secondary font-medium text-[12.5px]">
               {scheduleHuman(task.schedule, lang)}
             </span>
-            <span className="text-label-secondary truncate">
+          </div>
+          <div className="flex items-center gap-2.5 mt-1 text-[12px] min-w-0">
+            {task.lastRunAt && task.status !== 'running' && (
+              <span className="flex items-center gap-1 shrink-0 text-label-secondary">
+                {lastResult === 'success' && <CheckCircle2 size={12} className="text-ios-green" />}
+                {lastResult === 'failed' && <XCircle size={12} className="text-ios-red" />}
+                {t('tasks.lastShort')} · {formatRelative(task.lastRunAt, lang)}
+              </span>
+            )}
+            <span className="truncate text-label-secondary">
               {task.paused
                 ? t('tasks.status.paused')
                 : task.nextRunAt
@@ -67,13 +74,6 @@ export function TaskListScreen({ onBack }: OverlayScreenProps) {
                   : '—'}
             </span>
           </div>
-          {task.lastRunAt && task.status !== 'running' && (
-            <div className="flex items-center gap-1 mt-1 text-[12px] text-label-tertiary">
-              {lastResult === 'success' && <CheckCircle2 size={12} className="text-ios-green" />}
-              {lastResult === 'failed' && <XCircle size={12} className="text-ios-red" />}
-              {t('tasks.lastShort')} · {formatRelative(task.lastRunAt, lang)}
-            </div>
-          )}
         </div>
         <ChevronRight size={18} className="text-ios-gray3 shrink-0" />
       </button>

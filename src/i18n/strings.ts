@@ -56,7 +56,7 @@ export const STRINGS: Record<Lang, Dict> = {
     'shell.demoBanner': '演示原型 · 数据均为预置示例',
 
     // ---- login ----
-    'login.tagline': '随身的 AI 工作搭子',
+    'login.tagline': '更懂你工作方式的 AI',
     'login.subtitle': '随时对话、把重复的事交给它定时执行、把会议转成纪要。',
     'login.google': '使用 Google 登录',
     'login.signingIn': '正在登录…',
@@ -69,7 +69,7 @@ export const STRINGS: Record<Lang, Dict> = {
     'login.scan.album': '从相册选择',
     'login.scan.flash': '手电筒',
     'login.failed': '登录失败，请重试',
-    'login.terms': '继续即表示同意《服务条款》与《隐私政策》',
+    'login.terms': '继续即表示同意{terms}与{privacy}',
     'login.termsLink': '服务条款',
     'login.privacyLink': '隐私政策',
     'login.lang': '语言',
@@ -167,6 +167,8 @@ export const STRINGS: Record<Lang, Dict> = {
     'chat.toolcall.success': '调用成功',
     'chat.toolcall.error': '调用失败',
     'chat.toolcall.awaiting': '等待你的授权',
+    'chat.toolcall.needsYou': '待你处理',
+    'chat.compose.title': '编辑消息',
     'chat.toolcall.params': '参数',
     'chat.toolcall.result': '结果',
     'chat.toolcall.showMore': '展开更多',
@@ -217,6 +219,7 @@ export const STRINGS: Record<Lang, Dict> = {
     'chat.taskCard.view': '查看任务',
     'chat.quote.label': '引用执行结果',
     'chat.sourceBanner': '由定时任务「{name}」于 {time} 触发',
+    'chat.sourceBanner.meta': '定时任务 · {time}',
     'chat.sourceBanner.view': '查看任务',
 
     // ---- persona ----
@@ -352,7 +355,7 @@ export const STRINGS: Record<Lang, Dict> = {
     'tasks.run.failed': '执行失败',
     'tasks.run.running': '执行中',
     'tasks.run.openConversation': '打开对话',
-    'tasks.run.quoteAsk': '引用提问',
+    'tasks.run.quoteAsk': '向 Workmate 追问',
     'tasks.edit.title': '编辑任务',
     'tasks.edit.name': '任务名称',
     'tasks.edit.instruction': '任务描述',
@@ -363,6 +366,18 @@ export const STRINGS: Record<Lang, Dict> = {
     'tasks.edit.time': '时间',
     'tasks.edit.intervalMinutes': '间隔（分钟）',
     'tasks.edit.saved': '任务已更新，已重算下次运行',
+    'tasks.edit.mode.recurring': '重复',
+    'tasks.edit.mode.dates': '指定日期',
+    'tasks.edit.mode.interval': '间隔',
+    'tasks.edit.everyDayShortcut': '每天',
+    'tasks.edit.intervalEvery': '每',
+    'tasks.edit.unit.min': '分钟',
+    'tasks.edit.unit.hour': '小时',
+    'tasks.edit.unit.day': '天',
+    'tasks.edit.startTime': '开始时间',
+    'tasks.edit.startNow': '现在',
+    'tasks.edit.addDate': '添加日期',
+    'tasks.edit.dates.empty': '还没有添加日期',
 
     // ---- meetings ----
     'meet.title': '会议记录',
@@ -408,6 +423,12 @@ export const STRINGS: Record<Lang, Dict> = {
     'meet.analyzing.stage4': '正在生成总结…',
     'meet.analyzing.summaryOnly': '正在重新生成总结…',
     'meet.failedReason': '音频质量较低，转写未能完成',
+    // cloud upload stage (after save/import, before transcription)
+    'meet.upload.uploading': '上传中',
+    'meet.upload.failed': '上传失败',
+    'meet.upload.retry': '重试上传',
+    'meet.upload.interrupted': '上传中断，请重试',
+    'meet.upload.failedReason': '网络连接不稳定，上传未完成',
     // transcribe template picker
     'meet.template.title': '选择总结模板',
     'meet.template.start': '开始转译',
@@ -585,7 +606,7 @@ export const STRINGS: Record<Lang, Dict> = {
     'shell.demoBanner': 'Demo prototype · All data is sample content',
 
     // ---- login ----
-    'login.tagline': 'Your AI workmate, in your pocket',
+    'login.tagline': 'AI that works the way you do',
     'login.subtitle': 'Chat anytime, hand off recurring work, turn meetings into notes.',
     'login.google': 'Continue with Google',
     'login.signingIn': 'Signing in…',
@@ -598,7 +619,7 @@ export const STRINGS: Record<Lang, Dict> = {
     'login.scan.album': 'Choose from album',
     'login.scan.flash': 'Flashlight',
     'login.failed': 'Sign-in failed, please retry',
-    'login.terms': 'By continuing you agree to the Terms and Privacy Policy',
+    'login.terms': 'By continuing you agree to the {terms} and {privacy}',
     'login.termsLink': 'Terms of Service',
     'login.privacyLink': 'Privacy Policy',
     'login.lang': 'Language',
@@ -696,6 +717,8 @@ export const STRINGS: Record<Lang, Dict> = {
     'chat.toolcall.success': 'Done',
     'chat.toolcall.error': 'Failed',
     'chat.toolcall.awaiting': 'Awaiting your approval',
+    'chat.toolcall.needsYou': 'Needs you',
+    'chat.compose.title': 'Message',
     'chat.toolcall.params': 'Parameters',
     'chat.toolcall.result': 'Result',
     'chat.toolcall.showMore': 'Show more',
@@ -746,6 +769,7 @@ export const STRINGS: Record<Lang, Dict> = {
     'chat.taskCard.view': 'View task',
     'chat.quote.label': 'Quoted result',
     'chat.sourceBanner': 'Triggered by task "{name}" at {time}',
+    'chat.sourceBanner.meta': 'Scheduled task · {time}',
     'chat.sourceBanner.view': 'View task',
 
     // ---- persona ----
@@ -881,7 +905,7 @@ export const STRINGS: Record<Lang, Dict> = {
     'tasks.run.failed': 'Failed',
     'tasks.run.running': 'Running',
     'tasks.run.openConversation': 'Open chat',
-    'tasks.run.quoteAsk': 'Quote & ask',
+    'tasks.run.quoteAsk': 'Ask Workmate about this',
     'tasks.edit.title': 'Edit task',
     'tasks.edit.name': 'Task name',
     'tasks.edit.instruction': 'Task description',
@@ -892,6 +916,18 @@ export const STRINGS: Record<Lang, Dict> = {
     'tasks.edit.time': 'Time',
     'tasks.edit.intervalMinutes': 'Interval (minutes)',
     'tasks.edit.saved': 'Task updated, next run recalculated',
+    'tasks.edit.mode.recurring': 'Recurring',
+    'tasks.edit.mode.dates': 'Specific dates',
+    'tasks.edit.mode.interval': 'Interval',
+    'tasks.edit.everyDayShortcut': 'Every day',
+    'tasks.edit.intervalEvery': 'Every',
+    'tasks.edit.unit.min': 'Min',
+    'tasks.edit.unit.hour': 'Hr',
+    'tasks.edit.unit.day': 'Day',
+    'tasks.edit.startTime': 'Start',
+    'tasks.edit.startNow': 'Now',
+    'tasks.edit.addDate': 'Add date',
+    'tasks.edit.dates.empty': 'No dates added yet',
 
     // ---- meetings ----
     'meet.title': 'Meetings',
@@ -937,6 +973,12 @@ export const STRINGS: Record<Lang, Dict> = {
     'meet.analyzing.stage4': 'Generating summary…',
     'meet.analyzing.summaryOnly': 'Regenerating summary…',
     'meet.failedReason': 'Audio quality was too low to transcribe',
+    // cloud upload stage (after save/import, before transcription)
+    'meet.upload.uploading': 'Uploading',
+    'meet.upload.failed': 'Upload failed',
+    'meet.upload.retry': 'Retry upload',
+    'meet.upload.interrupted': 'Upload interrupted — please retry',
+    'meet.upload.failedReason': 'Network unstable, upload incomplete',
     // transcribe template picker
     'meet.template.title': 'Choose a summary template',
     'meet.template.start': 'Start',

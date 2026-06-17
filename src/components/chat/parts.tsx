@@ -8,7 +8,6 @@ import {
   Check,
   CheckCircle2,
   ChevronDown,
-  Clock,
   Copy,
   RotateCcw,
   Sparkles,
@@ -19,7 +18,7 @@ import {
   XCircle,
 } from 'lucide-react'
 import type { AppNotification, Message, ToolCallCard } from '../../lib/types'
-import { cn, gradientFor } from '../../lib/util'
+import { cn } from '../../lib/util'
 import { formatRelative, scheduleHuman } from '../../lib/time'
 import { useStore, type MessageTarget } from '../../store/useStore'
 import { useLang, useT } from '../../i18n'
@@ -133,7 +132,7 @@ export function ThinkingBlock({ thinking, active }: { thinking: string; active: 
   return (
     <div className="mb-2">
       <button onClick={() => setOpen((o) => !o)} className="flex items-center gap-1.5 text-[13px] text-label-secondary active:opacity-60">
-        <Sparkles size={14} className="text-brand-violet" />
+        <Sparkles size={14} className="text-label-tertiary" />
         <span>{active ? t('chat.thinking') : t('chat.thought')}</span>
         <ChevronDown size={14} className={cn('transition-transform', open && 'rotate-180')} />
       </button>
@@ -235,6 +234,26 @@ function CodeBlock({ code, clampable, tone }: { code: string; clampable?: boolea
   )
 }
 
+// Tool-call parameters as clean key–value rows (the chat-AI norm) instead of a raw
+// JS/JSON dump. Falls back to the code block when a value is nested (object/array).
+function ParamRows({ params }: { params: Record<string, unknown> }) {
+  const entries = Object.entries(params)
+  const complex = entries.some(([, v]) => v !== null && typeof v === 'object')
+  if (complex) return <CodeBlock code={formatJsLike(params)} />
+  return (
+    <div className="rounded-ios bg-ios-gray6 divide-y divide-divider overflow-hidden">
+      {entries.map(([k, v]) => (
+        <div key={k} className="flex items-baseline gap-3 px-3 py-2">
+          <span className="text-[12px] text-label-secondary shrink-0">{k}</span>
+          <span className="flex-1 text-[12.5px] font-mono text-label-primary text-right break-all">
+            {String(v)}
+          </span>
+        </div>
+      ))}
+    </div>
+  )
+}
+
 export function ToolCallCardView({ card }: { card: ToolCallCard }) {
   const t = useT()
   const [open, setOpen] = useState(false)
@@ -248,7 +267,15 @@ export function ToolCallCardView({ card }: { card: ToolCallCard }) {
     ) : card.status === 'error' ? (
       <XCircle size={17} className="text-ios-red" />
     ) : (
-      <Clock size={16} className="text-ios-orange" />
+      // Needs-you signal: orange status pill (dot + neutral label) — color via status,
+      // not chrome, so the card stays neutral and the purple Approve stays the one accent.
+      <span
+        className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[12px] font-medium text-label-primary shrink-0"
+        style={{ backgroundColor: 'color-mix(in srgb, var(--orange) 16%, transparent)' }}
+      >
+        <span className="w-1.5 h-1.5 rounded-full shrink-0" style={{ background: 'var(--orange)' }} />
+        {t('chat.toolcall.needsYou')}
+      </span>
     )
 
   return (
@@ -293,7 +320,7 @@ export function ToolCallCardView({ card }: { card: ToolCallCard }) {
               {card.params && Object.keys(card.params).length > 0 && (
                 <div>
                   <div className="text-[12px] font-medium text-label-secondary mb-1.5">{t('chat.toolcall.params')}</div>
-                  <CodeBlock code={formatJsLike(card.params)} />
+                  <ParamRows params={card.params} />
                 </div>
               )}
               {!awaiting && card.result && (
@@ -355,10 +382,10 @@ export function ApprovalControls({ notif }: { notif: AppNotification }) {
 
   return (
     <div className="flex gap-2.5">
-      <button onClick={reject} className="flex-1 h-10 rounded-ios-lg bg-ios-gray6 text-ios-red font-semibold text-[15px] press">
+      <button onClick={reject} className="flex-1 h-10 rounded-ios-lg bg-ios-gray6 text-label-primary font-semibold text-[15px] press">
         {t('notif.reject')}
       </button>
-      <button onClick={approve} className="flex-1 h-10 rounded-ios-lg bg-ios-blue text-white font-semibold text-[15px] press">
+      <button onClick={approve} className="flex-1 h-10 rounded-ios-lg text-white font-semibold text-[15px] press" style={{ background: '#CC79FF' }}>
         {t('notif.approve')}
       </button>
     </div>
@@ -374,15 +401,18 @@ export function TaskCreatedCard({ taskId }: { taskId: string }) {
   const lang = useLang()
   if (!task) return null
   return (
-    <div className="my-2 rounded-ios-lg overflow-hidden border border-divider shadow-ios">
-      <div className="px-3.5 py-2.5 flex items-center gap-2 text-white" style={{ background: gradientFor('brand') }}>
-        <CalendarClock size={17} />
-        <span className="text-[14px] font-semibold">{t('chat.taskCard.title')}</span>
+    <div className="my-2 rounded-ios-lg border border-divider bg-surface overflow-hidden">
+      <div className="flex items-center gap-2.5 px-3 py-2.5 hairline-b">
+        <div className="w-7 h-7 rounded-[8px] bg-ios-gray6 flex items-center justify-center text-label-secondary shrink-0">
+          <CalendarClock size={15} />
+        </div>
+        <span className="flex-1 min-w-0 text-[14px] font-medium truncate">{t('chat.taskCard.title')}</span>
+        <CheckCircle2 size={17} className="text-ios-green shrink-0" />
       </div>
-      <div className="bg-surface px-3.5 py-3 space-y-2">
+      <div className="px-3.5 py-3 space-y-2">
         <div className="text-[16px] font-semibold">{task.name}</div>
         <div className="flex items-center gap-2 text-[13px]">
-          <span className="px-2 py-0.5 rounded-md bg-brand-violet/10 text-brand-violet font-medium">
+          <span className="px-2 py-0.5 rounded-md bg-ios-gray6 text-label-secondary font-medium">
             {scheduleHuman(task.schedule, lang)}
           </span>
           {task.nextRunAt && (
@@ -393,7 +423,7 @@ export function TaskCreatedCard({ taskId }: { taskId: string }) {
         </div>
         <button
           onClick={() => push('taskDetail', { id: task.id })}
-          className="text-[14px] font-semibold text-ios-blue active:opacity-60"
+          className="text-[14px] font-semibold text-brand-primary active:opacity-60"
         >
           {t('chat.taskCard.view')} ›
         </button>

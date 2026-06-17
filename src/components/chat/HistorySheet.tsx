@@ -24,7 +24,7 @@ export type HistoryTarget =
 
 type View = 'menu' | 'rename' | 'move' | 'delete'
 
-const TINT = { blue: '#007AFF', violet: '#A06AF0', red: '#FF3B30', gray: '#8E8E93' }
+const TINT = { blue: '#407CFF', violet: '#CC79FF', red: '#EF4444', gray: '#8E8E93' }
 
 export function HistorySheet({ target, onClose }: { target: HistoryTarget; onClose: () => void }) {
   const t = useT()
@@ -90,7 +90,7 @@ export function HistorySheet({ target, onClose }: { target: HistoryTarget; onClo
             <ItemHeader icon={<MessageSquare size={18} />} tint={TINT.gray} title={conv.title} sub={conv.messages[conv.messages.length - 1]?.text.slice(0, 34) || t('common.empty')} />
             <div className="list-group divide-y divide-divider mt-4">
               <ActionRow icon={<Pencil size={15} />} tint={TINT.blue} label={t('chat.session.rename')} onClick={() => { setText(conv.title); setView('rename') }} />
-              <ActionRow icon={<Folder size={15} />} tint={TINT.violet} label={t('chat.session.moveTo')} value={projectName(conv.projectId)} onClick={() => setView('move')} />
+              <ActionRow icon={<Folder size={15} />} tint={TINT.violet} label={t('chat.session.moveTo')} onClick={() => setView('move')} />
               <ActionRow icon={<Trash2 size={15} />} tint={TINT.red} danger chevron={false} label={t('common.delete')} onClick={() => setView('delete')} />
             </div>
           </>
@@ -138,8 +138,8 @@ export function HistorySheet({ target, onClose }: { target: HistoryTarget; onClo
               </div>
             ) : (
               <button onClick={() => setShowNew(true)} className="w-full flex items-center gap-3 px-4 py-3 mt-3 active:opacity-60">
-                <span className="w-[29px] h-[29px] rounded-[8px] bg-ios-blue/10 flex items-center justify-center">
-                  <FolderPlus size={15} className="text-ios-blue" />
+                <span className="w-[29px] h-[29px] flex items-center justify-center text-label-secondary">
+                  <FolderPlus size={17} />
                 </span>
                 <span className="text-[16px] text-ios-blue">{t('chat.project.newAndMove')}</span>
               </button>
@@ -200,7 +200,7 @@ export function HistorySheet({ target, onClose }: { target: HistoryTarget; onClo
 function ItemHeader({ icon, tint, title, sub }: { icon: ReactNode; tint: string; title: string; sub?: string }) {
   return (
     <div className="flex items-center gap-3 px-1 pt-1">
-      <span className="w-10 h-10 rounded-[11px] flex items-center justify-center text-white shrink-0" style={{ background: tint }}>
+      <span className="w-10 h-10 rounded-[11px] flex items-center justify-center text-label-secondary bg-ios-gray6 shrink-0">
         {icon}
       </span>
       <div className="min-w-0">
@@ -216,9 +216,9 @@ function HeaderBar({ title, onBack }: { title: string; onBack?: () => void }) {
   return (
     <div className="relative h-7 flex items-center justify-center">
       {onBack && (
-        <button onClick={onBack} className="absolute left-0 flex items-center text-ios-blue active:opacity-50">
-          <ChevronLeft size={22} />
-          <span className="text-[15px] -ml-1">{t('common.back')}</span>
+        <button onClick={onBack} className="absolute left-0 flex items-center text-label-primary active:opacity-50">
+          <ChevronLeft size={24} strokeWidth={2.2} />
+          <span className="text-[16px] font-medium -ml-0.5">{t('common.back')}</span>
         </button>
       )}
       <span className="text-[16px] font-semibold">{title}</span>
@@ -245,7 +245,7 @@ function ActionRow({
 }) {
   return (
     <button onClick={onClick} className="w-full flex items-center gap-3 px-4 py-3 active:bg-black/[0.04]">
-      <span className="w-[29px] h-[29px] rounded-[8px] flex items-center justify-center text-white shrink-0" style={{ background: tint }}>
+      <span className={cn('w-[29px] h-[29px] flex items-center justify-center shrink-0', danger ? 'text-ios-red' : 'text-label-secondary')}>
         {icon}
       </span>
       <span className={cn('flex-1 text-left text-[16px]', danger && 'text-ios-red')}>{label}</span>
@@ -272,14 +272,14 @@ function SelectRow({
 }) {
   return (
     <button onClick={onClick} className="w-full flex items-center gap-3 px-4 py-3 active:bg-black/[0.04]">
-      <span className="w-[29px] h-[29px] rounded-[8px] flex items-center justify-center text-white shrink-0" style={{ background: tint }}>
+      <span className="w-[29px] h-[29px] flex items-center justify-center text-label-secondary shrink-0">
         {icon}
       </span>
       <div className="flex-1 text-left min-w-0">
         <div className="text-[16px] truncate">{label}</div>
         {desc && <div className="text-[12px] text-label-secondary truncate">{desc}</div>}
       </div>
-      {selected ? <Check size={18} className="text-ios-blue shrink-0" /> : <span className="w-[18px] shrink-0" />}
+      {selected ? <Check size={18} className="text-brand-primary shrink-0" /> : <span className="w-[18px] shrink-0" />}
     </button>
   )
 }
@@ -339,7 +339,7 @@ function ConfirmBlock({
   const t = useT()
   return (
     <div className="pt-1">
-      <HeaderBar title={confirm} onBack={onBack} />
+      <HeaderBar title="" onBack={onBack} />
       <div className="flex flex-col items-center text-center pt-4 pb-1">
         <div className="w-12 h-12 rounded-full bg-ios-red/10 flex items-center justify-center mb-3">
           <Trash2 size={22} className="text-ios-red" />

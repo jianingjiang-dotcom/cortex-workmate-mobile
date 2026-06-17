@@ -161,14 +161,16 @@ export interface AppNotification {
 // ---- Scheduled tasks (6.4) -------------------------------------------------
 
 export type TaskStatus = 'idle' | 'running' | 'success' | 'failed' | 'paused'
-export type ScheduleKind = 'daily' | 'interval' | 'weekly' | 'once'
+export type ScheduleKind = 'daily' | 'interval' | 'weekly' | 'once' | 'dates'
 
 export interface Schedule {
   kind: ScheduleKind
   timeOfDay?: string // 'HH:MM'
   intervalMinutes?: number
+  startAt?: number // interval: anchor (first occurrence) epoch ms; absent = "from now"
   weekday?: number // legacy single weekday 0 (Sun) - 6 (Sat); kept for back-compat
   weekdays?: number[] // weekly: selected weekdays (0=Sun..6=Sat) — supports multi-select
+  dates?: number[] // 'dates': full date+time epoch ms, each runs once, stored ascending
   humanZh: string
   humanEn: string
 }
@@ -233,6 +235,13 @@ export interface Meeting {
   summaryNote?: string // optional background note the user gave the AI for the summary
   summaryUpdatedAt?: number // last time the summary was (re)generated — used to surface
   // "only the summary was updated" even when the transcript is byte-identical
+
+  // Cloud upload stage (orthogonal to the transcription status machine). Absent =
+  // already uploaded (legacy/seed data degrades gracefully); only freshly created
+  // 'pending' meetings ever carry these. Transcription is gated until upload clears.
+  uploadStatus?: 'uploading' | 'failed'
+  uploadProgress?: number // 0–100 while uploading
+  uploadFailReason?: string // i18n key (e.g. 'meet.upload.interrupted')
 }
 
 // ---- Account ---------------------------------------------------------------
