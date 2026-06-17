@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { AudioLines, Check, CloudOff, Copy, MoreHorizontal, Pause, Play, RotateCcw, RotateCw, Search } from 'lucide-react'
+import { AudioLines, Check, Copy, MoreHorizontal, Pause, Play, RotateCcw, RotateCw, Search } from 'lucide-react'
 import type { Meeting, OverlayScreenProps, SummaryTemplate } from '../../lib/types'
 import { useStore } from '../../store/useStore'
 import { useLang, useT } from '../../i18n'
@@ -7,18 +7,13 @@ import { BackButton } from '../../components/Page'
 import { Button, EmptyState, Highlight, IconButton, Pill, SearchField, Segmented, Spinner, Switch } from '../../components/ui/atoms'
 import { ActionSheet, CenterModal, Sheet } from '../../components/ui/Sheet'
 import { Markdown } from '../../components/chat/parts'
-import { SUMMARY_TEMPLATES } from '../../data/seed'
+import { guessTemplate, SUMMARY_TEMPLATES } from '../../data/seed'
 import { formatClock, formatDateTime, formatDuration } from '../../lib/time'
 import { clamp, cn, solidFor, speakerColor } from '../../lib/util'
 
-// Suggest a template: re-transcribe keeps the current one; first transcribe guesses by title
-// (mirrors analysisFor's keyword routing so the suggestion tends to match the scenario).
+// Suggest a template: re-transcribe keeps the current one; first transcribe guesses by title.
 function defaultTemplate(m: Meeting): SummaryTemplate {
-  if (m.template) return m.template
-  if (/面试|访谈|interview/i.test(m.title)) return 'interview'
-  if (/客户|customer|client/i.test(m.title)) return 'customer'
-  if (/评审|会议|周会|review|meeting/i.test(m.title)) return 'meeting'
-  return 'generic'
+  return m.template ?? guessTemplate(m.title)
 }
 
 export function MeetingDetailScreen({ params, onBack }: OverlayScreenProps) {
@@ -26,7 +21,6 @@ export function MeetingDetailScreen({ params, onBack }: OverlayScreenProps) {
   const lang = useLang()
   const meeting = useStore((s) => s.meetings.find((m) => m.id === params?.id))
   const transcribe = useStore((s) => s.transcribeMeeting)
-  const uploadMeeting = useStore((s) => s.uploadMeeting)
   const renameMeeting = useStore((s) => s.renameMeeting)
   const deleteMeeting = useStore((s) => s.deleteMeeting)
   const askConfirm = useStore((s) => s.askConfirm)
@@ -305,12 +299,7 @@ export function MeetingDetailScreen({ params, onBack }: OverlayScreenProps) {
           </>
         ) : (
           <div className="flex-1 min-h-0">
-            <NonDone
-              meeting={meeting}
-              failure={failureText}
-              onTranscribe={() => openTranscribe('first')}
-              onRetryUpload={() => uploadMeeting(meeting.id)}
-            />
+            <NonDone meeting={meeting} failure={failureText} onTranscribe={() => openTranscribe('first')} />
           </div>
         )}
       </div>
@@ -439,64 +428,23 @@ function NonDone({
   meeting,
   failure,
   onTranscribe,
-  onRetryUpload,
 }: {
   meeting: Meeting
-  failure?: string // resolved transcription-failure text (from the parent)
+  failure?: string // resolved 转译-failure text (from the parent)
   onTranscribe: () => void
-  onRetryUpload: () => void
 }) {
   const t = useT()
   const { status, analyzeProgress: progress, analyzeStage: stage } = meeting
 
-  // ---- cloud-upload stage (gates everything below) ----
-  if (meeting.uploadStatus === 'uploading') {
-    return (
-      <div className="flex flex-col items-center justify-center h-full px-10 text-center">
-        <Spinner size={34} className="text-ios-blue" />
-        <div className="text-[16px] font-semibold mt-4">
-          {t('meet.upload.uploading')} {meeting.uploadProgress ?? 0}%
-        </div>
-        <div className="w-full max-w-[240px] h-1.5 rounded-full bg-ios-gray5 overflow-hidden mt-4">
-          <div
-            className="h-full rounded-full bg-ios-blue transition-all duration-300"
-            style={{ width: `${meeting.uploadProgress ?? 0}%` }}
-          />
-        </div>
-      </div>
-    )
-  }
-  if (meeting.uploadStatus === 'failed') {
-    const reason = meeting.uploadFailReason
-    return (
-      <div className="flex flex-col items-center justify-center h-full px-10 text-center">
-        <div
-          className="w-[72px] h-[72px] rounded-[20px] flex items-center justify-center text-white mb-4"
-          style={{ background: solidFor('sunset') }}
-        >
-          <CloudOff size={30} />
-        </div>
-        <div className="text-[17px] font-semibold">{t('meet.upload.failed')}</div>
-        {reason && (
-          <div className="text-[14px] text-ios-red mt-1.5">{reason.startsWith('meet.') ? t(reason) : reason}</div>
-        )}
-        <button
-          onClick={onRetryUpload}
-          className="mt-6 h-11 px-6 rounded-ios-lg text-white font-semibold text-[15px] press bg-brand-primary"
-        >
-          {t('meet.upload.retry')}
-        </button>
-      </div>
-    )
-  }
-
+  // 转译中 — the unified upload + transcribe flow (blue, matching the list pill).
+  // The stage text starts with 正在上传到云端… then moves through the transcribe stages.
   if (status === 'analyzing') {
     return (
       <div className="flex flex-col items-center justify-center h-full px-10 text-center">
-        <Spinner size={34} className="text-brand-violet" />
+        <Spinner size={34} className="text-ios-blue" />
         <div className="text-[16px] font-semibold mt-4">{stage ? t(stage) : t('meet.status.analyzing')}</div>
         <div className="w-full max-w-[240px] h-1.5 rounded-full bg-ios-gray5 overflow-hidden mt-4">
-          <div className="h-full rounded-full bg-brand-violet transition-all duration-300" style={{ width: `${progress ?? 0}%` }} />
+          <div className="h-full rounded-full bg-ios-blue transition-all duration-300" style={{ width: `${progress ?? 0}%` }} />
         </div>
       </div>
     )
@@ -514,7 +462,7 @@ function NonDone({
         onClick={onTranscribe}
         className="mt-6 h-11 px-6 rounded-ios-lg text-white font-semibold text-[15px] press bg-brand-primary"
       >
-        {status === 'failed' ? t('meet.retranscribe') : t('meet.transcribe')}
+        {status === 'failed' ? t('meet.transcribe.retry') : t('meet.transcribe')}
       </button>
     </div>
   )

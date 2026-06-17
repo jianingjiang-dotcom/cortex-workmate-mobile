@@ -4,7 +4,7 @@ export default {
   darkMode: 'class',
   theme: {
     extend: {
-      // /12 alpha step (bg-ios-green/12 …) isn't in Tailwind's default 5-step scale
+      // /12 alpha steps (bg-ios-green/12 …) aren't in Tailwind's default 5-step scale
       opacity: { 12: '0.12' },
       colors: {
         // iOS system palette — gray5/6 + accents are theme-aware (CSS vars)

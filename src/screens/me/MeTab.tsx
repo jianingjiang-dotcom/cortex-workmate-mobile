@@ -7,6 +7,7 @@ import { Page } from '../../components/Page'
 import { Bell } from '../../components/Bell'
 import { Avatar, Row, Section } from '../../components/ui/atoms'
 import { ActionSheet } from '../../components/ui/Sheet'
+import { CURRENT_VERSION, updateAvailable } from '../../lib/version'
 
 export function MeTab() {
   const t = useT()
@@ -20,8 +21,10 @@ export function MeTab() {
   const push = useStore((s) => s.push)
   const themeMode = useStore((s) => s.themeMode)
   const setThemeMode = useStore((s) => s.setThemeMode)
+  const updateDismissed = useStore((s) => s.updateDismissed)
   const [langOpen, setLangOpen] = useState(false)
   const [themeOpen, setThemeOpen] = useState(false)
+  const showVersionHint = updateAvailable && !updateDismissed
 
   const switchLang = (l: Lang) => {
     setLang(l)
@@ -81,7 +84,22 @@ export function MeTab() {
 
       {/* support */}
       <Section title={t('me.support')} className="mt-5">
-        <Row icon={<Smartphone size={17} />} iconBg="#8E8E93" title={t('me.version')} value="1.0.0" />
+        <Row
+          icon={<Smartphone size={17} />}
+          iconBg="#8E8E93"
+          title={t('me.version')}
+          value={showVersionHint ? undefined : CURRENT_VERSION}
+          chevron
+          onClick={() => push('about')}
+          right={
+            showVersionHint ? (
+              <span className="flex items-center gap-1.5 shrink-0">
+                <span className="w-[7px] h-[7px] rounded-full bg-ios-red" />
+                <span className="text-[13px] text-ios-red font-medium">{t('me.version.hint')}</span>
+              </span>
+            ) : undefined
+          }
+        />
         <Row
           icon={<RefreshCw size={17} />}
           iconBg="#FF9500"

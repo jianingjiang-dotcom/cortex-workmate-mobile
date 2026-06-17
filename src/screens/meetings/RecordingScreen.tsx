@@ -3,10 +3,10 @@ import { Mic, Pause, Upload } from 'lucide-react'
 import type { OverlayScreenProps } from '../../lib/types'
 import { useStore } from '../../store/useStore'
 import { useLang, useT } from '../../i18n'
-import { CenterModal } from '../../components/ui/Sheet'
 import { BackButton } from '../../components/Page'
 import { formatDateTime } from '../../lib/time'
 import { gradientFor, solidFor } from '../../lib/util'
+import { NameRecordingModal } from './NameRecordingModal'
 
 // waveform geometry
 const BAR_W = 3
@@ -208,15 +208,15 @@ export function RecordingScreen({ onBack }: OverlayScreenProps) {
   // 结束 = finish: pause (if needed) and prompt for a name to save
   const end = () => {
     if (!paused) pauseRecording()
-    setName((n) => (n.trim() ? n : `${t('meet.record')} · ${formatDateTime(Date.now(), lang)}`))
+    setName(`${t('meet.record')} · ${formatDateTime(Date.now(), lang)}`)
     setNaming(true)
   }
 
   // back out of the name prompt → stay on the (paused) recording screen; not a discard
   const cancelNaming = () => setNaming(false)
 
-  const save = () => {
-    createRecording({ title: name.trim() || t('meet.record'), durationMs: elapsed, source: 'recording' })
+  const save = (title: string, transcribe: boolean) => {
+    createRecording({ title: title.trim() || t('meet.record'), durationMs: elapsed, source: 'recording', transcribe })
     toast(t('meet.saved'), 'success')
     setNaming(false) // close the name modal so it doesn't linger during the overlay's exit
     cleanup()
@@ -344,27 +344,7 @@ export function RecordingScreen({ onBack }: OverlayScreenProps) {
         </div>
       )}
 
-      <CenterModal open={naming} onClose={cancelNaming}>
-        <div className="p-4">
-          <div className="text-[16px] font-semibold text-center mb-3">{t('meet.name.title')}</div>
-          <input
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            onKeyDown={(e) => e.key === 'Enter' && save()}
-            placeholder={t('meet.name.ph')}
-            autoFocus
-            className="w-full h-11 px-3.5 rounded-ios bg-ios-gray6 text-[15px] outline-none"
-          />
-          <div className="grid grid-cols-2 gap-2.5 mt-3.5">
-            <button onClick={cancelNaming} className="h-11 rounded-ios-lg bg-ios-gray6 font-semibold text-[15px] press">
-              {t('common.cancel')}
-            </button>
-            <button onClick={save} className="h-11 rounded-ios-lg text-white font-semibold text-[15px] press bg-brand-primary">
-              {t('common.save')}
-            </button>
-          </div>
-        </div>
-      </CenterModal>
+      <NameRecordingModal open={naming} initialName={name} onCancel={cancelNaming} onSave={save} />
     </div>
   )
 }

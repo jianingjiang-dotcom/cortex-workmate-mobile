@@ -8,6 +8,7 @@ import { EmptyState, Highlight, IconButton, SearchField } from '../../components
 import { dayBucket, formatDuration, formatTimeOnly } from '../../lib/time'
 import { solidFor } from '../../lib/util'
 import { MeetingStatusPill } from './meetingUi'
+import { NameRecordingModal } from './NameRecordingModal'
 
 export function MeetingListScreen({ onBack }: OverlayScreenProps) {
   const t = useT()
@@ -22,18 +23,27 @@ export function MeetingListScreen({ onBack }: OverlayScreenProps) {
   const [query, setQuery] = useState('')
   const q = query.trim().toLowerCase()
 
+  // imported file awaiting the name + 转译 dialog (same dialog the recording flow uses)
+  const [pendingImport, setPendingImport] = useState<{ name: string; durationMs: number } | null>(null)
+
   const onImport = (file: File) => {
     const url = URL.createObjectURL(file)
     const audio = new Audio()
     audio.preload = 'metadata'
     const finish = (durationMs: number) => {
-      createRecording({ title: file.name.replace(/\.[^.]+$/, ''), durationMs, source: 'import' })
+      setPendingImport({ name: file.name.replace(/\.[^.]+$/, ''), durationMs })
       URL.revokeObjectURL(url)
-      toast(t('meet.imported'), 'success')
     }
     audio.onloadedmetadata = () => finish(isFinite(audio.duration) ? Math.round(audio.duration * 1000) : 60000)
     audio.onerror = () => finish(60000)
     audio.src = url
+  }
+
+  const saveImport = (name: string, transcribe: boolean) => {
+    if (!pendingImport) return
+    createRecording({ title: name, durationMs: pendingImport.durationMs, source: 'import', transcribe })
+    setPendingImport(null)
+    toast(t('meet.imported'), 'success')
   }
 
   const sorted = [...meetings].sort((a, b) => b.createdAt - a.createdAt)
@@ -146,6 +156,13 @@ export function MeetingListScreen({ onBack }: OverlayScreenProps) {
           }}
         />
       </Page>
+
+      <NameRecordingModal
+        open={!!pendingImport}
+        initialName={pendingImport?.name ?? ''}
+        onCancel={() => setPendingImport(null)}
+        onSave={saveImport}
+      />
 
       {/* bottom action bar — centered camcorder-style start-record button */}
       {!searching && (

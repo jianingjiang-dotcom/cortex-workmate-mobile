@@ -243,6 +243,10 @@ export interface Meeting {
   uploadProgress?: number // 0–100 while uploading
   uploadFailReason?: string // i18n key (e.g. 'meet.upload.interrupted')
 }
+// NOTE: 转译 ("transcribe") is one unified action that internally does cloud-upload +
+// transcription. Its whole lifecycle rides the single `status` field — 'analyzing' is
+// shown as 转译中 (with analyzeProgress), 'failed' as 转译失败. There is no separate
+// upload status: upload is just the first stage of an 'analyzing' run.
 
 // ---- Account ---------------------------------------------------------------
 
@@ -321,6 +325,7 @@ export type ScreenName =
   | 'recording'
   | 'persona'
   | 'profile' // personal info center (account id + edit name/avatar)
+  | 'about' // app version / check-for-update
   | 'history' // normal-mode chat history (projects + sessions)
   | 'chatSearch' // search the Workmate continuous history
   | 'chatFavorites' // saved/bookmarked Workmate replies
