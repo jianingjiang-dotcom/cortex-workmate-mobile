@@ -195,8 +195,8 @@ export function MeetingDetailScreen({ params, onBack }: OverlayScreenProps) {
 
           <div className="flex items-center justify-center gap-8 mt-2">
             <button onClick={() => setPos((p) => clamp(p - 15000, 0, duration))} className="text-label-secondary active:opacity-50 flex flex-col items-center">
-              <RotateCcw size={26} />
-              <span className="text-[12px] -mt-0.5 text-label-secondary">15</span>
+              <RotateCcw size={26} strokeWidth={1.75} />
+              <span className="text-[12px] mt-1 text-label-secondary">15</span>
             </button>
             <button
               onClick={() => setPlaying((p) => !p)}
@@ -205,8 +205,8 @@ export function MeetingDetailScreen({ params, onBack }: OverlayScreenProps) {
               {playing ? <Pause size={26} fill="currentColor" /> : <Play size={26} fill="currentColor" className="ml-0.5" />}
             </button>
             <button onClick={() => setPos((p) => clamp(p + 15000, 0, duration))} className="text-label-secondary active:opacity-50 flex flex-col items-center">
-              <RotateCw size={26} />
-              <span className="text-[12px] -mt-0.5 text-label-secondary">15</span>
+              <RotateCw size={26} strokeWidth={1.75} />
+              <span className="text-[12px] mt-1 text-label-secondary">15</span>
             </button>
           </div>
 
@@ -398,7 +398,7 @@ export function MeetingDetailScreen({ params, onBack }: OverlayScreenProps) {
                 <button
                   key={key}
                   onClick={() => setTpl(key)}
-                  className="w-full flex items-center gap-3 px-4 py-3 text-left active:bg-black/[0.04]"
+                  className="w-full flex items-center gap-3 py-3 text-left active:bg-black/[0.04]"
                 >
                   <div className="flex-1 min-w-0">
                     <div className="text-[16px] text-label-primary">{t('meet.template.' + key)}</div>
@@ -421,14 +421,14 @@ export function MeetingDetailScreen({ params, onBack }: OverlayScreenProps) {
           )}
 
           {/* optional background note — gives the AI more context for the summary */}
-          <div className="mt-3 px-4">
+          <div className="mt-3">
             <div className="pb-1.5 text-[14px] font-medium text-label-secondary">{t('meet.template.note')}</div>
             <textarea
               value={note}
               onChange={(e) => setNote(e.target.value)}
               placeholder={t('meet.template.note.ph')}
               rows={2}
-              className="w-full rounded-ios-lg bg-ios-gray6 px-3 py-2.5 text-[16px] leading-snug outline-none resize-none placeholder:text-label-tertiary"
+              className="w-full rounded-ios-lg bg-surface border border-input px-3 py-2.5 text-[16px] leading-snug outline-none resize-none placeholder:text-label-tertiary"
             />
           </div>
         </div>
