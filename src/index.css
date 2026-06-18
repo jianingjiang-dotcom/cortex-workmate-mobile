@@ -82,11 +82,6 @@
     -webkit-tap-highlight-color: transparent;
   }
 
-  /* Cortex iconography: line icons render at 1.5px stroke (overrides Lucide's 2px attr) */
-  svg.lucide {
-    stroke-width: 1.5px;
-  }
-
   html,
   body,
   #root {
@@ -126,6 +121,7 @@
     -webkit-user-select: text;
     user-select: text;
   }
+
 }
 
 @layer components {
@@ -313,4 +309,13 @@
   height: 1px;
   background: var(--divider);
   pointer-events: none;
+}
+
+/* DS [LOCKED]: line icons are a single 1.5px stroke — never mixed weights.
+   Top-level (not @layer base, which didn't take effect) so it reliably
+   overrides Lucide's default 2px attribute and any per-icon strokeWidth.
+   Filled glyphs (fill=currentColor — the AI sparkle, solid toast pause/play)
+   are excluded so they stay solid rather than gaining an outline. */
+svg.lucide:not([fill='currentColor']) {
+  stroke-width: 1.5px;
 }
