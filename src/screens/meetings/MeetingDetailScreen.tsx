@@ -271,7 +271,7 @@ export function MeetingDetailScreen({ params, onBack }: OverlayScreenProps) {
                             </span>
                             <span className="text-[12px] text-label-tertiary tabular-nums">{formatClock(seg.startMs)}</span>
                           </div>
-                          <div className={cn('text-[16px] leading-relaxed', active ? 'text-label-primary font-medium' : 'text-label-primary/85')}>
+                          <div className={cn('text-[16px] leading-normal', active ? 'text-label-primary font-medium' : 'text-label-primary/85')}>
                             {qd ? <Highlight text={seg.text} query={query} /> : seg.text}
                           </div>
                         </button>
