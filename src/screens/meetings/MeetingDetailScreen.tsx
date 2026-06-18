@@ -200,7 +200,7 @@ export function MeetingDetailScreen({ params, onBack }: OverlayScreenProps) {
             </button>
             <button
               onClick={() => setPlaying((p) => !p)}
-              className="w-14 h-14 rounded-full flex items-center justify-center text-white press bg-brand-primary"
+              className="w-14 h-14 rounded-full flex items-center justify-center text-label-primary press bg-ios-gray5"
             >
               {playing ? <Pause size={26} fill="currentColor" /> : <Play size={26} fill="currentColor" className="ml-0.5" />}
             </button>
@@ -210,7 +210,7 @@ export function MeetingDetailScreen({ params, onBack }: OverlayScreenProps) {
             </button>
           </div>
 
-          <div className="flex items-center justify-center gap-3 mt-2.5">
+          <div className="flex items-center justify-center gap-4 mt-4">
             <span className="text-[12px] text-label-tertiary tabular-nums">
               {formatDateTime(meeting.createdAt, lang)} · {formatDuration(meeting.durationMs, lang)}
             </span>
