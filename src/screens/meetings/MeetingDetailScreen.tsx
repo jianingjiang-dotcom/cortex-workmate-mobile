@@ -306,7 +306,7 @@ export function MeetingDetailScreen({ params, onBack }: OverlayScreenProps) {
             </div>
           </>
         ) : (
-          <div className="flex-1 min-h-0">
+          <div className="flex-1 min-h-0 pb-12">
             <NonDone
               meeting={meeting}
               failure={failureText}
@@ -472,10 +472,7 @@ function NonDone({
     const reason = meeting.uploadFailReason
     return (
       <div className="flex flex-col items-center justify-center h-full px-10 text-center">
-        <div
-          className="w-[72px] h-[72px] rounded-[20px] flex items-center justify-center mb-4"
-          style={{ background: `${solidFor('sunset')}1A`, color: solidFor('sunset') }}
-        >
+        <div className="w-[72px] h-[72px] rounded-[20px] flex items-center justify-center mb-4 bg-ios-gray5 text-label-secondary">
           <CloudOff size={30} />
         </div>
         <div className="text-[16px] font-semibold">{t('meet.upload.failed')}</div>
@@ -505,13 +502,7 @@ function NonDone({
   }
   return (
     <div className="flex flex-col items-center justify-center h-full px-10 text-center">
-      <div
-        className={cn(
-          'w-[72px] h-[72px] rounded-[20px] flex items-center justify-center mb-4',
-          status === 'failed' ? '' : 'bg-ios-gray5 text-label-secondary',
-        )}
-        style={status === 'failed' ? { background: `${solidFor('sunset')}1A`, color: solidFor('sunset') } : undefined}
-      >
+      <div className="w-[72px] h-[72px] rounded-[20px] flex items-center justify-center mb-4 bg-ios-gray5 text-label-secondary">
         <AudioLines size={30} />
       </div>
       <div className="text-[16px] font-semibold">

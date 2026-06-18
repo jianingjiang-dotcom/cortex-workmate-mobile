@@ -492,9 +492,9 @@ export const STRINGS: Record<Lang, Dict> = {
     // ---- assistant hub ----
     'hub.title': '助手',
     'hub.subtitle': 'Workmate 工作台',
-    'hub.enterChat': '进入对话',
+    'hub.enterChat': '有问必答，随时待命',
     'hub.tasks': '定时任务',
-    'hub.tasks.desc': '托付给 Workmate 自动执行的周期事项',
+    'hub.tasks.desc': '托付执行的周期性事项',
     'hub.meetings': '会议记录',
     'hub.meetings.desc': '录音转写与会议纪要',
     'hub.persona': 'Workmate 人设',
@@ -1057,9 +1057,9 @@ export const STRINGS: Record<Lang, Dict> = {
     // ---- assistant hub ----
     'hub.title': 'Assistant',
     'hub.subtitle': 'Workmate workspace',
-    'hub.enterChat': 'Enter chat',
+    'hub.enterChat': 'Ask anything, anytime',
     'hub.tasks': 'Scheduled Tasks',
-    'hub.tasks.desc': 'Recurring work you hand off to Workmate',
+    'hub.tasks.desc': 'Recurring work you hand off',
     'hub.meetings': 'Meetings',
     'hub.meetings.desc': 'Recording, transcription and notes',
     'hub.persona': 'Workmate Persona',
