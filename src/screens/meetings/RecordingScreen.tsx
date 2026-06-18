@@ -6,7 +6,7 @@ import { useLang, useT } from '../../i18n'
 import { CenterModal } from '../../components/ui/Sheet'
 import { BackButton } from '../../components/Page'
 import { formatDateTime } from '../../lib/time'
-import { gradientFor, solidFor } from '../../lib/util'
+import { gradientFor } from '../../lib/util'
 
 // waveform geometry
 const BAR_W = 3
@@ -260,8 +260,8 @@ export function RecordingScreen({ onBack }: OverlayScreenProps) {
 
       {phase === 'intro' && (
         <div className="absolute inset-0 flex flex-col items-center justify-center px-9 text-center">
-          <div className="w-20 h-20 rounded-[24px] flex items-center justify-center mb-6" style={{ background: solidFor('sunset') }}>
-            <Mic size={36} className="text-white" />
+          <div className="w-[72px] h-[72px] rounded-[20px] bg-ios-gray6 flex items-center justify-center mb-6">
+            <Mic size={30} className="text-label-secondary" />
           </div>
           <h2 className="text-[22px] font-bold text-label-primary">{t('meet.rec.permTitle')}</h2>
           <p className="text-[14px] text-label-secondary mt-2.5 leading-relaxed">{t('meet.rec.permBody')}</p>
@@ -273,8 +273,8 @@ export function RecordingScreen({ onBack }: OverlayScreenProps) {
 
       {phase === 'denied' && (
         <div className="absolute inset-0 flex flex-col items-center justify-center px-9 text-center">
-          <div className="w-20 h-20 rounded-[24px] bg-ios-gray6 flex items-center justify-center mb-6">
-            <Mic size={36} className="text-label-tertiary" />
+          <div className="w-[72px] h-[72px] rounded-[20px] bg-ios-gray6 flex items-center justify-center mb-6">
+            <Mic size={30} className="text-label-tertiary" />
           </div>
           <h2 className="text-[22px] font-bold text-label-primary">{t('meet.rec.permDenied')}</h2>
           <p className="text-[14px] text-label-secondary mt-2.5 leading-relaxed">{t('meet.rec.permDeniedBody')}</p>
