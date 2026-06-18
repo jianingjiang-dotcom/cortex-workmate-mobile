@@ -70,7 +70,7 @@ export function ProfileScreen({ onBack }: OverlayScreenProps) {
         <button
           onClick={save}
           disabled={!dirty}
-          className={cn('text-[17px] font-semibold px-2', dirty ? 'text-ios-blue active:opacity-50' : 'text-label-tertiary')}
+          className={cn('text-[16px] font-semibold px-2', dirty ? 'text-ios-blue active:opacity-50' : 'text-label-tertiary')}
         >
           {t('common.save')}
         </button>
@@ -88,7 +88,7 @@ export function ProfileScreen({ onBack }: OverlayScreenProps) {
 
       {/* name (editable) */}
       <div className="px-4">
-        <div className="px-1 pb-1.5 text-[13px] font-medium text-label-secondary">{t('profile.name')}</div>
+        <div className="px-1 pb-1.5 text-[14px] font-medium text-label-secondary">{t('profile.name')}</div>
         <div className="bg-surface rounded-ios-lg px-3.5 py-3 border border-divider">
           <input
             value={name}

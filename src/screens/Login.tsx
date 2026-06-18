@@ -58,7 +58,7 @@ export function Login() {
           <button
             onClick={handleLogin}
             disabled={loading}
-            className="w-full h-[54px] rounded-ios-lg bg-brand-primary text-white flex items-center justify-center gap-3 text-[17px] font-semibold press disabled:opacity-70 active:opacity-90"
+            className="w-full h-[54px] rounded-ios-lg bg-brand-primary text-white flex items-center justify-center gap-3 text-[16px] font-semibold press disabled:opacity-70 active:opacity-90"
           >
             {loading ? (
               <>

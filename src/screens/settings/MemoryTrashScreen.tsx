@@ -41,15 +41,15 @@ export function MemoryTrashScreen({ onBack }: OverlayScreenProps) {
         </div>
       ) : (
         <>
-          <div className="px-5 pt-1 pb-2 text-[13px] text-label-secondary leading-snug">{t('memory.trash.hint')}</div>
+          <div className="px-5 pt-1 pb-2 text-[14px] text-label-secondary leading-snug">{t('memory.trash.hint')}</div>
           <div className="px-4">
             <div className="list-group divide-y divide-divider">
               {deleted.map((m) => (
                 <div key={m.id} className="flex items-center gap-2 px-4 py-3.5">
-                  <p className="flex-1 text-[15px] leading-relaxed text-label-secondary">{m.text}</p>
+                  <p className="flex-1 text-[16px] leading-relaxed text-label-secondary">{m.text}</p>
                   <button
                     onClick={() => restore(m)}
-                    className="px-3 h-8 rounded-full bg-brand-primary/10 text-brand-violet text-[13px] font-semibold active:opacity-60 shrink-0 flex items-center gap-1"
+                    className="px-3 h-8 rounded-full bg-brand-primary/10 text-brand-violet text-[14px] font-semibold active:opacity-60 shrink-0 flex items-center gap-1"
                   >
                     <RotateCcw size={14} />
                     {t('memory.restore')}

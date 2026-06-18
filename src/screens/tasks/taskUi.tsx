@@ -77,7 +77,7 @@ export function RunRecordRow({ run, last }: { run: RunRecord; last?: boolean }) 
           <div className="text-[12px] text-label-tertiary shrink-0">{formatDateTime(run.startedAt, lang)}</div>
         </div>
         {(run.resultSummary || run.failureReason) && (
-          <div className={cn('text-[13px] mt-0.5 leading-snug', run.failureReason ? 'text-ios-red' : 'text-label-secondary')}>
+          <div className={cn('text-[14px] mt-0.5 leading-snug', run.failureReason ? 'text-ios-red' : 'text-label-secondary')}>
             {run.failureReason || run.resultSummary}
           </div>
         )}
@@ -90,7 +90,7 @@ export function RunRecordRow({ run, last }: { run: RunRecord; last?: boolean }) 
           {run.conversationId && (
             <button
               onClick={() => push('conversation', { id: run.conversationId })}
-              className="text-[12.5px] font-medium text-ios-blue flex items-center active:opacity-60"
+              className="text-[12px] font-medium text-ios-blue flex items-center active:opacity-60"
             >
               {t('tasks.run.openConversation')}
               <ChevronRight size={13} />

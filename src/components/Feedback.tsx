@@ -21,13 +21,13 @@ import { useT } from '../i18n'
 // Per-kind colour + glyph. Colours are on-brand DS tokens: green success, link-blue
 // info/loading (NOT the purple accent), red error, amber warning, neutral grey for the
 // whole "neutral" family — which is differentiated by ICON, not colour.
-const TOAST_STYLE: Record<ToastKind, { color: string; Icon: typeof Check; spin?: boolean; sw?: number }> = {
+const TOAST_STYLE: Record<ToastKind, { color: string; Icon: typeof Check; spin?: boolean; sw?: number; fill?: boolean }> = {
   success: { color: '#22c55e', Icon: Check, sw: 3 },
   neutral: { color: '#8e8e93', Icon: Info },
   delete: { color: '#8e8e93', Icon: Trash2 },
   purge: { color: '#8e8e93', Icon: Trash },
-  pause: { color: '#8e8e93', Icon: Pause },
-  resume: { color: '#8e8e93', Icon: Play },
+  pause: { color: '#8e8e93', Icon: Pause, fill: true },
+  resume: { color: '#8e8e93', Icon: Play, fill: true },
   run: { color: '#8e8e93', Icon: Zap },
   readAll: { color: '#8e8e93', Icon: CheckCheck, sw: 3 },
   loading: { color: '#407cff', Icon: Loader2, spin: true },
@@ -58,7 +58,12 @@ export function ToastHost() {
                 className="w-5 h-5 rounded-full flex items-center justify-center text-white shrink-0"
                 style={{ background: s.color }}
               >
-                <Icon size={13} strokeWidth={s.sw || 2.4} className={s.spin ? 'animate-spin' : undefined} />
+                <Icon
+                  size={13}
+                  strokeWidth={s.fill ? 0 : s.sw || 2.4}
+                  fill={s.fill ? 'currentColor' : 'none'}
+                  className={s.spin ? 'animate-spin' : undefined}
+                />
               </span>
               <span className="text-[14px] font-medium text-label-primary truncate">{t.message}</span>
             </motion.div>
@@ -103,9 +108,9 @@ export function ConfirmHost() {
               transition={{ duration: 0.16 }}
             >
               <div className="px-5 pt-5 pb-4 text-center">
-                <div className="text-[17px] font-semibold text-label-primary">{dialog.title}</div>
+                <div className="text-[16px] font-semibold text-label-primary">{dialog.title}</div>
                 {dialog.message && (
-                  <div className="text-[13px] text-label-secondary mt-1.5 leading-snug">{dialog.message}</div>
+                  <div className="text-[14px] text-label-secondary mt-1.5 leading-snug">{dialog.message}</div>
                 )}
               </div>
               {(() => {
@@ -120,7 +125,7 @@ export function ConfirmHost() {
                       dialog.onConfirm()
                     }}
                     className={cn(
-                      'h-[44px] text-[17px] font-semibold active:bg-black/[0.04]',
+                      'h-[44px] text-[16px] font-semibold active:bg-black/[0.04]',
                       dialog.danger ? 'text-ios-red' : 'text-brand-primary',
                     )}
                   >
@@ -128,7 +133,7 @@ export function ConfirmHost() {
                   </button>
                 )
                 const cancelBtn = (
-                  <button onClick={close} className="h-[44px] text-[17px] text-label-primary active:bg-black/[0.04]">
+                  <button onClick={close} className="h-[44px] text-[16px] text-label-primary active:bg-black/[0.04]">
                     {cancelLabel}
                   </button>
                 )

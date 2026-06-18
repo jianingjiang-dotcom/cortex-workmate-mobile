@@ -106,7 +106,7 @@ export function ChatInput({
           ) : (
             <div className="w-16 h-16 rounded-ios bg-ios-gray6 flex flex-col items-center justify-center px-1">
               <FileText size={20} className="text-label-secondary" />
-              <span className="text-[9px] text-label-secondary truncate max-w-full mt-0.5">{a.name}</span>
+              <span className="text-[12px] text-label-secondary truncate max-w-full mt-0.5">{a.name}</span>
             </div>
           )}
           <button
@@ -129,7 +129,7 @@ export function ChatInput({
         <div className="flex items-center gap-1.5 text-[12px] font-semibold text-brand-primary">
           <span className="truncate">{quote.taskName}</span>
         </div>
-        <div className="text-[12.5px] text-label-secondary leading-snug line-clamp-2 mt-0.5 whitespace-pre-wrap break-words">{quote.summary}</div>
+        <div className="text-[12px] text-label-secondary leading-snug line-clamp-2 mt-0.5 whitespace-pre-wrap break-words">{quote.summary}</div>
       </div>
       <button
         onClick={onClearQuote}

@@ -88,7 +88,7 @@ export function ChatTab() {
           <div className="w-[68px] h-[68px] rounded-[20px] bg-brand-primary flex items-center justify-center text-white mb-4">
             <Sparkles size={30} />
           </div>
-          <div className="text-[17px] font-semibold">{t('chat.normal.greetingTitle')}</div>
+          <div className="text-[16px] font-semibold">{t('chat.normal.greetingTitle')}</div>
           <div className="text-[14px] text-label-secondary mt-1.5 leading-snug max-w-[260px]">
             {t('chat.normal.greetingBody')}
           </div>

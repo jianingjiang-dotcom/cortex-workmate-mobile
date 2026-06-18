@@ -205,7 +205,7 @@ export function NotificationsScreen({ onBack }: OverlayScreenProps) {
       </div>
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-2">
-          <div className="flex-1 min-w-0 text-[15px] font-medium leading-snug truncate">{n.title}</div>
+          <div className="flex-1 min-w-0 text-[16px] font-medium leading-snug truncate">{n.title}</div>
           <span className="text-[12px] text-label-secondary shrink-0">{formatNotifTime(n.createdAt, lang)}</span>
         </div>
         <div className="mt-0.5">
@@ -243,7 +243,7 @@ export function NotificationsScreen({ onBack }: OverlayScreenProps) {
               >
                 <span
                   className={cn(
-                    'text-[15px] transition-colors',
+                    'text-[16px] transition-colors',
                     active ? 'text-brand-primary font-semibold' : 'text-label-secondary font-medium',
                   )}
                 >
@@ -280,7 +280,7 @@ export function NotificationsScreen({ onBack }: OverlayScreenProps) {
         <div className="pt-2 pb-10">
           {groups.map((g) => (
             <div key={g.key} className="px-4 mb-2">
-              <div className="px-1 pb-1 pt-1 text-[13px] font-medium text-label-secondary">{g.label}</div>
+              <div className="px-1 pb-1 pt-1 text-[14px] font-medium text-label-secondary">{g.label}</div>
               <div className="list-group divide-y divide-divider">
                 {g.items.map((n) => (
                   <Row key={n.id} n={n} />

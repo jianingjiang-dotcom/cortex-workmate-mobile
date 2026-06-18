@@ -19,7 +19,7 @@ export function StatusBar({ variant = 'dark' }: { variant?: 'dark' | 'light' }) 
       className="absolute top-0 left-0 right-0 z-[60] h-[54px] flex items-end justify-between px-7 pb-2 pointer-events-none select-none"
       style={{ color }}
     >
-      <div className="text-[15px] font-semibold tracking-tight tabular-nums">{time}</div>
+      <div className="text-[16px] font-semibold tracking-tight tabular-nums">{time}</div>
       {/* Dynamic Island */}
       <div className="absolute left-1/2 top-[11px] -translate-x-1/2 w-[120px] h-[34px] rounded-full bg-black" />
       <div className="flex items-center gap-1.5">

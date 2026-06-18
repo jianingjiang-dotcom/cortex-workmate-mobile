@@ -46,7 +46,7 @@ function HeroTwo() {
       {/* AI reply — tucked BEHIND the tile (lower layer, smaller, softer) */}
       <motion.div
         {...float(1)}
-        className="absolute bottom-1 -left-2 z-0 bg-surface rounded-2xl rounded-bl-md shadow-ios px-3 py-2 text-[12.5px] text-label-secondary scale-90 origin-bottom-left"
+        className="absolute bottom-1 -left-2 z-0 bg-surface rounded-2xl rounded-bl-md shadow-ios px-3 py-2 text-[12px] text-label-secondary scale-90 origin-bottom-left"
       >
         {t('onb.bubble.ai')}
       </motion.div>
@@ -65,7 +65,7 @@ function HeroTwo() {
       {/* user message — IN FRONT, overlapping the tile (top layer, strong shadow) */}
       <motion.div
         {...float(0.5)}
-        className="absolute top-1 -right-1 z-20 bg-surface rounded-2xl rounded-br-md shadow-ios-lg px-3.5 py-2.5 text-[13px] font-medium"
+        className="absolute top-1 -right-1 z-20 bg-surface rounded-2xl rounded-br-md shadow-ios-lg px-3.5 py-2.5 text-[14px] font-medium"
       >
         {t('onb.bubble.user')}
       </motion.div>
@@ -103,8 +103,8 @@ function HeroThree() {
               {f.icon}
             </div>
             <div className="min-w-0">
-              <div className="text-[15px] font-semibold truncate">{f.title}</div>
-              <div className="text-[13px] text-label-secondary truncate">{f.desc}</div>
+              <div className="text-[16px] font-semibold truncate">{f.title}</div>
+              <div className="text-[14px] text-label-secondary truncate">{f.desc}</div>
             </div>
           </motion.div>
         )
@@ -163,8 +163,8 @@ export function Onboarding() {
             <div key={i} className="snap-center shrink-0 w-full h-full flex flex-col items-center justify-center px-9">
               <div className="flex-1 flex items-center justify-center">{p.hero}</div>
               <div className="text-center pb-6 min-h-[150px]">
-                <h2 className="text-[26px] font-bold tracking-tight">{p.title}</h2>
-                <p className="text-[15px] text-label-secondary mt-3 leading-relaxed max-w-[300px]">{p.body}</p>
+                <h2 className="text-[24px] font-bold tracking-tight">{p.title}</h2>
+                <p className="text-[16px] text-label-secondary mt-3 leading-relaxed max-w-[300px]">{p.body}</p>
               </div>
             </div>
           ))}

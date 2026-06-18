@@ -91,7 +91,7 @@ export function MemoryListScreen({ onBack }: OverlayScreenProps) {
           <div className="list-group divide-y divide-divider">
             {filtered.map((m) => (
               <div key={m.id} className="flex items-start gap-2 px-4 py-3.5">
-                <p className="flex-1 text-[15px] leading-relaxed text-label-primary">
+                <p className="flex-1 text-[16px] leading-relaxed text-label-primary">
                   {q ? <Highlight text={m.text} query={query} /> : m.text}
                 </p>
                 <button
