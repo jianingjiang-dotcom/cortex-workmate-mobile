@@ -217,8 +217,8 @@ function HeaderBar({ title, onBack }: { title: string; onBack?: () => void }) {
     <div className="relative h-7 flex items-center justify-center">
       {onBack && (
         <button onClick={onBack} className="absolute left-0 flex items-center text-label-primary active:opacity-50">
-          <ChevronLeft size={24} strokeWidth={2.2} />
-          <span className="text-[16px] font-medium -ml-0.5">{t('common.back')}</span>
+          <ChevronLeft size={24} />
+          <span className="text-[16px] font-normal -ml-0.5">{t('common.back')}</span>
         </button>
       )}
       <span className="text-[16px] font-semibold">{title}</span>
