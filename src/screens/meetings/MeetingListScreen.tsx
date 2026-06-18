@@ -1,12 +1,11 @@
 import { useRef, useState } from 'react'
-import { AudioLines, Search, Upload } from 'lucide-react'
+import { AudioLines, Import, Search, Upload } from 'lucide-react'
 import type { Meeting, OverlayScreenProps } from '../../lib/types'
 import { useStore } from '../../store/useStore'
 import { useLang, useT } from '../../i18n'
 import { Page } from '../../components/Page'
 import { EmptyState, Highlight, IconButton, SearchField } from '../../components/ui/atoms'
 import { dayBucket, formatDuration, formatTimeOnly } from '../../lib/time'
-import { solidFor } from '../../lib/util'
 import { MeetingStatusPill } from './meetingUi'
 
 export function MeetingListScreen({ onBack }: OverlayScreenProps) {
@@ -52,14 +51,8 @@ export function MeetingListScreen({ onBack }: OverlayScreenProps) {
       onClick={() => push('meetingDetail', { id: m.id })}
       className="w-full flex items-center gap-3 px-4 py-3 text-left active:bg-black/[0.03]"
     >
-      <div
-        className="w-11 h-11 rounded-[12px] flex items-center justify-center shrink-0"
-        style={{
-          background: `${solidFor(m.source === 'import' ? 'mint' : 'ocean')}1A`,
-          color: solidFor(m.source === 'import' ? 'mint' : 'ocean'),
-        }}
-      >
-        <AudioLines size={20} />
+      <div className="w-11 h-11 rounded-[12px] flex items-center justify-center shrink-0 bg-brand-primary/10 text-brand-primary">
+        {m.source === 'import' ? <Import size={20} /> : <AudioLines size={20} />}
       </div>
       <div className="flex-1 min-w-0">
         <div className="text-[16px] font-semibold truncate">
