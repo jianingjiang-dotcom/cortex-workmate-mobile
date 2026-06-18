@@ -63,12 +63,14 @@ export function solidFor(key: string | undefined): string {
   return SOLIDS[key || 'brand'] || SOLIDS.brand
 }
 
-/** Deterministic speaker colors for transcript segments. */
+/** Deterministic speaker colors for transcript segments.
+ *  No purple — that's reserved for the brand accent (transcript toggle, buttons),
+ *  so speaker labels never get confused with it. */
 export const SPEAKER_COLORS = [
   { text: '#407CFF', bg: 'rgba(64,124,255,0.10)', dot: '#407CFF' },
-  { text: '#CC79FF', bg: 'rgba(204,121,255,0.10)', dot: '#CC79FF' },
-  { text: '#FFA03B', bg: 'rgba(255,160,59,0.10)', dot: '#FFA03B' },
   { text: '#22C55E', bg: 'rgba(34,197,94,0.10)', dot: '#22C55E' },
+  { text: '#FFA03B', bg: 'rgba(255,160,59,0.10)', dot: '#FFA03B' },
+  { text: '#14B8A6', bg: 'rgba(20,184,166,0.10)', dot: '#14B8A6' },
 ]
 
 export function speakerColor(index: number) {

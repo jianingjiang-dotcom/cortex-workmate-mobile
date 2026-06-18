@@ -54,7 +54,7 @@ export function TaskListScreen({ onBack }: OverlayScreenProps) {
             )}
           </div>
           <div className="mt-0.5">
-            <span className="inline-block px-2 py-0.5 rounded-md bg-ios-gray6 text-label-secondary font-medium text-[12.5px]">
+            <span className="inline-block px-2 py-0.5 rounded-md bg-brand-primary/10 text-brand-primary font-medium text-[12px]">
               {scheduleHuman(task.schedule, lang)}
             </span>
           </div>

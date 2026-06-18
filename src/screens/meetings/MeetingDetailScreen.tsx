@@ -194,9 +194,9 @@ export function MeetingDetailScreen({ params, onBack }: OverlayScreenProps) {
           </div>
 
           <div className="flex items-center justify-center gap-8 mt-2">
-            <button onClick={() => setPos((p) => clamp(p - 15000, 0, duration))} className="text-label-primary active:opacity-50 flex flex-col items-center">
+            <button onClick={() => setPos((p) => clamp(p - 15000, 0, duration))} className="text-label-secondary active:opacity-50 flex flex-col items-center">
               <RotateCcw size={26} />
-              <span className="text-[12px] -mt-0.5 text-label-tertiary font-light">15</span>
+              <span className="text-[12px] -mt-0.5 text-label-secondary">15</span>
             </button>
             <button
               onClick={() => setPlaying((p) => !p)}
@@ -204,9 +204,9 @@ export function MeetingDetailScreen({ params, onBack }: OverlayScreenProps) {
             >
               {playing ? <Pause size={26} fill="currentColor" /> : <Play size={26} fill="currentColor" className="ml-0.5" />}
             </button>
-            <button onClick={() => setPos((p) => clamp(p + 15000, 0, duration))} className="text-label-primary active:opacity-50 flex flex-col items-center">
+            <button onClick={() => setPos((p) => clamp(p + 15000, 0, duration))} className="text-label-secondary active:opacity-50 flex flex-col items-center">
               <RotateCw size={26} />
-              <span className="text-[12px] -mt-0.5 text-label-tertiary font-light">15</span>
+              <span className="text-[12px] -mt-0.5 text-label-secondary">15</span>
             </button>
           </div>
 
@@ -421,8 +421,8 @@ export function MeetingDetailScreen({ params, onBack }: OverlayScreenProps) {
           )}
 
           {/* optional background note — gives the AI more context for the summary */}
-          <div className="mt-3 px-1">
-            <div className="px-1 pb-1.5 text-[14px] font-medium text-label-secondary">{t('meet.template.note')}</div>
+          <div className="mt-3 px-4">
+            <div className="pb-1.5 text-[14px] font-medium text-label-secondary">{t('meet.template.note')}</div>
             <textarea
               value={note}
               onChange={(e) => setNote(e.target.value)}
