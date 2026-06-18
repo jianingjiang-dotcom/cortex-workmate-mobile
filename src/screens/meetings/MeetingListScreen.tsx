@@ -54,7 +54,7 @@ export function MeetingListScreen({ onBack }: OverlayScreenProps) {
     >
       <div
         className="w-11 h-11 rounded-[13px] flex items-center justify-center text-white shrink-0"
-        style={{ background: solidFor(m.source === 'import' ? 'mint' : 'violet') }}
+        style={{ background: solidFor(m.source === 'import' ? 'mint' : 'ocean') }}
       >
         <AudioLines size={20} />
       </div>
@@ -62,7 +62,7 @@ export function MeetingListScreen({ onBack }: OverlayScreenProps) {
         <div className="text-[16px] font-semibold truncate">
           {q ? <Highlight text={m.title} query={query} /> : m.title}
         </div>
-        <div className="text-[13px] text-label-secondary tabular-nums">
+        <div className="text-[14px] text-label-secondary tabular-nums">
           {formatTimeOnly(m.createdAt)} · {formatDuration(m.durationMs, lang)}
         </div>
       </div>
@@ -122,7 +122,7 @@ export function MeetingListScreen({ onBack }: OverlayScreenProps) {
               <div className="mt-1">
                 {grouped.map((g) => (
                   <div key={g.b} className="px-4 mb-4">
-                    <div className="px-1 pb-1.5 text-[13px] font-medium text-label-secondary">{t(`meet.group.${g.b}`)}</div>
+                    <div className="px-1 pb-1.5 text-[14px] font-medium text-label-secondary">{t(`meet.group.${g.b}`)}</div>
                     <div className="list-group divide-y divide-divider">
                       {g.items.map((m) => (
                         <Row key={m.id} m={m} />

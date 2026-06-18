@@ -263,7 +263,7 @@ export function RecordingScreen({ onBack }: OverlayScreenProps) {
           <div className="w-[72px] h-[72px] rounded-[20px] bg-ios-gray6 flex items-center justify-center mb-6">
             <Mic size={30} className="text-label-secondary" />
           </div>
-          <h2 className="text-[22px] font-bold text-label-primary">{t('meet.rec.permTitle')}</h2>
+          <h2 className="text-[20px] font-bold text-label-primary">{t('meet.rec.permTitle')}</h2>
           <p className="text-[14px] text-label-secondary mt-2.5 leading-relaxed">{t('meet.rec.permBody')}</p>
           <button onClick={requestMic} className="w-full h-13 mt-8 rounded-ios-lg bg-brand-primary text-white font-semibold text-[16px] py-3.5 press">
             {t('meet.rec.permAllow')}
@@ -276,12 +276,12 @@ export function RecordingScreen({ onBack }: OverlayScreenProps) {
           <div className="w-[72px] h-[72px] rounded-[20px] bg-ios-gray6 flex items-center justify-center mb-6">
             <Mic size={30} className="text-label-tertiary" />
           </div>
-          <h2 className="text-[22px] font-bold text-label-primary">{t('meet.rec.permDenied')}</h2>
+          <h2 className="text-[20px] font-bold text-label-primary">{t('meet.rec.permDenied')}</h2>
           <p className="text-[14px] text-label-secondary mt-2.5 leading-relaxed">{t('meet.rec.permDeniedBody')}</p>
           <button onClick={() => startRecording(true)} className="w-full h-13 mt-8 rounded-ios-lg bg-brand-primary text-white font-semibold text-[16px] py-3.5 press">
             {t('meet.rec.useDemo')}
           </button>
-          <button onClick={onBack} className="mt-3 text-[15px] text-label-secondary font-medium active:opacity-60 flex items-center gap-1.5">
+          <button onClick={onBack} className="mt-3 text-[16px] text-label-secondary font-medium active:opacity-60 flex items-center gap-1.5">
             <Upload size={15} />
             {t('meet.rec.importInstead')}
           </button>
@@ -292,7 +292,7 @@ export function RecordingScreen({ onBack }: OverlayScreenProps) {
         <div className="absolute inset-0 flex flex-col pt-[84px] pb-12">
           {/* timer + status */}
           <div className="text-center">
-            <div className="text-[56px] font-light tabular-nums tracking-tight leading-none">
+            <div className="text-[32px] font-light tabular-nums tracking-tight leading-none">
               <span className="text-label-tertiary">{mm}:</span>
               <span className="text-label-primary">
                 {ss}.{tenth}
@@ -352,13 +352,13 @@ export function RecordingScreen({ onBack }: OverlayScreenProps) {
             onKeyDown={(e) => e.key === 'Enter' && save()}
             placeholder={t('meet.name.ph')}
             autoFocus
-            className="w-full h-11 px-3.5 rounded-ios bg-ios-gray6 text-[15px] outline-none"
+            className="w-full h-11 px-3.5 rounded-ios bg-ios-gray6 text-[16px] outline-none"
           />
           <div className="grid grid-cols-2 gap-2.5 mt-3.5">
-            <button onClick={cancelNaming} className="h-11 rounded-ios-lg bg-ios-gray6 font-semibold text-[15px] press">
+            <button onClick={cancelNaming} className="h-11 rounded-ios-lg bg-ios-gray6 font-semibold text-[16px] press">
               {t('common.cancel')}
             </button>
-            <button onClick={save} className="h-11 rounded-ios-lg text-white font-semibold text-[15px] press bg-brand-primary">
+            <button onClick={save} className="h-11 rounded-ios-lg text-white font-semibold text-[16px] press bg-brand-primary">
               {t('common.save')}
             </button>
           </div>

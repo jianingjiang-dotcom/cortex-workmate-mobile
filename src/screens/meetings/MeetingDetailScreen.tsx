@@ -196,7 +196,7 @@ export function MeetingDetailScreen({ params, onBack }: OverlayScreenProps) {
           <div className="flex items-center justify-center gap-8 mt-2">
             <button onClick={() => setPos((p) => clamp(p - 15000, 0, duration))} className="text-label-primary active:opacity-50 flex flex-col items-center">
               <RotateCcw size={26} />
-              <span className="text-[9px] -mt-0.5">15</span>
+              <span className="text-[12px] -mt-0.5">15</span>
             </button>
             <button
               onClick={() => setPlaying((p) => !p)}
@@ -206,7 +206,7 @@ export function MeetingDetailScreen({ params, onBack }: OverlayScreenProps) {
             </button>
             <button onClick={() => setPos((p) => clamp(p + 15000, 0, duration))} className="text-label-primary active:opacity-50 flex flex-col items-center">
               <RotateCw size={26} />
-              <span className="text-[9px] -mt-0.5">15</span>
+              <span className="text-[12px] -mt-0.5">15</span>
             </button>
           </div>
 
@@ -269,9 +269,9 @@ export function MeetingDetailScreen({ params, onBack }: OverlayScreenProps) {
                             <span className="text-[12px] font-semibold" style={{ color: c.text }}>
                               {seg.speaker}
                             </span>
-                            <span className="text-[11px] text-label-tertiary tabular-nums">{formatClock(seg.startMs)}</span>
+                            <span className="text-[12px] text-label-tertiary tabular-nums">{formatClock(seg.startMs)}</span>
                           </div>
-                          <div className={cn('text-[15px] leading-relaxed', active ? 'text-label-primary font-medium' : 'text-label-primary/85')}>
+                          <div className={cn('text-[16px] leading-relaxed', active ? 'text-label-primary font-medium' : 'text-label-primary/85')}>
                             {qd ? <Highlight text={seg.text} query={query} /> : seg.text}
                           </div>
                         </button>
@@ -357,10 +357,10 @@ export function MeetingDetailScreen({ params, onBack }: OverlayScreenProps) {
             value={renameText}
             onChange={(e) => setRenameText(e.target.value)}
             autoFocus
-            className="w-full h-11 px-3.5 rounded-ios bg-ios-gray6 text-[15px] outline-none"
+            className="w-full h-11 px-3.5 rounded-ios bg-ios-gray6 text-[16px] outline-none"
           />
           <div className="grid grid-cols-2 gap-2.5 mt-3.5">
-            <button onClick={() => setRenameOpen(false)} className="h-10 rounded-ios-lg bg-ios-gray6 font-semibold text-[15px]">
+            <button onClick={() => setRenameOpen(false)} className="h-10 rounded-ios-lg bg-ios-gray6 font-semibold text-[16px]">
               {t('common.cancel')}
             </button>
             <button
@@ -371,7 +371,7 @@ export function MeetingDetailScreen({ params, onBack }: OverlayScreenProps) {
                 }
                 setRenameOpen(false)
               }}
-              className="h-10 rounded-ios-lg text-white font-semibold text-[15px] bg-brand-primary"
+              className="h-10 rounded-ios-lg text-white font-semibold text-[16px] bg-brand-primary"
             >
               {t('common.save')}
             </button>
@@ -402,7 +402,7 @@ export function MeetingDetailScreen({ params, onBack }: OverlayScreenProps) {
                 >
                   <div className="flex-1 min-w-0">
                     <div className="text-[16px] text-label-primary">{t('meet.template.' + key)}</div>
-                    <div className="text-[13px] text-label-secondary mt-0.5">{t('meet.template.' + key + '.desc')}</div>
+                    <div className="text-[14px] text-label-secondary mt-0.5">{t('meet.template.' + key + '.desc')}</div>
                   </div>
                   {on && <Check size={20} className="text-ios-blue shrink-0" strokeWidth={2.5} />}
                 </button>
@@ -413,7 +413,7 @@ export function MeetingDetailScreen({ params, onBack }: OverlayScreenProps) {
           {transcribeMode === 're' && (
             <div className="card mt-3 px-4 py-3 flex items-center gap-3">
               <div className="flex-1 min-w-0">
-                <div className="text-[15px] text-label-primary">{t('meet.retranscribe.regenTranscript')}</div>
+                <div className="text-[16px] text-label-primary">{t('meet.retranscribe.regenTranscript')}</div>
                 <div className="text-[12px] text-label-tertiary mt-0.5 leading-snug">{t('meet.retranscribe.regenHint')}</div>
               </div>
               <Switch checked={regenTranscript} onChange={setRegenTranscript} />
@@ -422,13 +422,13 @@ export function MeetingDetailScreen({ params, onBack }: OverlayScreenProps) {
 
           {/* optional background note — gives the AI more context for the summary */}
           <div className="mt-3 px-1">
-            <div className="px-1 pb-1.5 text-[13px] font-medium text-label-secondary">{t('meet.template.note')}</div>
+            <div className="px-1 pb-1.5 text-[14px] font-medium text-label-secondary">{t('meet.template.note')}</div>
             <textarea
               value={note}
               onChange={(e) => setNote(e.target.value)}
               placeholder={t('meet.template.note.ph')}
               rows={2}
-              className="w-full rounded-ios-lg bg-ios-gray6 px-3 py-2.5 text-[15px] leading-snug outline-none resize-none placeholder:text-label-tertiary"
+              className="w-full rounded-ios-lg bg-ios-gray6 px-3 py-2.5 text-[16px] leading-snug outline-none resize-none placeholder:text-label-tertiary"
             />
           </div>
         </div>
@@ -478,13 +478,13 @@ function NonDone({
         >
           <CloudOff size={30} />
         </div>
-        <div className="text-[17px] font-semibold">{t('meet.upload.failed')}</div>
+        <div className="text-[16px] font-semibold">{t('meet.upload.failed')}</div>
         {reason && (
           <div className="text-[14px] text-ios-red mt-1.5">{reason.startsWith('meet.') ? t(reason) : reason}</div>
         )}
         <button
           onClick={onRetryUpload}
-          className="mt-6 h-11 px-6 rounded-ios-lg text-white font-semibold text-[15px] press bg-brand-primary"
+          className="mt-6 h-11 px-6 rounded-ios-lg text-white font-semibold text-[16px] press bg-brand-primary"
         >
           {t('meet.upload.retry')}
         </button>
@@ -508,13 +508,13 @@ function NonDone({
       <div className="w-[72px] h-[72px] rounded-[20px] flex items-center justify-center text-white mb-4" style={{ background: solidFor(status === 'failed' ? 'sunset' : 'violet') }}>
         <AudioLines size={30} />
       </div>
-      <div className="text-[17px] font-semibold">
+      <div className="text-[16px] font-semibold">
         {status === 'failed' ? t('meet.status.failed') : t('meet.transcript.empty')}
       </div>
       {status === 'failed' && failure && <div className="text-[14px] text-ios-red mt-1.5">{failure}</div>}
       <button
         onClick={onTranscribe}
-        className="mt-6 h-11 px-6 rounded-ios-lg text-white font-semibold text-[15px] press bg-brand-primary"
+        className="mt-6 h-11 px-6 rounded-ios-lg text-white font-semibold text-[16px] press bg-brand-primary"
       >
         {status === 'failed' ? t('meet.retranscribe') : t('meet.transcribe')}
       </button>
