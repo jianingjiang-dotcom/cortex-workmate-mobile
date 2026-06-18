@@ -53,7 +53,9 @@ export function MeetingListScreen({ onBack }: OverlayScreenProps) {
     >
       <div
         className={`w-11 h-11 rounded-[12px] flex items-center justify-center shrink-0 ${
-          m.source === 'import' ? 'bg-ios-gray5 text-label-secondary' : 'bg-brand-primary/10 text-brand-primary'
+          m.source === 'import'
+            ? 'bg-black/[0.06] dark:bg-white/[0.1] text-label-secondary'
+            : 'bg-brand-primary/10 text-brand-primary'
         }`}
       >
         {m.source === 'import' ? <Import size={20} /> : <AudioLines size={20} />}
