@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { CalendarClock, ChevronRight, MoreHorizontal, Pause, Play, Plus, X } from 'lucide-react'
+import { CalendarClock, ChevronDown, ChevronRight, MoreHorizontal, Pause, Play, Plus, X } from 'lucide-react'
 import type { McpServer, OverlayScreenProps, Schedule } from '../../lib/types'
 import { useStore } from '../../store/useStore'
 import { useLang, useT } from '../../i18n'
@@ -199,6 +199,16 @@ function initWeekdays(s?: Schedule): number[] {
   if (s?.weekday != null) return [s.weekday]
   return [1, 3, 5]
 }
+
+type Freq = 'everyday' | 'weekdays' | 'weekends' | 'custom'
+/** Map a weekday set to a named preset (else 'custom'). */
+function freqOf(wd: number[]): Freq {
+  const k = wd.slice().sort((a, b) => a - b).join(',')
+  if (k === '0,1,2,3,4,5,6') return 'everyday'
+  if (k === '1,2,3,4,5') return 'weekdays'
+  if (k === '0,6') return 'weekends'
+  return 'custom'
+}
 function initDates(s?: Schedule): number[] {
   if (s?.kind === 'dates' && s.dates?.length) return s.dates.slice().sort((a, b) => a - b)
   if (s?.kind === 'once') return [combine(Date.now(), s.timeOfDay ?? '09:00')]
@@ -225,6 +235,8 @@ function TaskEditSheet({ open, onClose, taskId }: { open: boolean; onClose: () =
   const [instruction, setInstruction] = useState(task?.instruction ?? '')
   const [mode, setMode] = useState<EditMode>(initMode(task?.schedule))
   const [weekdays, setWeekdays] = useState<number[]>(initWeekdays(task?.schedule))
+  const [freq, setFreq] = useState<Freq>(freqOf(initWeekdays(task?.schedule)))
+  const [freqSheet, setFreqSheet] = useState(false)
   const [time, setTime] = useState(task?.schedule.timeOfDay ?? '09:00')
   const [dates, setDates] = useState<number[]>(initDates(task?.schedule))
   const initIv = minsToUnit(task?.schedule.intervalMinutes ?? 60)
@@ -242,6 +254,7 @@ function TaskEditSheet({ open, onClose, taskId }: { open: boolean; onClose: () =
     setInstruction(task.instruction)
     setMode(initMode(task.schedule))
     setWeekdays(initWeekdays(task.schedule))
+    setFreq(freqOf(initWeekdays(task.schedule)))
     setTime(task.schedule.timeOfDay ?? '09:00')
     setDates(initDates(task.schedule))
     const iv = minsToUnit(task.schedule.intervalMinutes ?? 60)
@@ -251,7 +264,6 @@ function TaskEditSheet({ open, onClose, taskId }: { open: boolean; onClose: () =
   }
 
   const weekdayLabels = lang === 'zh' ? WEEKDAYS_ZH : WEEKDAYS_EN
-  const everyDay = weekdays.length === 7
 
   const toggleWeekday = (i: number) =>
     setWeekdays((prev) => (prev.includes(i) ? prev.filter((d) => d !== i) : [...prev, i].sort((a, b) => a - b)))
@@ -343,32 +355,35 @@ function TaskEditSheet({ open, onClose, taskId }: { open: boolean; onClose: () =
             onChange={(v) => setMode(v)}
           />
 
-          {/* Mode ①: recurring weekday rule (incl. every day) */}
+          {/* Mode ①: recurring rule — frequency preset (dropdown) + custom days */}
           {mode === 'recurring' && (
             <div className="mt-3 space-y-2.5">
-              <div className="flex gap-1">
+              <div className="flex items-center gap-2">
+                <span className="text-[14px] text-label-secondary shrink-0 min-w-[48px]">{t('tasks.edit.repeat')}</span>
                 <button
-                  onClick={() => setWeekdays([0, 1, 2, 3, 4, 5, 6])}
-                  className={cn(
-                    'px-3 h-9 rounded-[8px] text-[12px] font-medium shrink-0',
-                    everyDay ? 'bg-brand-violet text-white' : 'bg-ios-gray6 text-label-secondary',
-                  )}
+                  onClick={() => setFreqSheet(true)}
+                  className="flex-1 h-9 px-3 rounded-ios bg-surface border border-input text-[16px] text-left flex items-center justify-between active:opacity-60"
                 >
-                  {t('tasks.edit.everyDayShortcut')}
+                  <span>{t('tasks.edit.freq.' + freq)}</span>
+                  <ChevronDown size={16} className="text-label-tertiary shrink-0" />
                 </button>
-                {weekdayLabels.map((w, i) => (
-                  <button
-                    key={i}
-                    onClick={() => toggleWeekday(i)}
-                    className={cn(
-                      'flex-1 h-9 rounded-[8px] text-[12px] font-medium transition-colors',
-                      !everyDay && weekdays.includes(i) ? 'bg-brand-violet text-white' : 'bg-ios-gray6 text-label-secondary',
-                    )}
-                  >
-                    {w.replace('周', '')}
-                  </button>
-                ))}
               </div>
+              {freq === 'custom' && (
+                <div className="flex gap-1.5">
+                  {weekdayLabels.map((w, i) => (
+                    <button
+                      key={i}
+                      onClick={() => toggleWeekday(i)}
+                      className={cn(
+                        'flex-1 h-10 rounded-[10px] text-[14px] font-medium transition-colors',
+                        weekdays.includes(i) ? 'bg-brand-violet text-white' : 'bg-ios-gray6 text-label-secondary',
+                      )}
+                    >
+                      {lang === 'zh' ? w.replace('周', '') : w[0]}
+                    </button>
+                  ))}
+                </div>
+              )}
               <div className="flex items-center gap-2">
                 <span className="text-[14px] text-label-secondary shrink-0 min-w-[48px]">{t('tasks.edit.time')}</span>
                 <input
@@ -485,6 +500,19 @@ function TaskEditSheet({ open, onClose, taskId }: { open: boolean; onClose: () =
           onSelect={onPickDay}
         />
       </CenterModal>
+
+      <ActionSheet
+        open={freqSheet}
+        onClose={() => setFreqSheet(false)}
+        title={t('tasks.edit.repeat')}
+        cancelLabel={t('common.cancel')}
+        actions={[
+          { label: t('tasks.edit.freq.everyday'), onClick: () => { setWeekdays([0, 1, 2, 3, 4, 5, 6]); setFreq('everyday') } },
+          { label: t('tasks.edit.freq.weekdays'), onClick: () => { setWeekdays([1, 2, 3, 4, 5]); setFreq('weekdays') } },
+          { label: t('tasks.edit.freq.weekends'), onClick: () => { setWeekdays([0, 6]); setFreq('weekends') } },
+          { label: t('tasks.edit.freq.custom'), onClick: () => setFreq('custom') },
+        ]}
+      />
     </Sheet>
   )
 }
