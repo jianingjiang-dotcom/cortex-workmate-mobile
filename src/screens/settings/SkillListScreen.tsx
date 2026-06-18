@@ -58,7 +58,7 @@ export function SkillListScreen({ onBack }: OverlayScreenProps) {
                   <div className="text-[16px] font-medium truncate">
                     {q ? <Highlight text={sk.name} query={query} /> : sk.name}
                   </div>
-                  <div className="text-[14px] text-label-secondary truncate mt-0.5">{sk.desc}</div>
+                  <div className="text-[13px] text-label-secondary truncate mt-0.5">{sk.desc}</div>
                 </div>
                 <Switch checked={sk.enabled} onChange={() => toggleSkill(sk.id)} />
               </div>

@@ -51,11 +51,13 @@ export function HistoryScreen({ onBack }: OverlayScreenProps) {
       }
     >
       {conversations.length === 0 && projects.length === 0 ? (
-        <EmptyState
-          icon={<MessageSquare size={30} />}
-          title={t('chat.history.empty')}
-          subtitle={t('chat.history.emptyHint')}
-        />
+        <div className="flex items-center justify-center" style={{ minHeight: 600 }}>
+          <EmptyState
+            icon={<MessageSquare size={30} />}
+            title={t('chat.history.empty')}
+            subtitle={t('chat.history.emptyHint')}
+          />
+        </div>
       ) : (
         <div className="pt-1">
           {projects.map((p) => (
@@ -70,7 +72,7 @@ export function HistoryScreen({ onBack }: OverlayScreenProps) {
           ))}
           {ungrouped.length > 0 && (
             <div className="px-4 mb-4">
-              <div className="flex items-center gap-1.5 px-1 pb-1.5 text-[14px] font-medium text-label-secondary">
+              <div className="flex items-center gap-1.5 px-1 pb-1.5 text-[13px] font-medium text-label-secondary">
                 {t('chat.history.ungrouped')}
               </div>
               <div className="list-group divide-y divide-divider">
@@ -112,7 +114,7 @@ function ConvRow({
           <MessageSquare size={16} className="text-label-secondary" />
         </div>
         <div className="flex-1 min-w-0">
-          <div className="text-[16px] font-medium truncate">{c.title}</div>
+          <div className="text-[15px] font-medium truncate">{c.title}</div>
           <div className="text-[12px] text-label-secondary truncate">
             {last ? last.text.slice(0, 30) || '—' : t('common.empty')} · {formatRelative(c.updatedAt, lang)}
           </div>
@@ -151,7 +153,7 @@ function ProjectGroup({
         {...press}
         className="flex items-center px-1 pb-1.5 select-none [-webkit-touch-callout:none] rounded-lg active:bg-black/[0.03]"
       >
-        <div className="flex items-center gap-1.5 flex-1 min-w-0 text-[14px] font-medium text-label-secondary">
+        <div className="flex items-center gap-1.5 flex-1 min-w-0 text-[13px] font-medium text-label-secondary">
           <Folder size={14} className="text-label-tertiary shrink-0" />
           <span className="truncate">{p.name}</span>
           <span className="text-label-tertiary shrink-0">· {items.length}</span>
@@ -171,7 +173,7 @@ function ProjectGroup({
           ))}
         </div>
       ) : (
-        <div className="list-group px-4 py-3 text-[14px] text-label-tertiary">{t('chat.project.empty')}</div>
+        <div className="list-group px-4 py-3 text-[13px] text-label-tertiary">{t('chat.project.empty')}</div>
       )}
     </div>
   )

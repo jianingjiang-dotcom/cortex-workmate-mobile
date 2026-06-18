@@ -131,7 +131,7 @@ export function ThinkingBlock({ thinking, active }: { thinking: string; active: 
   }, [active])
   return (
     <div className="mb-2">
-      <button onClick={() => setOpen((o) => !o)} className="flex items-center gap-1.5 text-[14px] text-label-secondary active:opacity-60">
+      <button onClick={() => setOpen((o) => !o)} className="flex items-center gap-1.5 text-[13px] text-label-secondary active:opacity-60">
         <Sparkles size={14} className="text-label-tertiary" />
         <span>{active ? t('chat.thinking') : t('chat.thought')}</span>
         <ChevronDown size={14} className={cn('transition-transform', open && 'rotate-180')} />
@@ -144,7 +144,7 @@ export function ThinkingBlock({ thinking, active }: { thinking: string; active: 
             exit={{ height: 0, opacity: 0 }}
             className="overflow-hidden"
           >
-            <div className="mt-1.5 pl-3 border-l-2 border-ios-gray4 text-[14px] leading-relaxed text-label-secondary">
+            <div className="mt-1.5 pl-3 border-l-2 border-ios-gray4 text-[13px] leading-relaxed text-label-secondary">
               {thinking}
               {active && <span className="inline-block w-1 h-3 ml-0.5 bg-brand-violet/60 align-middle animate-pulse" />}
             </div>
@@ -360,7 +360,7 @@ export function ApprovalControls({ notif }: { notif: AppNotification }) {
     return (
       <div
         className={cn(
-          'flex items-center gap-1.5 text-[14px] font-medium',
+          'flex items-center gap-1.5 text-[13px] font-medium',
           approved ? 'text-ios-green' : 'text-ios-red',
         )}
       >
@@ -377,15 +377,15 @@ export function ApprovalControls({ notif }: { notif: AppNotification }) {
   }
   const reject = () => {
     resolveApprovalFlow(notif.id, 'rejected')
-    toast(t('notif.rejectedToast'))
+    toast(t('notif.rejectedToast'), 'error')
   }
 
   return (
     <div className="flex gap-2.5">
-      <button onClick={reject} className="flex-1 h-10 rounded-ios-lg bg-ios-gray6 text-label-primary font-semibold text-[16px] press">
+      <button onClick={reject} className="flex-1 h-10 rounded-ios-lg bg-ios-gray6 text-label-primary font-semibold text-[15px] press">
         {t('notif.reject')}
       </button>
-      <button onClick={approve} className="flex-1 h-10 rounded-ios-lg text-white font-semibold text-[16px] press" style={{ background: '#CC79FF' }}>
+      <button onClick={approve} className="flex-1 h-10 rounded-ios-lg text-white font-semibold text-[15px] press" style={{ background: '#CC79FF' }}>
         {t('notif.approve')}
       </button>
     </div>
@@ -411,7 +411,7 @@ export function TaskCreatedCard({ taskId }: { taskId: string }) {
       </div>
       <div className="px-3.5 py-3 space-y-2">
         <div className="text-[16px] font-semibold">{task.name}</div>
-        <div className="flex items-center gap-2 text-[14px]">
+        <div className="flex items-center gap-2 text-[13px]">
           <span className="px-2 py-0.5 rounded-md bg-ios-gray6 text-label-secondary font-medium">
             {scheduleHuman(task.schedule, lang)}
           </span>
@@ -448,8 +448,8 @@ export function McpConnectCard({ serverId, target }: { serverId: string; target:
       <div className="flex items-center gap-3 px-3.5 py-3">
         <ServerLogo logo={server.logo} gradient={server.gradient} name={server.letter || server.name} size={36} />
         <div className="flex-1 min-w-0">
-          <div className="text-[16px] font-semibold truncate">{server.name}</div>
-          <div className="text-[14px] text-label-secondary truncate">{server.desc}</div>
+          <div className="text-[15px] font-semibold truncate">{server.name}</div>
+          <div className="text-[13px] text-label-secondary truncate">{server.desc}</div>
         </div>
         {server.enabled ? (
           <span className="flex items-center gap-1 text-[14px] font-semibold text-ios-green shrink-0">
@@ -457,7 +457,7 @@ export function McpConnectCard({ serverId, target }: { serverId: string; target:
             {t('mcp.connected.short')}
           </span>
         ) : state ? (
-          <div className="flex items-center gap-1.5 text-[14px] text-label-secondary shrink-0 whitespace-nowrap">
+          <div className="flex items-center gap-1.5 text-[13px] text-label-secondary shrink-0 whitespace-nowrap">
             <Spinner size={15} />
             {state === 'auth' ? t('mcp.authorizing') : t('mcp.connecting')}
           </div>
@@ -495,15 +495,16 @@ export function MessageActions({
   const [reasonOpen, setReasonOpen] = useState(false)
 
   const copy = () => {
-    navigator.clipboard?.writeText(message.text).catch(() => {})
-    toast(t('common.copied'), 'success')
+    const p = navigator.clipboard?.writeText(message.text)
+    if (p) p.then(() => toast(t('common.copied'), 'neutral')).catch(() => toast(t('common.copyFailed'), 'error'))
+    else toast(t('common.copyFailed'), 'error')
   }
   const like = () =>
     patchMessage(target, message.id, { reaction: message.reaction === 'up' ? null : 'up' })
   const toggleFav = () => {
     const was = message.favoritedAt
     patchMessage(target, message.id, (m) => ({ favoritedAt: m.favoritedAt ? undefined : Date.now() }))
-    toast(was ? t('chat.fav.removed') : t('chat.fav.add'), 'success')
+    toast(was ? t('chat.fav.removed') : t('chat.fav.add'), was ? 'delete' : 'neutral')
   }
 
   const reasons = ['chat.dislike.r1', 'chat.dislike.r2', 'chat.dislike.r3', 'chat.dislike.r4']
@@ -542,9 +543,9 @@ export function MessageActions({
               onClick={() => {
                 patchMessage(target, message.id, { reaction: 'down', downvoteReason: t(r) })
                 setReasonOpen(false)
-                toast(t('chat.feedbackThanks'), 'success')
+                toast(t('chat.feedbackThanks'), 'neutral')
               }}
-              className="w-full h-12 rounded-ios-lg bg-ios-gray6 text-[16px] font-medium active:bg-ios-gray5"
+              className="w-full h-12 rounded-ios-lg bg-ios-gray6 text-[15px] font-medium active:bg-ios-gray5"
             >
               {t(r)}
             </button>

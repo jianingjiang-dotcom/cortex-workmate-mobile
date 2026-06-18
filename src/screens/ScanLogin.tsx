@@ -175,11 +175,11 @@ export function ScanLogin() {
         </div>
 
         {/* status */}
-        <div className="h-7 mt-9 flex items-center gap-2 text-[16px] font-medium">
+        <div className="h-7 mt-9 flex items-center gap-2 text-[15px] font-medium">
           {phase === 'authorizing' && <Spinner size={16} className="text-white/70" />}
           <span>{status}</span>
         </div>
-        <p className="text-[14px] text-white/45 mt-2 text-center leading-relaxed max-w-[260px] px-4">{t('login.scan.tip')}</p>
+        <p className="text-[13px] text-white/45 mt-2 text-center leading-relaxed max-w-[260px] px-4">{t('login.scan.tip')}</p>
       </div>
 
       {/* bottom action */}
@@ -187,7 +187,7 @@ export function ScanLogin() {
         <button
           onClick={succeed}
           disabled={success}
-          className="flex items-center gap-2 px-5 h-11 rounded-full bg-white/10 active:bg-white/[0.18] text-[16px] font-medium disabled:opacity-40"
+          className="flex items-center gap-2 px-5 h-11 rounded-full bg-white/10 active:bg-white/[0.18] text-[15px] font-medium disabled:opacity-40"
         >
           <ImageIcon size={18} />
           {t('login.scan.album')}

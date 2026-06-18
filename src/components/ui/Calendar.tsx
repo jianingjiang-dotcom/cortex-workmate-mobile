@@ -92,7 +92,7 @@ export function Calendar({
             >
               <span
                 className={cn(
-                  'w-9 h-9 flex items-center justify-center rounded-full text-[16px]',
+                  'w-9 h-9 flex items-center justify-center rounded-full text-[15px]',
                   isSel
                     ? 'bg-ios-blue text-white font-semibold'
                     : disabled

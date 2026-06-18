@@ -8,7 +8,7 @@ export function BackButton({ label, onClick }: { label?: string; onClick: () => 
   return (
     <button onClick={onClick} className="flex items-center text-label-primary -ml-1 pr-2 active:opacity-50 press">
       <ChevronLeft size={26} strokeWidth={2.2} className="-mr-0.5" />
-      <span className="text-[16px] font-semibold truncate max-w-[120px]">{label ?? t('common.back')}</span>
+      <span className="text-[17px] font-semibold truncate max-w-[120px]">{label ?? t('common.back')}</span>
     </button>
   )
 }
@@ -61,7 +61,7 @@ export function Page({
             </div>
             {/* detail pages keep a centered inline title */}
             {!largeTitle && title && (
-              <div className="absolute left-1/2 -translate-x-1/2 text-[16px] font-semibold truncate max-w-[58%] text-center pointer-events-none">
+              <div className="absolute left-1/2 -translate-x-1/2 text-[17px] font-semibold truncate max-w-[58%] text-center pointer-events-none">
                 {title}
               </div>
             )}
@@ -70,7 +70,7 @@ export function Page({
           {/* pinned large title */}
           {showLarge && (
             <div className="h-[52px] flex items-end px-4 pb-2">
-              <h1 className="text-[32px] font-bold tracking-tight leading-tight truncate">{title}</h1>
+              <h1 className="text-[34px] font-bold tracking-tight leading-tight truncate">{title}</h1>
             </div>
           )}
         </div>

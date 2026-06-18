@@ -8,8 +8,11 @@ import { ScanLogin } from './ScanLogin'
 
 function GoogleG({ size = 20 }: { size?: number }) {
   return (
-    <svg width={size} height={size} viewBox="0 0 800 800" fill="currentColor">
-      <path d="M407.786 0C515.413 2.30444e-05 605.328 39.4198 674.421 103.643L561.92 213.487C533.129 186.467 482.638 154.135 407.786 154.135C302.372 154.135 212.903 223.673 180.567 319.786L179.829 322.116C172.295 346.251 167.725 372.022 167.725 398.626C167.725 426.085 172.596 452.662 181.011 477.465L181.009 477.466H181.011C212.904 573.579 302.372 643.114 407.786 643.114C467.136 643.114 512.315 626.727 545.976 603.252L547.216 602.377C599.499 565.185 623.079 510.397 627.472 473.921H407.786V325.988H782.052C787.807 350.791 790.467 374.709 790.467 407.484C790.467 528.843 747.059 631.157 671.765 700.696C605.768 761.817 515.414 797.252 407.786 797.252C251.878 797.252 117.231 707.78 51.6797 577.563V577.562L50.4209 575.025C24.1814 521.63 9.16023 461.845 9.16016 398.626C9.16016 334.403 24.6629 273.721 51.6797 219.685V219.684C117.231 89.4677 251.878 0 407.786 0Z" />
+    <svg width={size} height={size} viewBox="0 0 48 48" fill="currentColor">
+      <path d="M43.6 20.5H42V20H24v8h11.3c-1.6 4.7-6.1 8-11.3 8a12 12 0 1 1 0-24c3.1 0 5.9 1.2 8 3.1l5.7-5.7A20 20 0 1 0 24 44c11 0 19.5-8 19.5-20 0-1.3-.1-2.3-.4-3.5z" />
+      <path d="M6.3 14.7l6.6 4.8C14.7 15.1 18.9 12 24 12c3.1 0 5.9 1.2 8 3.1l5.7-5.7A20 20 0 0 0 6.3 14.7z" />
+      <path d="M24 44c5.2 0 9.9-2 13.4-5.2l-6.2-5.2A12 12 0 0 1 24 36c-5.2 0-9.6-3.3-11.3-7.9l-6.5 5C9.5 39.6 16.2 44 24 44z" />
+      <path d="M43.6 20.5H42V20H24v8h11.3a12 12 0 0 1-4.1 5.6l6.2 5.2C39.9 41.9 44 36.7 44 28c0-1.3-.1-2.3-.4-3.5z" />
     </svg>
   )
 }
@@ -55,7 +58,7 @@ export function Login() {
           <button
             onClick={handleLogin}
             disabled={loading}
-            className="w-full h-[54px] rounded-ios-lg bg-brand-primary text-white flex items-center justify-center gap-3 text-[16px] font-semibold press disabled:opacity-70 active:opacity-90"
+            className="w-full h-[54px] rounded-ios-lg bg-brand-primary text-white flex items-center justify-center gap-3 text-[17px] font-semibold press disabled:opacity-70 active:opacity-90"
           >
             {loading ? (
               <>

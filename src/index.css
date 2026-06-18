@@ -202,7 +202,7 @@
 
   /* Markdown rendering scope for AI replies / summaries */
   .md {
-    @apply text-[16px] leading-[1.55] text-label-primary;
+    @apply text-[15px] leading-[1.55] text-label-primary;
   }
   .md > *:first-child {
     margin-top: 0;
@@ -211,13 +211,13 @@
     margin-bottom: 0;
   }
   .md h1 {
-    @apply text-[20px] font-bold mt-4 mb-2;
+    @apply text-[19px] font-bold mt-4 mb-2;
   }
   .md h2 {
-    @apply text-[16px] font-bold mt-4 mb-1.5;
+    @apply text-[17px] font-bold mt-4 mb-1.5;
   }
   .md h3 {
-    @apply text-[16px] font-semibold mt-3 mb-1;
+    @apply text-[15px] font-semibold mt-3 mb-1;
   }
   .md p {
     @apply my-2;
@@ -242,11 +242,11 @@
     @apply font-semibold;
   }
   .md code {
-    @apply font-mono text-[14px] px-1.5 py-0.5 rounded-md;
+    @apply font-mono text-[13px] px-1.5 py-0.5 rounded-md;
     background: var(--fill);
   }
   .md pre {
-    @apply font-mono text-[14px] p-3 rounded-ios my-2 overflow-x-auto;
+    @apply font-mono text-[13px] p-3 rounded-ios my-2 overflow-x-auto;
     background: var(--fill);
   }
   .md pre code {
@@ -274,10 +274,10 @@
   }
   .md input[type='checkbox']:checked::after {
     content: '✓';
-    @apply text-white text-[12px] flex items-center justify-center h-full leading-none;
+    @apply text-white text-[11px] flex items-center justify-center h-full leading-none;
   }
   .md table {
-    @apply my-2 w-full text-[14px] border-collapse;
+    @apply my-2 w-full text-[13px] border-collapse;
   }
   .md th,
   .md td {

@@ -37,7 +37,7 @@ export function AgentPickerSheet({ open, onClose }: { open: boolean; onClose: ()
             {q ? <Highlight text={a.name} query={query} /> : a.name}
           </div>
           {a.desc && (
-            <div className="text-[14px] text-label-secondary truncate mt-0.5">
+            <div className="text-[13px] text-label-secondary truncate mt-0.5">
               {q ? <Highlight text={a.desc} query={query} /> : a.desc}
             </div>
           )}

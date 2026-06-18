@@ -31,7 +31,7 @@ export function McpDetailScreen({ params, onBack }: OverlayScreenProps) {
           <ServerLogo logo={server.logo} gradient={server.gradient} name={server.letter || server.name} size={52} />
           <div className="flex-1 min-w-0">
             <div className="text-[18px] font-bold truncate">{server.name}</div>
-            <div className="text-[14px] text-label-secondary truncate mt-0.5">
+            <div className="text-[13px] text-label-secondary truncate mt-0.5">
               {[server.publisher, authLabel].filter(Boolean).join(' · ')}
             </div>
           </div>
@@ -41,7 +41,7 @@ export function McpDetailScreen({ params, onBack }: OverlayScreenProps) {
       {/* connect / enable control */}
       <div className="px-4 mt-3">
         {state ? (
-          <div className="card flex items-center justify-center gap-2 h-12 text-[16px] text-label-secondary">
+          <div className="card flex items-center justify-center gap-2 h-12 text-[15px] text-label-secondary">
             <Spinner size={16} />
             {state === 'auth' ? t('mcp.authorizing') : t('mcp.connecting')}
           </div>
@@ -63,10 +63,10 @@ export function McpDetailScreen({ params, onBack }: OverlayScreenProps) {
 
       {/* about */}
       <div className="px-4 mt-5">
-        <div className="px-3 pb-1.5 text-[14px] font-medium text-label-secondary uppercase tracking-wide">
+        <div className="px-3 pb-1.5 text-[13px] font-medium text-label-secondary uppercase tracking-wide">
           {t('mcp.detail.about')}
         </div>
-        <div className="card px-4 py-3.5 text-[16px] leading-relaxed text-label-primary">
+        <div className="card px-4 py-3.5 text-[15px] leading-relaxed text-label-primary">
           {server.about || server.desc}
         </div>
       </div>
@@ -74,14 +74,14 @@ export function McpDetailScreen({ params, onBack }: OverlayScreenProps) {
       {/* tools */}
       {tools.length > 0 && (
         <div className="px-4 mt-5">
-          <div className="px-3 pb-1.5 text-[14px] font-medium text-label-secondary uppercase tracking-wide">
+          <div className="px-3 pb-1.5 text-[13px] font-medium text-label-secondary uppercase tracking-wide">
             {t('mcp.detail.tools')} · {tools.length}
           </div>
           <div className="list-group divide-y divide-divider">
             {tools.map((tool) => (
               <div key={tool.name} className="px-4 py-3">
                 <code className="text-[13.5px] font-mono text-brand-violet break-all">{tool.name}</code>
-                <div className="text-[14px] text-label-secondary mt-1 leading-relaxed">{tool.desc}</div>
+                <div className="text-[13px] text-label-secondary mt-1 leading-relaxed">{tool.desc}</div>
               </div>
             ))}
           </div>

@@ -1,37 +1,68 @@
 import { AnimatePresence, motion } from 'framer-motion'
-import { Check, Info, X } from 'lucide-react'
+import {
+  AlertTriangle,
+  Check,
+  CheckCheck,
+  CheckCircle2,
+  Info,
+  Loader2,
+  Pause,
+  Play,
+  Trash,
+  Trash2,
+  XCircle,
+  Zap,
+} from 'lucide-react'
+import type { ToastKind } from '../lib/types'
 import { useStore } from '../store/useStore'
 import { useT } from '../i18n'
-import { cn } from '../lib/util'
+
+// Per-kind colour + glyph. Colours are on-brand DS tokens: green success, link-blue
+// info/loading (NOT the purple accent), red error, amber warning, neutral grey for the
+// whole "neutral" family — which is differentiated by ICON, not colour.
+const TOAST_STYLE: Record<ToastKind, { color: string; Icon: typeof Check; spin?: boolean; sw?: number }> = {
+  success: { color: '#22c55e', Icon: Check, sw: 3 },
+  neutral: { color: '#8e8e93', Icon: Info },
+  delete: { color: '#8e8e93', Icon: Trash2 },
+  purge: { color: '#8e8e93', Icon: Trash },
+  pause: { color: '#8e8e93', Icon: Pause },
+  resume: { color: '#8e8e93', Icon: Play },
+  run: { color: '#8e8e93', Icon: Zap },
+  readAll: { color: '#8e8e93', Icon: CheckCheck, sw: 3 },
+  loading: { color: '#407cff', Icon: Loader2, spin: true },
+  info: { color: '#407cff', Icon: Info },
+  error: { color: '#ef4444', Icon: XCircle },
+  warning: { color: '#ffa03b', Icon: AlertTriangle },
+}
 
 export function ToastHost() {
   const toasts = useStore((s) => s.toasts)
   return (
     <div className="absolute top-[60px] left-0 right-0 z-[95] flex flex-col items-center gap-2 px-6 pointer-events-none">
       <AnimatePresence>
-        {toasts.map((t) => (
-          <motion.div
-            key={t.id}
-            layout
-            initial={{ opacity: 0, y: -16, scale: 0.96 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: -10, scale: 0.96 }}
-            transition={{ type: 'spring', stiffness: 450, damping: 34 }}
-            className="glass rounded-full pl-3 pr-4 py-2.5 shadow-ios-md flex items-center gap-2 max-w-[90%]"
-          >
-            <span
-              className={cn(
-                'w-5 h-5 rounded-full flex items-center justify-center text-white shrink-0',
-                t.kind === 'success' && 'bg-ios-green',
-                t.kind === 'error' && 'bg-ios-red',
-                t.kind === 'info' && 'bg-ios-gray',
-              )}
+        {toasts.map((t) => {
+          const s = TOAST_STYLE[t.kind] || TOAST_STYLE.neutral
+          const Icon = s.Icon
+          return (
+            <motion.div
+              key={t.id}
+              layout
+              initial={{ opacity: 0, y: -16, scale: 0.96 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: -10, scale: 0.96 }}
+              transition={{ type: 'spring', stiffness: 450, damping: 34 }}
+              className="glass rounded-full pl-3 pr-4 py-2.5 shadow-ios-md flex items-center gap-2 max-w-[90%]"
             >
-              {t.kind === 'success' ? <Check size={13} strokeWidth={3} /> : t.kind === 'error' ? <X size={13} strokeWidth={3} /> : <Info size={13} strokeWidth={3} />}
-            </span>
-            <span className="text-[14px] font-medium text-label-primary truncate">{t.message}</span>
-          </motion.div>
-        ))}
+              <span
+                className="w-5 h-5 rounded-full flex items-center justify-center text-white shrink-0"
+                style={{ background: s.color }}
+              >
+                <Icon size={13} strokeWidth={s.sw || 2.4} className={s.spin ? 'animate-spin' : undefined} />
+              </span>
+              <span className="text-[14px] font-medium text-label-primary truncate">{t.message}</span>
+            </motion.div>
+          )
+        })}
       </AnimatePresence>
     </div>
   )
@@ -71,9 +102,9 @@ export function ConfirmHost() {
               transition={{ duration: 0.16 }}
             >
               <div className="px-5 pt-5 pb-4 text-center">
-                <div className="text-[16px] font-semibold text-label-primary">{dialog.title}</div>
+                <div className="text-[17px] font-semibold text-label-primary">{dialog.title}</div>
                 {dialog.message && (
-                  <div className="text-[14px] text-label-secondary mt-1.5 leading-snug">{dialog.message}</div>
+                  <div className="text-[13px] text-label-secondary mt-1.5 leading-snug">{dialog.message}</div>
                 )}
               </div>
               {(() => {
@@ -88,7 +119,7 @@ export function ConfirmHost() {
                       dialog.onConfirm()
                     }}
                     className={cn(
-                      'h-[44px] text-[16px] active:bg-black/[0.04]',
+                      'h-[44px] text-[17px] font-semibold active:bg-black/[0.04]',
                       dialog.danger ? 'text-ios-red' : 'text-brand-primary',
                     )}
                   >
@@ -96,7 +127,7 @@ export function ConfirmHost() {
                   </button>
                 )
                 const cancelBtn = (
-                  <button onClick={close} className="h-[44px] text-[16px] font-semibold text-label-primary active:bg-black/[0.04]">
+                  <button onClick={close} className="h-[44px] text-[17px] text-label-primary active:bg-black/[0.04]">
                     {cancelLabel}
                   </button>
                 )

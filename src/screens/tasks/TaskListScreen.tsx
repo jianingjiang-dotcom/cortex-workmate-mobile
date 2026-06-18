@@ -53,7 +53,7 @@ export function TaskListScreen({ onBack }: OverlayScreenProps) {
               </span>
             )}
           </div>
-          <div className="mt-1">
+          <div className="mt-0.5">
             <span className="inline-block px-2 py-0.5 rounded-md bg-ios-gray6 text-label-secondary font-medium text-[12.5px]">
               {scheduleHuman(task.schedule, lang)}
             </span>
@@ -95,18 +95,20 @@ export function TaskListScreen({ onBack }: OverlayScreenProps) {
     >
       <p className="px-4 pt-0.5 pb-2 text-[14px] text-label-secondary leading-snug">{t('tasks.subtitle')}</p>
       {tasks.length === 0 ? (
-        <EmptyState
-          icon={<CalendarClock size={30} />}
-          title={t('tasks.empty')}
-          subtitle={t('tasks.emptyHint')}
-          action={<Button onClick={addViaChat}>{t('tasks.emptyCta')}</Button>}
-        />
+        <div className="flex items-center justify-center" style={{ minHeight: 560 }}>
+          <EmptyState
+            icon={<CalendarClock size={30} />}
+            title={t('tasks.empty')}
+            subtitle={t('tasks.emptyHint')}
+            action={<Button onClick={addViaChat}>{t('tasks.emptyCta')}</Button>}
+          />
+        </div>
       ) : (
         <>
           <div className="px-4 pt-1 space-y-3">{active.map(renderCard)}</div>
           {paused.length > 0 && (
             <>
-              <div className="px-5 pt-4 pb-1.5 text-[14px] font-medium text-label-secondary uppercase tracking-wide">
+              <div className="px-5 pt-4 pb-1.5 text-[13px] font-medium text-label-secondary uppercase tracking-wide">
                 {t('tasks.list.paused')}
               </div>
               <div className="px-4 space-y-3 opacity-60">{paused.map(renderCard)}</div>
