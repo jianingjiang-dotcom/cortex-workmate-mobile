@@ -196,7 +196,7 @@ export function MeetingDetailScreen({ params, onBack }: OverlayScreenProps) {
           <div className="flex items-center justify-center gap-8 mt-2">
             <button onClick={() => setPos((p) => clamp(p - 15000, 0, duration))} className="text-label-primary active:opacity-50 flex flex-col items-center">
               <RotateCcw size={26} />
-              <span className="text-[12px] -mt-0.5">15</span>
+              <span className="text-[12px] -mt-0.5 text-label-tertiary font-light">15</span>
             </button>
             <button
               onClick={() => setPlaying((p) => !p)}
@@ -206,7 +206,7 @@ export function MeetingDetailScreen({ params, onBack }: OverlayScreenProps) {
             </button>
             <button onClick={() => setPos((p) => clamp(p + 15000, 0, duration))} className="text-label-primary active:opacity-50 flex flex-col items-center">
               <RotateCw size={26} />
-              <span className="text-[12px] -mt-0.5">15</span>
+              <span className="text-[12px] -mt-0.5 text-label-tertiary font-light">15</span>
             </button>
           </div>
 
@@ -505,7 +505,13 @@ function NonDone({
   }
   return (
     <div className="flex flex-col items-center justify-center h-full px-10 text-center">
-      <div className="w-[72px] h-[72px] rounded-[20px] flex items-center justify-center text-white mb-4" style={{ background: solidFor(status === 'failed' ? 'sunset' : 'violet') }}>
+      <div
+        className={cn(
+          'w-[72px] h-[72px] rounded-[20px] flex items-center justify-center mb-4',
+          status === 'failed' ? 'text-white' : 'bg-ios-gray5 text-label-secondary',
+        )}
+        style={status === 'failed' ? { background: solidFor('sunset') } : undefined}
+      >
         <AudioLines size={30} />
       </div>
       <div className="text-[16px] font-semibold">

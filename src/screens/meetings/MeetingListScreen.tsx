@@ -53,8 +53,11 @@ export function MeetingListScreen({ onBack }: OverlayScreenProps) {
       className="w-full flex items-center gap-3 px-4 py-3 text-left active:bg-black/[0.03]"
     >
       <div
-        className="w-11 h-11 rounded-[13px] flex items-center justify-center text-white shrink-0"
-        style={{ background: solidFor(m.source === 'import' ? 'mint' : 'ocean') }}
+        className="w-11 h-11 rounded-[12px] flex items-center justify-center shrink-0"
+        style={{
+          background: `${solidFor(m.source === 'import' ? 'mint' : 'ocean')}1A`,
+          color: solidFor(m.source === 'import' ? 'mint' : 'ocean'),
+        }}
       >
         <AudioLines size={20} />
       </div>
