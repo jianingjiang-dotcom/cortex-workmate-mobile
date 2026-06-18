@@ -55,7 +55,7 @@ export function AssistantTab() {
           </div>
           <div className="flex-1 min-w-0">
             <div className="text-[18px] font-bold text-white">{persona.name}</div>
-            <div className="text-[13px] text-white/85 truncate">{t('hub.enterChat')}</div>
+            <div className="text-[14px] text-white/85 truncate">{t('hub.enterChat')}</div>
           </div>
           <ChevronRight size={20} className="text-white/75" />
         </button>
@@ -74,9 +74,9 @@ export function AssistantTab() {
             </div>
             <div className="flex-1 min-w-0">
               <div className="text-[16px] font-semibold">{e.title}</div>
-              <div className="text-[13px] text-label-secondary truncate">{e.desc}</div>
+              <div className="text-[14px] text-label-secondary truncate">{e.desc}</div>
             </div>
-            {e.value && <div className="text-[13px] text-label-secondary shrink-0">{e.value}</div>}
+            {e.value && <div className="text-[14px] text-label-secondary shrink-0">{e.value}</div>}
             <ChevronRight size={18} className="text-ios-gray3 shrink-0" />
           </button>
         ))}

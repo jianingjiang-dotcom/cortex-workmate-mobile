@@ -63,7 +63,7 @@ export function TaskDetailScreen({ params, onBack }: OverlayScreenProps) {
 
         {/* required MCP servers */}
         <div className="px-4 mt-5">
-          <div className="px-3 pb-1.5 text-[13px] font-medium text-label-secondary uppercase tracking-wide">
+          <div className="px-3 pb-1.5 text-[14px] font-medium text-label-secondary uppercase tracking-wide">
             {t('tasks.detail.mcp')}
           </div>
           {linkedMcp.length === 0 ? (
@@ -77,7 +77,7 @@ export function TaskDetailScreen({ params, onBack }: OverlayScreenProps) {
                   className="w-full flex items-center gap-3 px-4 py-3 text-left active:bg-black/[0.03]"
                 >
                   <ServerLogo logo={m.logo} gradient={m.gradient} name={m.letter || m.name} size={30} />
-                  <span className="flex-1 text-[15px] font-medium truncate">{m.name}</span>
+                  <span className="flex-1 text-[16px] font-medium truncate">{m.name}</span>
                   <Pill color={m.enabled ? 'green' : 'gray'}>
                     {m.enabled ? t('mcp.connected.short') : t('mcp.notConnected')}
                   </Pill>
@@ -90,15 +90,15 @@ export function TaskDetailScreen({ params, onBack }: OverlayScreenProps) {
 
         {/* instruction */}
         <div className="px-4 mt-5">
-          <div className="px-3 pb-1.5 text-[13px] font-medium text-label-secondary uppercase tracking-wide">
+          <div className="px-3 pb-1.5 text-[14px] font-medium text-label-secondary uppercase tracking-wide">
             {t('tasks.detail.instruction')}
           </div>
-          <div className="card px-4 py-3.5 text-[15px] leading-relaxed whitespace-pre-wrap">{task.instruction}</div>
+          <div className="card px-4 py-3.5 text-[16px] leading-relaxed whitespace-pre-wrap">{task.instruction}</div>
         </div>
 
         {/* run records */}
         <div className="px-4 mt-5">
-          <div className="px-3 pb-1.5 text-[13px] font-medium text-label-secondary uppercase tracking-wide">
+          <div className="px-3 pb-1.5 text-[14px] font-medium text-label-secondary uppercase tracking-wide">
             {t('tasks.detail.runs')}
           </div>
           {task.runs.length === 0 ? (
@@ -326,12 +326,12 @@ function TaskEditSheet({ open, onClose, taskId }: { open: boolean; onClose: () =
             value={instruction}
             onChange={(e) => setInstruction(e.target.value)}
             rows={6}
-            className="w-full bg-transparent text-[15px] leading-relaxed outline-none resize-none"
+            className="w-full bg-transparent text-[16px] leading-relaxed outline-none resize-none"
           />
         </Field>
 
         <div>
-          <div className="px-1 pb-1.5 text-[13px] font-medium text-label-secondary">{t('tasks.edit.trigger')}</div>
+          <div className="px-1 pb-1.5 text-[14px] font-medium text-label-secondary">{t('tasks.edit.trigger')}</div>
           <Segmented
             layoutId="task-edit-mode"
             options={[
@@ -375,7 +375,7 @@ function TaskEditSheet({ open, onClose, taskId }: { open: boolean; onClose: () =
                   type="time"
                   value={time}
                   onChange={(e) => setTime(e.target.value)}
-                  className="h-9 px-3 rounded-ios bg-ios-gray6 text-[15px] outline-none"
+                  className="h-9 px-3 rounded-ios bg-ios-gray6 text-[16px] outline-none"
                 />
               </div>
             </div>
@@ -392,7 +392,7 @@ function TaskEditSheet({ open, onClose, taskId }: { open: boolean; onClose: () =
                     <div key={i} className="flex items-center gap-2">
                       <button
                         onClick={() => setPicker(i)}
-                        className="flex-1 h-9 px-3 rounded-ios bg-ios-gray6 text-[15px] text-left active:opacity-60"
+                        className="flex-1 h-9 px-3 rounded-ios bg-ios-gray6 text-[16px] text-left active:opacity-60"
                       >
                         {formatDateShort(d, lang)}
                       </button>
@@ -400,7 +400,7 @@ function TaskEditSheet({ open, onClose, taskId }: { open: boolean; onClose: () =
                         type="time"
                         value={hhmm(d)}
                         onChange={(e) => setDateTime(i, e.target.value)}
-                        className="h-9 px-2.5 rounded-ios bg-ios-gray6 text-[15px] outline-none"
+                        className="h-9 px-2.5 rounded-ios bg-ios-gray6 text-[16px] outline-none"
                       />
                       <button
                         onClick={() => removeDate(i)}
@@ -415,7 +415,7 @@ function TaskEditSheet({ open, onClose, taskId }: { open: boolean; onClose: () =
               )}
               <button
                 onClick={() => setPicker('add')}
-                className="flex items-center gap-1.5 h-9 px-3 text-[15px] font-medium text-ios-blue active:opacity-60"
+                className="flex items-center gap-1.5 h-9 px-3 text-[16px] font-medium text-ios-blue active:opacity-60"
               >
                 <Plus size={18} /> {t('tasks.edit.addDate')}
               </button>
@@ -432,7 +432,7 @@ function TaskEditSheet({ open, onClose, taskId }: { open: boolean; onClose: () =
                   value={count}
                   min={1}
                   onChange={(e) => setCount(Math.max(1, Math.floor(+e.target.value || 1)))}
-                  className="w-16 h-9 px-3 rounded-ios bg-ios-gray6 text-[15px] outline-none"
+                  className="w-16 h-9 px-3 rounded-ios bg-ios-gray6 text-[16px] outline-none"
                 />
                 <div className="flex-1">
                   <Segmented
@@ -451,7 +451,7 @@ function TaskEditSheet({ open, onClose, taskId }: { open: boolean; onClose: () =
                 <span className="text-[14px] text-label-secondary shrink-0 min-w-[48px]">{t('tasks.edit.startTime')}</span>
                 <button
                   onClick={() => setPicker('start')}
-                  className="flex-1 h-9 px-3 rounded-ios bg-ios-gray6 text-[15px] text-left active:opacity-60"
+                  className="flex-1 h-9 px-3 rounded-ios bg-ios-gray6 text-[16px] text-left active:opacity-60"
                 >
                   {startAt != null ? formatDateShort(startAt, lang) : t('tasks.edit.startNow')}
                 </button>
@@ -461,7 +461,7 @@ function TaskEditSheet({ open, onClose, taskId }: { open: boolean; onClose: () =
                       type="time"
                       value={hhmm(startAt)}
                       onChange={(e) => setStartAt(combine(startAt, e.target.value))}
-                      className="h-9 px-2.5 rounded-ios bg-ios-gray6 text-[15px] outline-none"
+                      className="h-9 px-2.5 rounded-ios bg-ios-gray6 text-[16px] outline-none"
                     />
                     <button
                       onClick={() => setStartAt(undefined)}
@@ -492,7 +492,7 @@ function TaskEditSheet({ open, onClose, taskId }: { open: boolean; onClose: () =
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <div>
-      <div className="px-1 pb-1.5 text-[13px] font-medium text-label-secondary">{label}</div>
+      <div className="px-1 pb-1.5 text-[14px] font-medium text-label-secondary">{label}</div>
       <div className="bg-surface rounded-ios-lg px-3.5 py-3 border border-divider">{children}</div>
     </div>
   )

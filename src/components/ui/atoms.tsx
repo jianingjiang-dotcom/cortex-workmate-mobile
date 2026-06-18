@@ -145,7 +145,7 @@ export function Button({
   const sizes = {
     sm: 'h-9 px-4 text-[14px] rounded-ios',
     md: 'h-11 px-5 text-[16px] rounded-ios-lg',
-    lg: 'h-[52px] px-6 text-[17px] rounded-ios-lg',
+    lg: 'h-[52px] px-6 text-[16px] rounded-ios-lg',
   }
   const variants: Record<BtnVariant, string> = {
     primary: 'bg-brand-primary text-white shadow-ios-md active:brightness-95',
@@ -289,7 +289,7 @@ export function Section({
       {title && (
         <div
           className={cn(
-            'px-3 pb-1.5 pt-1 text-[13px] font-medium text-label-secondary',
+            'px-3 pb-1.5 pt-1 text-[14px] font-medium text-label-secondary',
             !noUppercase && 'uppercase tracking-wide',
           )}
         >
@@ -297,7 +297,7 @@ export function Section({
         </div>
       )}
       <div className="list-group divide-y divide-divider">{children}</div>
-      {footer && <div className="px-3 pt-1.5 text-[13px] text-label-secondary leading-snug">{footer}</div>}
+      {footer && <div className="px-3 pt-1.5 text-[14px] text-label-secondary leading-snug">{footer}</div>}
     </div>
   )
 }
@@ -347,9 +347,9 @@ export function Row({
       )}
       <div className="flex-1 min-w-0">
         <div className={cn('text-[16px] truncate', danger ? 'text-ios-red' : 'text-label-primary')}>{title}</div>
-        {subtitle && <div className="text-[13px] text-label-secondary truncate mt-0.5">{subtitle}</div>}
+        {subtitle && <div className="text-[14px] text-label-secondary truncate mt-0.5">{subtitle}</div>}
       </div>
-      {value && <div className="text-[15px] text-label-secondary shrink-0 max-w-[55%] truncate">{value}</div>}
+      {value && <div className="text-[16px] text-label-secondary shrink-0 max-w-[55%] truncate">{value}</div>}
       {right}
       {chevron && (
         <ChevronRight size={18} className="text-ios-gray2 shrink-0" />
@@ -376,7 +376,7 @@ export function EmptyState({
       <div className="w-[72px] h-[72px] rounded-[20px] flex items-center justify-center mb-4 bg-ios-gray6 text-label-secondary">
         {icon}
       </div>
-      <div className="text-[17px] font-semibold text-label-primary">{title}</div>
+      <div className="text-[16px] font-semibold text-label-primary">{title}</div>
       {subtitle && <div className="text-[14px] text-label-secondary mt-1.5 leading-relaxed max-w-[260px]">{subtitle}</div>}
       {action && <div className="mt-5">{action}</div>}
     </div>
@@ -466,7 +466,7 @@ export function SearchField({
           value={value}
           onChange={(e) => onChange(e.target.value)}
           placeholder={placeholder}
-          className="w-full h-9 bg-surface border border-input rounded-[12px] pl-9 pr-8 text-[15px] outline-none placeholder:text-label-tertiary"
+          className="w-full h-9 bg-surface border border-input rounded-[12px] pl-9 pr-8 text-[16px] outline-none placeholder:text-label-tertiary"
         />
         {value && (
           <button
@@ -479,7 +479,7 @@ export function SearchField({
         )}
       </div>
       {onClose && (
-        <button onClick={onClose} className="text-[15px] text-label-secondary active:opacity-60 shrink-0">
+        <button onClick={onClose} className="text-[16px] text-label-secondary active:opacity-60 shrink-0">
           {closeLabel}
         </button>
       )}

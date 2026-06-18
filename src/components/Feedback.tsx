@@ -71,9 +71,9 @@ export function ConfirmHost() {
               transition={{ duration: 0.16 }}
             >
               <div className="px-5 pt-5 pb-4 text-center">
-                <div className="text-[17px] font-semibold text-label-primary">{dialog.title}</div>
+                <div className="text-[16px] font-semibold text-label-primary">{dialog.title}</div>
                 {dialog.message && (
-                  <div className="text-[13px] text-label-secondary mt-1.5 leading-snug">{dialog.message}</div>
+                  <div className="text-[14px] text-label-secondary mt-1.5 leading-snug">{dialog.message}</div>
                 )}
               </div>
               {(() => {
@@ -88,7 +88,7 @@ export function ConfirmHost() {
                       dialog.onConfirm()
                     }}
                     className={cn(
-                      'h-[44px] text-[17px] font-semibold active:bg-black/[0.04]',
+                      'h-[44px] text-[16px] active:bg-black/[0.04]',
                       dialog.danger ? 'text-ios-red' : 'text-brand-primary',
                     )}
                   >
@@ -96,7 +96,7 @@ export function ConfirmHost() {
                   </button>
                 )
                 const cancelBtn = (
-                  <button onClick={close} className="h-[44px] text-[17px] text-label-primary active:bg-black/[0.04]">
+                  <button onClick={close} className="h-[44px] text-[16px] font-semibold text-label-primary active:bg-black/[0.04]">
                     {cancelLabel}
                   </button>
                 )

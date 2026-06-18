@@ -44,11 +44,11 @@ export function TabBar() {
               <span className="relative">
                 <Icon size={24} style={{ color: active ? ACTIVE : INACTIVE }} />
                 {key === 'me' && showMeDot && (
-                  <span className="absolute -top-0.5 -right-1.5 w-[9px] h-[9px] rounded-full bg-ios-red ring-2 ring-surface" />
+                  <span className="absolute -top-0.5 -right-1.5 w-[9px] h-[9px] rounded-full bg-brand-primary ring-2 ring-surface" />
                 )}
               </span>
               <span
-                className="text-[11px] font-medium tracking-tight"
+                className="text-[12px] font-medium tracking-tight"
                 style={{ color: active ? ACTIVE : INACTIVE }}
               >
                 {label}

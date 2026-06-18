@@ -106,7 +106,7 @@ export function ChatInput({
           ) : (
             <div className="w-16 h-16 rounded-ios bg-ios-gray6 flex flex-col items-center justify-center px-1">
               <FileText size={20} className="text-label-secondary" />
-              <span className="text-[9px] text-label-secondary truncate max-w-full mt-0.5">{a.name}</span>
+              <span className="text-[12px] text-label-secondary truncate max-w-full mt-0.5">{a.name}</span>
             </div>
           )}
           <button

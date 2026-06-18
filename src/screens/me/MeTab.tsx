@@ -94,8 +94,8 @@ export function MeTab() {
           right={
             showVersionHint ? (
               <span className="flex items-center gap-1.5 shrink-0">
-                <span className="w-[7px] h-[7px] rounded-full bg-ios-red" />
-                <span className="text-[13px] text-ios-red font-medium">{t('me.version.hint')}</span>
+                <span className="w-[7px] h-[7px] rounded-full bg-brand-primary" />
+                <span className="text-[14px] text-brand-primary font-medium">{t('me.version.hint')}</span>
               </span>
             ) : undefined
           }

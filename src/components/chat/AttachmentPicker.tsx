@@ -63,7 +63,7 @@ export function AttachmentPicker({
     >
       <div className="px-4 pb-2">
         {/* photos */}
-        <div className="text-[13px] font-medium text-label-secondary px-1 pb-2">{t('chat.attach.photos')}</div>
+        <div className="text-[14px] font-medium text-label-secondary px-1 pb-2">{t('chat.attach.photos')}</div>
         <div className="grid grid-cols-3 gap-2">
           {SAMPLE_PHOTOS.map((p) => {
             const on = selected.has(p.id)
@@ -85,20 +85,20 @@ export function AttachmentPicker({
         </div>
 
         {/* files */}
-        <div className="text-[13px] font-medium text-label-secondary px-1 pt-4 pb-2">{t('chat.attach.files')}</div>
+        <div className="text-[14px] font-medium text-label-secondary px-1 pt-4 pb-2">{t('chat.attach.files')}</div>
         <div className="list-group divide-y divide-divider">
           {SAMPLE_FILES.map((f) => {
             const on = selected.has(f.id)
             return (
               <button key={f.id} onClick={() => toggle(f.id)} className="w-full flex items-center gap-3 px-3.5 py-2.5 active:bg-black/[0.04]">
                 <div
-                  className="w-9 h-9 rounded-[8px] flex items-center justify-center text-white text-[10px] font-bold shrink-0"
+                  className="w-9 h-9 rounded-[8px] flex items-center justify-center text-white text-[12px] font-bold shrink-0"
                   style={{ background: EXT_COLOR[f.ext] || '#8E8E93' }}
                 >
                   {f.ext.toUpperCase()}
                 </div>
                 <div className="flex-1 min-w-0 text-left">
-                  <div className="text-[15px] font-medium truncate">{f.name}</div>
+                  <div className="text-[16px] font-medium truncate">{f.name}</div>
                   <div className="text-[12px] text-label-secondary">{formatBytes(f.size)}</div>
                 </div>
                 <div

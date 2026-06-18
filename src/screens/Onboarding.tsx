@@ -43,10 +43,10 @@ function HeroTwo() {
       >
         <Sparkles size={44} className="text-white" />
       </motion.div>
-      <motion.div {...float(0.5)} className="absolute top-3 -right-1 bg-surface rounded-2xl rounded-br-md shadow-ios-md px-3.5 py-2.5 text-[13px] font-medium">
+      <motion.div {...float(0.5)} className="absolute top-3 -right-1 bg-surface rounded-2xl rounded-br-md shadow-ios-md px-3.5 py-2.5 text-[14px] font-medium">
         帮我整理今天的要点 ✦
       </motion.div>
-      <motion.div {...float(1)} className="absolute bottom-2 -left-2 bg-surface rounded-2xl rounded-bl-md shadow-ios-md px-3.5 py-2.5 text-[13px] text-label-secondary">
+      <motion.div {...float(1)} className="absolute bottom-2 -left-2 bg-surface rounded-2xl rounded-bl-md shadow-ios-md px-3.5 py-2.5 text-[14px] text-label-secondary">
         已为你汇总 3 件事…
       </motion.div>
     </div>
@@ -74,8 +74,8 @@ function HeroThree() {
             {f.icon}
           </div>
           <div>
-            <div className="text-[15px] font-semibold">{f.title}</div>
-            <div className="text-[13px] text-label-secondary">{f.desc}</div>
+            <div className="text-[16px] font-semibold">{f.title}</div>
+            <div className="text-[14px] text-label-secondary">{f.desc}</div>
           </div>
         </motion.div>
       ))}
@@ -133,8 +133,8 @@ export function Onboarding() {
             <div key={i} className="snap-center shrink-0 w-full h-full flex flex-col items-center justify-center px-9">
               <div className="flex-1 flex items-center justify-center">{p.hero}</div>
               <div className="text-center pb-6 min-h-[150px]">
-                <h2 className="text-[26px] font-bold tracking-tight">{p.title}</h2>
-                <p className="text-[15px] text-label-secondary mt-3 leading-relaxed max-w-[300px]">{p.body}</p>
+                <h2 className="text-[24px] font-bold tracking-tight">{p.title}</h2>
+                <p className="text-[16px] text-label-secondary mt-3 leading-relaxed max-w-[300px]">{p.body}</p>
               </div>
             </div>
           ))}

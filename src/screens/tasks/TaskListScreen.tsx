@@ -106,7 +106,7 @@ export function TaskListScreen({ onBack }: OverlayScreenProps) {
           <div className="px-4 pt-1 space-y-3">{active.map(renderCard)}</div>
           {paused.length > 0 && (
             <>
-              <div className="px-5 pt-4 pb-1.5 text-[13px] font-medium text-label-secondary uppercase tracking-wide">
+              <div className="px-5 pt-4 pb-1.5 text-[14px] font-medium text-label-secondary uppercase tracking-wide">
                 {t('tasks.list.paused')}
               </div>
               <div className="px-4 space-y-3 opacity-60">{paused.map(renderCard)}</div>

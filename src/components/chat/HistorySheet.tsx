@@ -126,12 +126,12 @@ export function HistorySheet({ target, onClose }: { target: HistoryTarget; onClo
                   onChange={(e) => setNewName(e.target.value)}
                   placeholder={t('chat.project.name.ph')}
                   onKeyDown={(e) => e.key === 'Enter' && newName.trim() && (moveConversation(conv.id, newProject(newName.trim())), toast(t('chat.session.moved'), 'success'), onClose())}
-                  className="flex-1 h-11 px-3.5 rounded-ios bg-ios-gray6 text-[15px] outline-none"
+                  className="flex-1 h-11 px-3.5 rounded-ios bg-ios-gray6 text-[16px] outline-none"
                 />
                 <button
                   disabled={!newName.trim()}
                   onClick={() => { const id = newProject(newName.trim()); moveConversation(conv.id, id); toast(t('chat.session.moved'), 'success'); onClose() }}
-                  className="px-4 rounded-ios-lg text-white font-semibold text-[15px] bg-brand-primary disabled:opacity-40 press"
+                  className="px-4 rounded-ios-lg text-white font-semibold text-[16px] bg-brand-primary disabled:opacity-40 press"
                 >
                   {t('common.done')}
                 </button>
@@ -345,7 +345,7 @@ function ConfirmBlock({
           <Trash2 size={22} className="text-ios-red" />
         </div>
         <div className="text-[16px] font-semibold">{title}</div>
-        <div className="text-[13px] text-label-secondary mt-1 leading-snug px-4">{body}</div>
+        <div className="text-[14px] text-label-secondary mt-1 leading-snug px-4">{body}</div>
       </div>
       <div className="grid grid-cols-2 gap-2.5 mt-4">
         <button onClick={onBack} className="h-12 rounded-ios-lg bg-ios-gray6 font-semibold text-[16px]">
@@ -386,7 +386,7 @@ function ProjectDeleteBlock({
       </div>
       {count > 0 && (
         <>
-          <div className="text-[13px] text-label-secondary px-1 pt-2 pb-1.5">{t('chat.project.deleteQuestion')}</div>
+          <div className="text-[14px] text-label-secondary px-1 pt-2 pb-1.5">{t('chat.project.deleteQuestion')}</div>
           <div className="list-group divide-y divide-divider">
             <SelectRow icon={<FolderMinus size={15} />} tint={TINT.gray} label={t('chat.project.keepChats')} desc={t('chat.project.keepChatsDesc')} selected={choice === 'keep'} onClick={() => setChoice('keep')} />
             <SelectRow icon={<Trash2 size={15} />} tint={TINT.red} label={t('chat.project.deleteChats')} desc={t('chat.project.deleteChatsDesc', { n: count })} selected={choice === 'all'} onClick={() => setChoice('all')} />

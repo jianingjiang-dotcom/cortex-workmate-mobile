@@ -530,7 +530,7 @@ export const STRINGS: Record<Lang, Dict> = {
     'me.countItems': '{n} 条',
     // 版本 / 检查更新
     'about.title': '版本',
-    'about.appName': 'Cortex Workmate',
+    'about.appName': 'Cortex',
     'about.checking': '正在检查更新…',
     'about.currentVersion': '当前版本 {v}',
     'about.upToDate': '已是最新版本',
@@ -1102,7 +1102,7 @@ export const STRINGS: Record<Lang, Dict> = {
     'me.countItems': '{n} items',
     // version / check for update
     'about.title': 'Version',
-    'about.appName': 'Cortex Workmate',
+    'about.appName': 'Cortex',
     'about.checking': 'Checking for updates…',
     'about.currentVersion': 'Current version {v}',
     'about.upToDate': "You're up to date",

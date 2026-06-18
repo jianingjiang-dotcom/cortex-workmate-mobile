@@ -17,8 +17,8 @@ function AttachmentThumb({ a }: { a: Attachment }) {
     <div className="flex items-center gap-2 rounded-ios px-3 py-2.5 max-w-[220px]" style={{ background: USER_BUBBLE }}>
       <FileText size={18} className="shrink-0 text-label-secondary" />
       <div className="min-w-0">
-        <div className="text-[13px] font-medium truncate text-label-primary">{a.name}</div>
-        <div className="text-[11px] text-label-secondary">{formatBytes(a.size)}</div>
+        <div className="text-[14px] font-medium truncate text-label-primary">{a.name}</div>
+        <div className="text-[12px] text-label-secondary">{formatBytes(a.size)}</div>
       </div>
     </div>
   )
@@ -44,7 +44,7 @@ function QuotedRunChip({ run }: { run: TaskRunRef }) {
       <div className="text-[13.5px] text-label-primary leading-snug mt-0.5 line-clamp-3 whitespace-pre-wrap break-words">
         {run.summary}
       </div>
-      <div className="text-[11px] text-label-tertiary mt-1">{formatRelative(run.startedAt, lang)}</div>
+      <div className="text-[12px] text-label-tertiary mt-1">{formatRelative(run.startedAt, lang)}</div>
     </div>
   )
 }
@@ -109,14 +109,14 @@ export function MessageView({
         {message.quotedRun && <QuotedRunChip run={message.quotedRun} />}
         {message.text && (
           <div
-            className="max-w-[82%] rounded-[20px] rounded-br-[7px] px-3.5 py-2.5 text-label-primary text-[15px] leading-[1.45] whitespace-pre-wrap break-words"
+            className="max-w-[82%] rounded-[20px] rounded-br-[7px] px-3.5 py-2.5 text-label-primary text-[16px] leading-[1.45] whitespace-pre-wrap break-words"
             style={{ background: USER_BUBBLE }}
           >
             {message.text}
           </div>
         )}
         <div className="flex items-center gap-2 mt-1 pr-1">
-          {message.edited && <span className="text-[11px] text-label-tertiary">{t('chat.edited')}</span>}
+          {message.edited && <span className="text-[12px] text-label-tertiary">{t('chat.edited')}</span>}
           {mode === 'normal' && onEditUser && (
             <button
               onClick={() => onEditUser(message)}
@@ -140,12 +140,12 @@ export function MessageView({
         {activeAgent ? (
           <>
             <Bot size={18} className="text-brand-primary shrink-0" />
-            <span className="text-[13px] font-semibold brand-text">{activeAgent.name}</span>
+            <span className="text-[14px] font-semibold brand-text">{activeAgent.name}</span>
           </>
         ) : (
           <>
             <Avatar src={persona.avatarImage} gradient={persona.avatarGradient} size={26} shape="circle" icon={<Sparkles size={14} />} />
-            <span className="text-[13px] font-semibold brand-text">{persona.name}</span>
+            <span className="text-[14px] font-semibold brand-text">{persona.name}</span>
           </>
         )}
       </div>

@@ -28,7 +28,7 @@ export function McpListScreen({ onBack }: OverlayScreenProps) {
     const state = busy[m.id]
     if (state) {
       return (
-        <div className="flex items-center gap-1.5 text-[13px] text-label-secondary shrink-0 whitespace-nowrap">
+        <div className="flex items-center gap-1.5 text-[14px] text-label-secondary shrink-0 whitespace-nowrap">
           <Spinner size={15} />
           <span>{state === 'auth' ? t('mcp.authorizing') : t('mcp.connecting')}</span>
         </div>
@@ -93,7 +93,7 @@ export function McpListScreen({ onBack }: OverlayScreenProps) {
                         </span>
                       )}
                     </div>
-                    <div className="text-[13px] text-label-secondary truncate mt-0.5">{m.desc}</div>
+                    <div className="text-[14px] text-label-secondary truncate mt-0.5">{m.desc}</div>
                   </div>
                 </button>
                 {renderControl(m)}

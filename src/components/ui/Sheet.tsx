@@ -66,7 +66,7 @@ export function Sheet({
               <div className="w-9 h-1 rounded-full bg-ios-gray4" />
             </div>
             {title && (
-              <div className="px-5 pt-1 pb-2 text-[17px] font-semibold text-center shrink-0">{title}</div>
+              <div className="px-5 pt-1 pb-2 text-[16px] font-semibold text-center shrink-0">{title}</div>
             )}
             <div className={cn('flex-1 min-h-0 scroll-y no-scrollbar overflow-y-auto', footer ? 'pb-2' : 'pb-8')}>
               {children}
@@ -126,8 +126,8 @@ export function ActionSheet({
             <div className="rounded-[14px] overflow-hidden glass mb-2">
               {(title || message) && (
                 <div className="px-4 py-3 text-center border-b border-divider">
-                  {title && <div className="text-[13px] font-medium text-label-secondary">{title}</div>}
-                  {message && <div className="text-[13px] text-label-secondary mt-0.5">{message}</div>}
+                  {title && <div className="text-[14px] font-medium text-label-secondary">{title}</div>}
+                  {message && <div className="text-[14px] text-label-secondary mt-0.5">{message}</div>}
                 </div>
               )}
               {actions.map((a, i) => (
@@ -139,7 +139,7 @@ export function ActionSheet({
                     a.onClick()
                   }}
                   className={cn(
-                    'w-full h-[54px] flex items-center justify-center gap-2 text-[17px] active:bg-black/[0.06] disabled:opacity-40',
+                    'w-full h-[54px] flex items-center justify-center gap-2 text-[16px] active:bg-black/[0.06] disabled:opacity-40',
                     i > 0 && 'border-t border-divider',
                     a.destructive ? 'text-ios-red' : 'text-label-primary',
                   )}
@@ -151,7 +151,7 @@ export function ActionSheet({
             </div>
             <button
               onClick={onClose}
-              className="w-full h-[54px] rounded-[14px] bg-surface text-[17px] font-semibold text-label-primary active:bg-ios-gray6"
+              className="w-full h-[54px] rounded-[14px] bg-surface text-[16px] font-semibold text-label-primary active:bg-ios-gray6"
             >
               {cancelLabel}
             </button>
@@ -192,7 +192,7 @@ export function CenterModal({
             exit={{ opacity: 0 }}
           >
             <motion.div
-              className="w-full max-w-[300px] bg-surface rounded-[16px] overflow-hidden pointer-events-auto shadow-ios-lg"
+              className="w-full max-w-[300px] bg-white dark:bg-[#1c1c1e] rounded-[16px] overflow-hidden pointer-events-auto shadow-ios-lg"
               initial={{ scale: 0.9, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.95, opacity: 0, pointerEvents: 'none' }}
