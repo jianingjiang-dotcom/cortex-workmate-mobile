@@ -473,8 +473,8 @@ function NonDone({
     return (
       <div className="flex flex-col items-center justify-center h-full px-10 text-center">
         <div
-          className="w-[72px] h-[72px] rounded-[20px] flex items-center justify-center text-white mb-4"
-          style={{ background: solidFor('sunset') }}
+          className="w-[72px] h-[72px] rounded-[20px] flex items-center justify-center mb-4"
+          style={{ background: `${solidFor('sunset')}1A`, color: solidFor('sunset') }}
         >
           <CloudOff size={30} />
         </div>
@@ -508,9 +508,9 @@ function NonDone({
       <div
         className={cn(
           'w-[72px] h-[72px] rounded-[20px] flex items-center justify-center mb-4',
-          status === 'failed' ? 'text-white' : 'bg-ios-gray5 text-label-secondary',
+          status === 'failed' ? '' : 'bg-ios-gray5 text-label-secondary',
         )}
-        style={status === 'failed' ? { background: solidFor('sunset') } : undefined}
+        style={status === 'failed' ? { background: `${solidFor('sunset')}1A`, color: solidFor('sunset') } : undefined}
       >
         <AudioLines size={30} />
       </div>
