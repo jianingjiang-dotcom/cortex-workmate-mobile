@@ -51,7 +51,11 @@ export function MeetingListScreen({ onBack }: OverlayScreenProps) {
       onClick={() => push('meetingDetail', { id: m.id })}
       className="w-full flex items-center gap-3 px-4 py-3 text-left active:bg-black/[0.03]"
     >
-      <div className="w-11 h-11 rounded-[12px] flex items-center justify-center shrink-0 bg-brand-primary/10 text-brand-primary">
+      <div
+        className={`w-11 h-11 rounded-[12px] flex items-center justify-center shrink-0 ${
+          m.source === 'import' ? 'bg-ios-gray5 text-label-secondary' : 'bg-brand-primary/10 text-brand-primary'
+        }`}
+      >
         {m.source === 'import' ? <Import size={20} /> : <AudioLines size={20} />}
       </div>
       <div className="flex-1 min-w-0">

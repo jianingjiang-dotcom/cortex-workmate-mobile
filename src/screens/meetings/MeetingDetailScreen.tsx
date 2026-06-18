@@ -211,7 +211,7 @@ export function MeetingDetailScreen({ params, onBack }: OverlayScreenProps) {
           </div>
 
           <div className="flex items-center justify-center gap-4 mt-4">
-            <span className="text-[12px] text-label-tertiary tabular-nums">
+            <span className="text-[12px] text-label-secondary tabular-nums">
               {formatDateTime(meeting.createdAt, lang)} · {formatDuration(meeting.durationMs, lang)}
             </span>
             <button
@@ -285,7 +285,7 @@ export function MeetingDetailScreen({ params, onBack }: OverlayScreenProps) {
                     <div className="flex items-center gap-2 px-1 pt-1.5 pb-1">
                       {meeting.template && <Pill color="brand">{t('meet.template.' + meeting.template)}</Pill>}
                       {meeting.summaryUpdatedAt && (
-                        <span className="text-[12px] text-label-tertiary truncate">
+                        <span className="text-[12px] text-label-secondary truncate">
                           {t('meet.summary.updatedAt', { time: formatDateTime(meeting.summaryUpdatedAt, lang) })}
                         </span>
                       )}
