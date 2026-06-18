@@ -63,6 +63,7 @@ interface AppState {
   authStatus: 'loggedOut' | 'onboarding' | 'ready'
   hasOnboarded: boolean
   scanLoginOpen: boolean
+  updateDismissed: boolean // user chose to update (tapped the App Store CTA); just viewing keeps the marker
   // account
   account: Account
   // navigation (ephemeral)
@@ -104,6 +105,7 @@ interface AppState {
   login: () => void
   setScanLogin: (open: boolean) => void
   completeOnboarding: () => void
+  dismissUpdate: () => void // user chose to update → clear the new-version marker
   logout: () => void
   updateAccount: (patch: Partial<Account>) => void
 
@@ -232,6 +234,7 @@ export const useStore = create<AppState>()(
       authStatus: 'loggedOut',
       hasOnboarded: false,
       scanLoginOpen: false,
+      updateDismissed: false,
       activeTab: 'chat',
       overlays: [],
       chatMode: 'workmate',
@@ -260,6 +263,7 @@ export const useStore = create<AppState>()(
         set((s) => ({ authStatus: s.hasOnboarded ? 'ready' : 'onboarding', scanLoginOpen: false })),
       setScanLogin: (open) => set({ scanLoginOpen: open }),
       completeOnboarding: () => set({ hasOnboarded: true, authStatus: 'ready' }),
+      dismissUpdate: () => set({ updateDismissed: true }),
       logout: () =>
         set({ authStatus: 'loggedOut', overlays: [], activeTab: 'chat', scanLoginOpen: false }),
       updateAccount: (patch) => set((s) => ({ account: { ...s.account, ...patch } })),
@@ -726,6 +730,7 @@ export const useStore = create<AppState>()(
           overlays: [],
           toasts: [],
           confirmDialog: null,
+          updateDismissed: false, // re-arm the new-version marker after a reset
         }),
     }),
     {
@@ -767,6 +772,7 @@ export const useStore = create<AppState>()(
         themeMode: s.themeMode,
         authStatus: s.authStatus === 'onboarding' ? 'loggedOut' : s.authStatus,
         hasOnboarded: s.hasOnboarded,
+        updateDismissed: s.updateDismissed,
         account: s.account,
         activeTab: s.activeTab,
         chatMode: s.chatMode,

@@ -14,6 +14,7 @@ import {
   Zap,
 } from 'lucide-react'
 import type { ToastKind } from '../lib/types'
+import { cn } from '../lib/util'
 import { useStore } from '../store/useStore'
 import { useT } from '../i18n'
 
