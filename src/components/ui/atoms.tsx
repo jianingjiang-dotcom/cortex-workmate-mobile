@@ -24,7 +24,6 @@ export function Spinner({ size = 18, className, color }: { size?: number; classN
 
 export function Avatar({
   gradient,
-  color,
   name,
   size = 40,
   shape = 'squircle',
@@ -33,7 +32,6 @@ export function Avatar({
   className,
 }: {
   gradient?: string
-  color?: string // explicit fill — overrides gradient (e.g. identityColor() for letter avatars)
   name?: string
   size?: number
   shape?: 'circle' | 'squircle'
@@ -68,7 +66,7 @@ export function Avatar({
         width: size,
         height: size,
         borderRadius: radius,
-        background: color || solidFor(gradient),
+        background: solidFor(gradient),
         fontSize: size * 0.4,
       }}
     >

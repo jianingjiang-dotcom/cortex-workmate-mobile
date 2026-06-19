@@ -328,6 +328,7 @@ export interface Skill {
   name: string
   desc: string
   enabled: boolean
+  icon?: string // lucide glyph key (see SKILL_ICONS); falls back to a default skill glyph
   gradient?: string
   letter?: string
 }

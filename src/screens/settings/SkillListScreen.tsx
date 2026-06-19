@@ -1,11 +1,22 @@
 import { useState } from 'react'
-import { Search } from 'lucide-react'
+import { ClipboardCheck, FileText, ListChecks, Mail, PieChart, Search, Wand2 } from 'lucide-react'
+import type { LucideIcon } from 'lucide-react'
 import type { OverlayScreenProps } from '../../lib/types'
 import { useStore } from '../../store/useStore'
 import { useT } from '../../i18n'
 import { Page } from '../../components/Page'
-import { Avatar, Highlight, IconButton, SearchField, Switch } from '../../components/ui/atoms'
-import { identityColorAt } from '../../lib/util'
+import { Highlight, IconButton, SearchField, Switch } from '../../components/ui/atoms'
+
+// Skill glyphs (a meaningful icon per skill via Skill.icon); Wand2 is the graceful
+// default so new/uncurated skills never fall back to letters or break the layout.
+const SKILL_ICONS: Record<string, LucideIcon> = {
+  report: FileText,
+  search: Search,
+  checklist: ListChecks,
+  mail: Mail,
+  review: ClipboardCheck,
+  chart: PieChart,
+}
 
 export function SkillListScreen({ onBack }: OverlayScreenProps) {
   const t = useT()
@@ -52,9 +63,13 @@ export function SkillListScreen({ onBack }: OverlayScreenProps) {
       ) : (
         <div className="px-4 mt-1">
           <div className="list-group divide-y divide-divider">
-            {filtered.map((sk, i) => (
+            {filtered.map((sk) => {
+              const Glyph = SKILL_ICONS[sk.icon ?? ''] ?? Wand2
+              return (
               <div key={sk.id} className="flex items-center gap-3 px-4 py-3">
-                <Avatar color={identityColorAt(i)} name={sk.letter || sk.name} size={38} />
+                <div className="w-[38px] h-[38px] rounded-[11px] bg-brand-primary/10 text-brand-primary flex items-center justify-center shrink-0">
+                  <Glyph size={20} />
+                </div>
                 <div className="flex-1 min-w-0">
                   <div className="text-[16px] font-medium truncate">
                     {q ? <Highlight text={sk.name} query={query} /> : sk.name}
@@ -63,7 +78,8 @@ export function SkillListScreen({ onBack }: OverlayScreenProps) {
                 </div>
                 <Switch checked={sk.enabled} onChange={() => toggleSkill(sk.id)} />
               </div>
-            ))}
+              )
+            })}
           </div>
         </div>
       )}

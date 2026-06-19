@@ -1036,12 +1036,12 @@ export function buildSeed(lang: Lang = _seedLang): SeedData {
   ]
 
   const skills: Skill[] = [
-    { id: uid('skill_'), name: L('周报生成', 'Weekly Report'), desc: L('汇总本周进展，按结论 + 要点生成周报', 'Compiles weekly progress into a conclusion + key-points report'), enabled: true, gradient: 'brand', letter: L('周', 'W') },
-    { id: uid('skill_'), name: L('竞品分析', 'Competitor Analysis'), desc: L('抓取竞品信息并整理成对比要点', 'Gathers competitor info into comparison points'), enabled: true, gradient: 'violet', letter: L('竞', 'C') },
-    { id: uid('skill_'), name: L('会议待办提取', 'Action-Item Extraction'), desc: L('从会议纪要中自动提取待办项', 'Auto-extracts action items from meeting notes'), enabled: true, gradient: 'ocean', letter: L('会', 'A') },
-    { id: uid('skill_'), name: L('邮件起草', 'Email Drafting'), desc: L('根据要点起草中英文邮件', 'Drafts emails in Chinese or English from key points'), enabled: false, gradient: 'sunset', letter: L('邮', 'E') },
-    { id: uid('skill_'), name: L('PRD 评审', 'PRD Review'), desc: L('基于第一性原理检查 PRD 漏洞', 'Checks PRDs for gaps from first principles'), enabled: false, gradient: 'mint', letter: 'P' },
-    { id: uid('skill_'), name: L('数据透视', 'Data Pivot'), desc: L('把原始数据透视成图表与洞察', 'Pivots raw data into charts and insights'), enabled: false, gradient: 'amber', letter: L('数', 'D') },
+    { id: uid('skill_'), name: L('周报生成', 'Weekly Report'), desc: L('汇总本周进展，按结论 + 要点生成周报', 'Compiles weekly progress into a conclusion + key-points report'), enabled: true, icon: 'report', gradient: 'brand', letter: L('周', 'W') },
+    { id: uid('skill_'), name: L('竞品分析', 'Competitor Analysis'), desc: L('抓取竞品信息并整理成对比要点', 'Gathers competitor info into comparison points'), enabled: true, icon: 'search', gradient: 'violet', letter: L('竞', 'C') },
+    { id: uid('skill_'), name: L('会议待办提取', 'Action-Item Extraction'), desc: L('从会议纪要中自动提取待办项', 'Auto-extracts action items from meeting notes'), enabled: true, icon: 'checklist', gradient: 'ocean', letter: L('会', 'A') },
+    { id: uid('skill_'), name: L('邮件起草', 'Email Drafting'), desc: L('根据要点起草中英文邮件', 'Drafts emails in Chinese or English from key points'), enabled: false, icon: 'mail', gradient: 'sunset', letter: L('邮', 'E') },
+    { id: uid('skill_'), name: L('PRD 评审', 'PRD Review'), desc: L('基于第一性原理检查 PRD 漏洞', 'Checks PRDs for gaps from first principles'), enabled: false, icon: 'review', gradient: 'mint', letter: 'P' },
+    { id: uid('skill_'), name: L('数据透视', 'Data Pivot'), desc: L('把原始数据透视成图表与洞察', 'Pivots raw data into charts and insights'), enabled: false, icon: 'chart', gradient: 'amber', letter: L('数', 'D') },
   ]
 
   return {
