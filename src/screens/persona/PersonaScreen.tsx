@@ -85,7 +85,7 @@ export function PersonaScreen({ onBack }: OverlayScreenProps) {
   const save = () => {
     if (!dirty) return
     setPersona({ name: name.trim() || persona.name, description, avatarImage, systemPrompt, modelId })
-    toast(t('persona.saved'), 'success')
+    toast(t('persona.saved'), 'neutral')
     onBack()
   }
 
@@ -109,7 +109,7 @@ export function PersonaScreen({ onBack }: OverlayScreenProps) {
         <button
           onClick={save}
           disabled={!dirty}
-          className={cn('text-[17px] font-semibold px-2', dirty ? 'text-ios-blue active:opacity-50' : 'text-label-tertiary')}
+          className={cn('text-[16px] font-semibold px-2', dirty ? 'text-ios-purple active:opacity-50' : 'text-label-tertiary')}
         >
           {t('common.save')}
         </button>
@@ -119,7 +119,7 @@ export function PersonaScreen({ onBack }: OverlayScreenProps) {
       <div className="flex flex-col items-center pt-4 pb-6">
         <button onClick={() => setAvatarSheet(true)} className="relative active:opacity-90">
           <Avatar src={avatarImage} gradient={persona.avatarGradient} size={88} shape="circle" icon={<SparkleIcon />} />
-          <div className="absolute -bottom-0.5 -right-0.5 w-7 h-7 rounded-full bg-ios-blue ring-2 ring-ios-gray6 flex items-center justify-center">
+          <div className="absolute -bottom-0.5 -right-0.5 w-7 h-7 rounded-full bg-ios-purple ring-2 ring-ios-gray6 flex items-center justify-center">
             <Camera size={14} className="text-white" />
           </div>
         </button>
@@ -150,19 +150,19 @@ export function PersonaScreen({ onBack }: OverlayScreenProps) {
             onChange={(e) => setSystemPrompt(e.target.value)}
             placeholder={t('persona.prompt.ph')}
             rows={6}
-            className="w-full bg-transparent text-[15px] leading-relaxed outline-none resize-none"
+            className="w-full bg-transparent text-[16px] leading-relaxed outline-none resize-none"
           />
         </Field>
 
         <div>
-          <div className="px-1 pb-1.5 text-[13px] font-medium text-label-secondary">{t('persona.model')}</div>
+          <div className="px-1 pb-1.5 text-[14px] font-medium text-label-secondary">{t('persona.model')}</div>
           <button
             onClick={() => setModelOpen(true)}
             className="w-full bg-surface rounded-ios-lg px-3.5 py-3 flex items-center gap-3 active:bg-ios-gray6"
           >
             {model && <VendorLogo vendor={model.vendor} size={34} />}
             <div className="flex-1 text-left">
-              <div className="text-[15px] font-medium">{model?.name}</div>
+              <div className="text-[16px] font-medium">{model?.name}</div>
               <div className="text-[12px] text-label-secondary">{model?.vendor}</div>
             </div>
             <svg width="8" height="14" viewBox="0 0 8 14" className="text-ios-gray3" fill="none">
@@ -199,18 +199,18 @@ export function PersonaScreen({ onBack }: OverlayScreenProps) {
                 }}
                 className={cn(
                   'w-full flex items-center gap-3 px-3.5 py-3 rounded-ios-lg border text-left',
-                  active ? 'border-ios-blue bg-ios-blue/[0.05]' : 'border-divider bg-surface',
+                  active ? 'border-ios-purple bg-ios-purple/[0.05]' : 'border-divider bg-surface',
                 )}
               >
                 <VendorLogo vendor={m.vendor} size={38} />
                 <div className="flex-1 min-w-0">
-                  <div className="text-[15px] font-medium">{m.name}</div>
+                  <div className="text-[16px] font-medium">{m.name}</div>
                   <div className="text-[12px] text-label-secondary">
                     {m.vendor}
                     {m.desc ? ` · ${m.desc}` : ''}
                   </div>
                 </div>
-                {active && <Check size={20} className="text-ios-blue" />}
+                {active && <Check size={20} className="text-ios-purple" />}
               </button>
             )
           })}
@@ -223,7 +223,7 @@ export function PersonaScreen({ onBack }: OverlayScreenProps) {
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <div>
-      <div className="px-1 pb-1.5 text-[13px] font-medium text-label-secondary">{label}</div>
+      <div className="px-1 pb-1.5 text-[14px] font-medium text-label-secondary">{label}</div>
       <div className="bg-surface rounded-ios-lg px-3.5 py-3">{children}</div>
     </div>
   )

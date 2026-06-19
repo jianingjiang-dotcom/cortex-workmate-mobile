@@ -39,7 +39,7 @@ export function ProfileScreen({ onBack }: OverlayScreenProps) {
   const save = () => {
     if (!dirty) return
     updateAccount({ name: name.trim() || account.name, avatarImage })
-    toast(t('profile.saved'), 'success')
+    toast(t('profile.saved'), 'neutral')
     onBack()
   }
 
@@ -55,8 +55,9 @@ export function ProfileScreen({ onBack }: OverlayScreenProps) {
   }
 
   const copyId = () => {
-    navigator.clipboard?.writeText(account.id).catch(() => {})
-    toast(t('profile.idCopied'), 'success')
+    const p = navigator.clipboard?.writeText(account.id)
+    if (p) p.then(() => toast(t('profile.idCopied'), 'neutral')).catch(() => toast(t('common.copyFailed'), 'error'))
+    else toast(t('common.copyFailed'), 'error')
   }
 
   return (
@@ -69,7 +70,7 @@ export function ProfileScreen({ onBack }: OverlayScreenProps) {
         <button
           onClick={save}
           disabled={!dirty}
-          className={cn('text-[17px] font-semibold px-2', dirty ? 'text-ios-blue active:opacity-50' : 'text-label-tertiary')}
+          className={cn('text-[16px] font-semibold px-2', dirty ? 'text-ios-purple active:opacity-50' : 'text-label-tertiary')}
         >
           {t('common.save')}
         </button>
@@ -79,7 +80,7 @@ export function ProfileScreen({ onBack }: OverlayScreenProps) {
       <div className="flex flex-col items-center pt-4 pb-5">
         <button onClick={() => setAvatarSheet(true)} className="relative active:opacity-90" aria-label={t('profile.avatar')}>
           <Avatar src={avatarImage} gradient={account.avatarGradient} name={name} size={92} shape="circle" />
-          <div className="absolute -bottom-0.5 -right-0.5 w-7 h-7 rounded-full bg-ios-blue ring-2 ring-grouped flex items-center justify-center">
+          <div className="absolute -bottom-0.5 -right-0.5 w-7 h-7 rounded-full bg-ios-purple ring-2 ring-grouped flex items-center justify-center">
             <Camera size={14} className="text-white" />
           </div>
         </button>
@@ -87,7 +88,7 @@ export function ProfileScreen({ onBack }: OverlayScreenProps) {
 
       {/* name (editable) */}
       <div className="px-4">
-        <div className="px-1 pb-1.5 text-[13px] font-medium text-label-secondary">{t('profile.name')}</div>
+        <div className="px-1 pb-1.5 text-[14px] font-medium text-label-secondary">{t('profile.name')}</div>
         <div className="bg-surface rounded-ios-lg px-3.5 py-3 border border-divider">
           <input
             value={name}

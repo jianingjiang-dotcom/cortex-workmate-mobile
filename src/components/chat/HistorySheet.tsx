@@ -24,7 +24,7 @@ export type HistoryTarget =
 
 type View = 'menu' | 'rename' | 'move' | 'delete'
 
-const TINT = { blue: '#407CFF', violet: '#CC79FF', red: '#EF4444', gray: '#8E8E93' }
+const TINT = { blue: 'var(--blue)', violet: 'var(--purple)', red: '#EF4444', gray: '#8E8E93' }
 
 export function HistorySheet({ target, onClose }: { target: HistoryTarget; onClose: () => void }) {
   const t = useT()
@@ -77,7 +77,7 @@ export function HistorySheet({ target, onClose }: { target: HistoryTarget; onClo
             onConfirm={() => {
               if (text.trim()) {
                 newProject(text.trim())
-                toast(t('chat.project.created'), 'success')
+                toast(t('chat.project.created'), 'neutral')
               }
               onClose()
             }}
@@ -104,7 +104,7 @@ export function HistorySheet({ target, onClose }: { target: HistoryTarget; onClo
             confirm={t('common.save')}
             onConfirm={() => {
               if (text.trim()) renameConversation(conv.id, text.trim())
-              toast(t('common.saved'), 'success')
+              toast(t('common.saved'), 'neutral')
               onClose()
             }}
           />
@@ -113,9 +113,9 @@ export function HistorySheet({ target, onClose }: { target: HistoryTarget; onClo
           <>
             <HeaderBar title={t('chat.session.moveTo')} onBack={() => setView('menu')} />
             <div className="list-group divide-y divide-divider mt-3">
-              <SelectRow icon={<FolderMinus size={15} />} tint={TINT.gray} label={t('chat.session.moveTo.none')} selected={!conv.projectId} onClick={() => { moveConversation(conv.id, undefined); toast(t('chat.session.moved'), 'success'); onClose() }} />
+              <SelectRow icon={<FolderMinus size={15} />} tint={TINT.gray} label={t('chat.session.moveTo.none')} selected={!conv.projectId} onClick={() => { moveConversation(conv.id, undefined); toast(t('chat.session.moved'), 'neutral'); onClose() }} />
               {projects.map((p) => (
-                <SelectRow key={p.id} icon={<Folder size={15} />} tint={TINT.violet} label={p.name} selected={conv.projectId === p.id} onClick={() => { moveConversation(conv.id, p.id); toast(t('chat.session.moved'), 'success'); onClose() }} />
+                <SelectRow key={p.id} icon={<Folder size={15} />} tint={TINT.violet} label={p.name} selected={conv.projectId === p.id} onClick={() => { moveConversation(conv.id, p.id); toast(t('chat.session.moved'), 'neutral'); onClose() }} />
               ))}
             </div>
             {showNew ? (
@@ -125,13 +125,13 @@ export function HistorySheet({ target, onClose }: { target: HistoryTarget; onClo
                   value={newName}
                   onChange={(e) => setNewName(e.target.value)}
                   placeholder={t('chat.project.name.ph')}
-                  onKeyDown={(e) => e.key === 'Enter' && newName.trim() && (moveConversation(conv.id, newProject(newName.trim())), toast(t('chat.session.moved'), 'success'), onClose())}
-                  className="flex-1 h-11 px-3.5 rounded-ios bg-ios-gray6 text-[15px] outline-none"
+                  onKeyDown={(e) => e.key === 'Enter' && newName.trim() && (moveConversation(conv.id, newProject(newName.trim())), toast(t('chat.session.moved'), 'neutral'), onClose())}
+                  className="flex-1 h-11 px-3.5 rounded-ios bg-ios-gray6 text-[16px] outline-none"
                 />
                 <button
                   disabled={!newName.trim()}
-                  onClick={() => { const id = newProject(newName.trim()); moveConversation(conv.id, id); toast(t('chat.session.moved'), 'success'); onClose() }}
-                  className="px-4 rounded-ios-lg text-white font-semibold text-[15px] bg-brand-primary disabled:opacity-40 press"
+                  onClick={() => { const id = newProject(newName.trim()); moveConversation(conv.id, id); toast(t('chat.session.moved'), 'neutral'); onClose() }}
+                  className="px-4 rounded-ios-lg text-white font-semibold text-[16px] bg-brand-primary disabled:opacity-40 press"
                 >
                   {t('common.done')}
                 </button>
@@ -141,7 +141,7 @@ export function HistorySheet({ target, onClose }: { target: HistoryTarget; onClo
                 <span className="w-[29px] h-[29px] flex items-center justify-center text-label-secondary">
                   <FolderPlus size={17} />
                 </span>
-                <span className="text-[16px] text-ios-blue">{t('chat.project.newAndMove')}</span>
+                <span className="text-[16px] text-ios-purple">{t('chat.project.newAndMove')}</span>
               </button>
             )}
           </>
@@ -152,7 +152,7 @@ export function HistorySheet({ target, onClose }: { target: HistoryTarget; onClo
             title={t('chat.session.deleteConfirm')}
             body={t('chat.session.deleteBody')}
             confirm={t('common.delete')}
-            onConfirm={() => { deleteConversation(conv.id); toast(t('chat.session.deleted')); onClose() }}
+            onConfirm={() => { deleteConversation(conv.id); toast(t('chat.session.deleted'), 'delete'); onClose() }}
           />
         )}
 
@@ -175,7 +175,7 @@ export function HistorySheet({ target, onClose }: { target: HistoryTarget; onClo
             confirm={t('common.save')}
             onConfirm={() => {
               if (text.trim()) renameProject(proj.id, text.trim())
-              toast(t('chat.project.renamed'), 'success')
+              toast(t('chat.project.renamed'), 'neutral')
               onClose()
             }}
           />
@@ -187,7 +187,7 @@ export function HistorySheet({ target, onClose }: { target: HistoryTarget; onClo
             choice={delChoice}
             setChoice={setDelChoice}
             onBack={() => setView('menu')}
-            onConfirm={() => { deleteProject(proj.id, delChoice === 'all'); toast(t('chat.project.deleted')); onClose() }}
+            onConfirm={() => { deleteProject(proj.id, delChoice === 'all'); toast(t('chat.project.deleted'), 'delete'); onClose() }}
           />
         )}
       </div>
@@ -217,8 +217,8 @@ function HeaderBar({ title, onBack }: { title: string; onBack?: () => void }) {
     <div className="relative h-7 flex items-center justify-center">
       {onBack && (
         <button onClick={onBack} className="absolute left-0 flex items-center text-label-primary active:opacity-50">
-          <ChevronLeft size={24} strokeWidth={2.2} />
-          <span className="text-[16px] font-medium -ml-0.5">{t('common.back')}</span>
+          <ChevronLeft size={24} />
+          <span className="text-[16px] font-normal -ml-0.5">{t('common.back')}</span>
         </button>
       )}
       <span className="text-[16px] font-semibold">{title}</span>
@@ -345,7 +345,7 @@ function ConfirmBlock({
           <Trash2 size={22} className="text-ios-red" />
         </div>
         <div className="text-[16px] font-semibold">{title}</div>
-        <div className="text-[13px] text-label-secondary mt-1 leading-snug px-4">{body}</div>
+        <div className="text-[14px] text-label-secondary mt-1 leading-snug px-4">{body}</div>
       </div>
       <div className="grid grid-cols-2 gap-2.5 mt-4">
         <button onClick={onBack} className="h-12 rounded-ios-lg bg-ios-gray6 font-semibold text-[16px]">
@@ -386,7 +386,7 @@ function ProjectDeleteBlock({
       </div>
       {count > 0 && (
         <>
-          <div className="text-[13px] text-label-secondary px-1 pt-2 pb-1.5">{t('chat.project.deleteQuestion')}</div>
+          <div className="text-[14px] text-label-secondary px-1 pt-2 pb-1.5">{t('chat.project.deleteQuestion')}</div>
           <div className="list-group divide-y divide-divider">
             <SelectRow icon={<FolderMinus size={15} />} tint={TINT.gray} label={t('chat.project.keepChats')} desc={t('chat.project.keepChatsDesc')} selected={choice === 'keep'} onClick={() => setChoice('keep')} />
             <SelectRow icon={<Trash2 size={15} />} tint={TINT.red} label={t('chat.project.deleteChats')} desc={t('chat.project.deleteChatsDesc', { n: count })} selected={choice === 'all'} onClick={() => setChoice('all')} />

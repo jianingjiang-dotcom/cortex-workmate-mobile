@@ -208,20 +208,6 @@ export const SUMMARY_TEMPLATES: { key: SummaryTemplate }[] = [
   { key: 'actions' },
 ]
 
-// Guess a summary template from the recording title (keyword routing). Used to pre-select
-// a sensible template both for the auto-转译 kicked off at save and for the detail-page
-// template picker's default. Mirrors analysisFor()'s scenario routing.
-export function guessTemplate(title: string): SummaryTemplate {
-  if (/面试|访谈|interview/i.test(title)) return 'interview'
-  if (/客户|customer|client/i.test(title)) return 'customer'
-  if (/评审|会议|周会|review|meeting/i.test(title)) return 'meeting'
-  return 'generic'
-}
-
-// Mock summary generator — each template returns a visibly different markdown FORMAT.
-// `m.title` is woven into the heading so the summary reads as belonging to this recording;
-// an optional `note` (user-provided background) is surfaced as a blockquote under the heading
-// so it's visible the AI took it into account.
 export function summaryForTemplate(key: SummaryTemplate, m?: { title?: string }, note?: string): string {
   const base = summaryBody(key, m)
   const trimmed = note?.trim()
@@ -446,6 +432,8 @@ export function buildSeed(lang: Lang = _seedLang): SeedData {
   const jiraMsgId = uid('m_')
   const slackId = 'mcp_slack_seed'
   const jiraId = 'mcp_jira_seed'
+  const reviewMeetingId = uid('meet_')
+  const importMeetingId = uid('meet_')
 
   const wm = (
     role: 'user' | 'assistant',
@@ -887,39 +875,48 @@ export function buildSeed(lang: Lang = _seedLang): SeedData {
       body: L('计划：每天 09:00。', 'Schedule: every day at 09:00.'),
       taskStatusKind: 'created', relatedTaskId: ghTask.id,
     },
+    {
+      id: uid('ntf_'), type: 'meeting', createdAt: now - 1 * DAY - 2 * HR, read: false,
+      title: L('会议纪要已生成 · 产品评审会', 'Meeting notes ready · Product Review'),
+      body: L('转写完成，已生成结构化纪要与待办。', 'Transcription complete — structured notes and action items are ready.'),
+      meetingStatusKind: 'ready', relatedMeetingId: reviewMeetingId,
+    },
+    {
+      id: uid('ntf_'), type: 'meeting', createdAt: now - 30 * MIN, read: false,
+      title: L('转写失败 · 导入音频 · 团队周会', 'Transcription failed · Imported Audio · Team Weekly'),
+      body: L('音频处理失败，请重试。', 'Audio processing failed — please retry.'),
+      meetingStatusKind: 'failed', relatedMeetingId: importMeetingId,
+    },
+    {
+      id: uid('ntf_'), type: 'contact_request', createdAt: now - 1 * DAY + 3 * HR, read: false,
+      title: L('junwei 的 Workmate 想与你建立连接', "junwei's Workmate wants to connect"),
+      requesterName: 'junwei', requesterGradient: 'ocean', approvalStatus: 'pending',
+    },
+    {
+      id: uid('ntf_'), type: 'contact_request', createdAt: now - 2 * DAY, read: true,
+      title: L('Mia 的 Workmate 想与你建立连接', "Mia's Workmate wants to connect"),
+      requesterName: 'Mia', requesterGradient: 'sunset', approvalStatus: 'approved',
+    },
   ]
 
   const review = reviewAnalysis()
   const meetings: Meeting[] = [
     {
-      id: uid('meet_'), title: L('产品评审会 · Q3 路线图', 'Product Review · Q3 Roadmap'),
+      id: reviewMeetingId, title: L('产品评审会 · Q3 路线图', 'Product Review · Q3 Roadmap'),
       createdAt: now - 1 * DAY - 2 * HR, durationMs: 118000, status: 'done', source: 'recording',
       transcript: review.transcript, summaryMarkdown: review.summary, template: 'meeting', summaryUpdatedAt: now - 1 * DAY - 2 * HR,
     },
     {
-      // 转译失败 demo: red 转译失败 pill in the list → 重试转译 in detail → 转译中 → done.
-      // (转译 = upload + transcribe unified; a failure in either stage surfaces here.)
       id: uid('meet_'), title: L('客户拜访沟通', 'Customer Visit Call'),
-      createdAt: now - 3 * HR, durationMs: 65000, status: 'failed', source: 'recording',
-      failureReason: 'meet.fail.network',
-    },
-    {
-      // another 转译失败 — an imported file, different reason
-      id: uid('meet_'), title: L('导入音频 · 季度复盘', 'Imported Audio · Quarterly Review'),
-      createdAt: now - 4 * HR, durationMs: 143000, status: 'failed', source: 'import',
-      failureReason: 'meet.fail.quota',
-    },
-    {
-      id: uid('meet_'), title: L('电话沟通 · 供应商对接', 'Call · Supplier Sync'),
-      createdAt: now - 5 * HR, durationMs: 38000, status: 'failed', source: 'recording',
-      failureReason: 'meet.fail.timeout',
+      createdAt: now - 3 * HR, durationMs: 65000, status: 'pending', source: 'recording',
+      uploadStatus: 'failed', uploadFailReason: 'meet.upload.failedReason',
     },
     {
       id: uid('meet_'), title: L('用户访谈 · 增长方向', 'User Interview · Growth'),
       createdAt: now - 6 * HR, durationMs: 82000, status: 'pending', source: 'recording',
     },
     {
-      id: uid('meet_'), title: L('导入音频 · 团队周会', 'Imported Audio · Team Weekly'),
+      id: importMeetingId, title: L('导入音频 · 团队周会', 'Imported Audio · Team Weekly'),
       createdAt: now - 30 * MIN, durationMs: 50000, status: 'failed', source: 'import', failureReason: 'meet.failedReason',
     },
   ]

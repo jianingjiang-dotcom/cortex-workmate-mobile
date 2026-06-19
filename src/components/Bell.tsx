@@ -16,7 +16,7 @@ export function Bell({ color = 'blue' }: { color?: 'blue' | 'white' }) {
         // Count badge: --accent purple circle, white 600 number, 18px min, 9+ cap (DS §4).
         <span
           className="absolute -top-0.5 -right-0.5 min-w-[17px] h-[17px] px-[5px] rounded-full text-white text-[11px] font-semibold flex items-center justify-center"
-          style={{ background: '#CC79FF' }}
+          style={{ background: 'var(--purple)' }}
         >
           {unread > 9 ? '9+' : unread}
         </span>

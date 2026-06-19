@@ -339,16 +339,16 @@ export function ChatThread({
             onChange={(e) => setEditText(e.target.value)}
             rows={3}
             autoFocus
-            className="w-full rounded-ios bg-ios-gray6 p-3 text-[15px] outline-none resize-none"
+            className="w-full rounded-ios bg-ios-gray6 p-3 text-[16px] outline-none resize-none"
           />
           <div className="grid grid-cols-2 gap-2.5 mt-3">
-            <button onClick={() => setEditing(null)} className="h-10 rounded-ios-lg bg-ios-gray6 font-semibold text-[15px]">
+            <button onClick={() => setEditing(null)} className="h-10 rounded-ios-lg bg-ios-gray6 font-semibold text-[16px]">
               {t('common.cancel')}
             </button>
             <button
               onClick={submitEdit}
               disabled={!editText.trim()}
-              className="h-10 rounded-ios-lg text-white font-semibold text-[15px] disabled:opacity-50 bg-brand-primary"
+              className="h-10 rounded-ios-lg text-white font-semibold text-[16px] disabled:opacity-50 bg-brand-primary"
             >
               {t('common.confirm')}
             </button>

@@ -36,7 +36,7 @@ export function useMcpConnect() {
 
   const connect = (m: McpServer, onDone?: () => void) => {
     if (m.auth === 'oauth' && !m.authorized) {
-      toast(t('mcp.auth.opening'), 'info')
+      toast(t('mcp.auth.opening'), 'loading')
       setBusy((b) => ({ ...b, [m.id]: 'auth' }))
       window.setTimeout(() => {
         authorizeMcp(m.id)

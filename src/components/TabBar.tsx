@@ -2,17 +2,14 @@ import { MessageCircle, Sparkles, UserRound } from 'lucide-react'
 import { useStore } from '../store/useStore'
 import { useT } from '../i18n'
 import type { TabKey } from '../lib/types'
-import { updateAvailable } from '../lib/version'
 
-const ACTIVE = '#CC79FF' // --accent
+const ACTIVE = 'var(--purple)' // --accent
 const INACTIVE = '#8E8E93' // --text-3
 
 export function TabBar() {
   const activeTab = useStore((s) => s.activeTab)
   const setTab = useStore((s) => s.setTab)
-  const updateDismissed = useStore((s) => s.updateDismissed)
   const t = useT()
-  const showMeDot = updateAvailable && !updateDismissed
 
   const tabs: { key: TabKey; label: string; Icon: typeof MessageCircle }[] = [
     { key: 'chat', label: t('tab.chat'), Icon: MessageCircle },
@@ -41,12 +38,7 @@ export function TabBar() {
               onClick={() => setTab(key)}
               className="flex-1 flex flex-col items-center justify-center gap-1 min-h-[52px] px-2 rounded-full transition-opacity active:opacity-60"
             >
-              <span className="relative">
-                <Icon size={24} style={{ color: active ? ACTIVE : INACTIVE }} />
-                {key === 'me' && showMeDot && (
-                  <span className="absolute -top-0.5 -right-1.5 w-[9px] h-[9px] rounded-full bg-ios-red ring-2 ring-surface" />
-                )}
-              </span>
+              <Icon size={24} style={{ color: active ? ACTIVE : INACTIVE }} />
               <span
                 className="text-[11px] font-medium tracking-tight"
                 style={{ color: active ? ACTIVE : INACTIVE }}

@@ -47,14 +47,20 @@ export function TaskListScreen({ onBack }: OverlayScreenProps) {
           <div className="flex items-center gap-2">
             <span className="text-[16px] font-semibold truncate flex-1">{task.name}</span>
             {task.status === 'running' && (
-              <span className="flex items-center gap-1 text-[12px] text-ios-blue shrink-0">
+              <span className="flex items-center gap-1 text-[12px] text-ios-purple shrink-0">
                 <Spinner size={12} className="text-current" />
                 {t('tasks.status.running')}
               </span>
             )}
           </div>
-          <div className="mt-1">
-            <span className="inline-block px-2 py-0.5 rounded-md bg-ios-gray6 text-label-secondary font-medium text-[12.5px]">
+          <div className="mt-0.5">
+            <span
+              className={`inline-block px-2 py-0.5 rounded-md font-medium text-[12px] ${
+                task.paused
+                  ? 'bg-black/[0.06] dark:bg-white/[0.1] text-label-secondary'
+                  : 'bg-brand-primary/10 text-brand-primary'
+              }`}
+            >
               {scheduleHuman(task.schedule, lang)}
             </span>
           </div>
@@ -95,21 +101,23 @@ export function TaskListScreen({ onBack }: OverlayScreenProps) {
     >
       <p className="px-4 pt-0.5 pb-2 text-[14px] text-label-secondary leading-snug">{t('tasks.subtitle')}</p>
       {tasks.length === 0 ? (
-        <EmptyState
-          icon={<CalendarClock size={30} />}
-          title={t('tasks.empty')}
-          subtitle={t('tasks.emptyHint')}
-          action={<Button onClick={addViaChat}>{t('tasks.emptyCta')}</Button>}
-        />
+        <div className="flex items-center justify-center" style={{ minHeight: 560 }}>
+          <EmptyState
+            icon={<CalendarClock size={30} />}
+            title={t('tasks.empty')}
+            subtitle={t('tasks.emptyHint')}
+            action={<Button onClick={addViaChat}>{t('tasks.emptyCta')}</Button>}
+          />
+        </div>
       ) : (
         <>
           <div className="px-4 pt-1 space-y-3">{active.map(renderCard)}</div>
           {paused.length > 0 && (
             <>
-              <div className="px-5 pt-4 pb-1.5 text-[13px] font-medium text-label-secondary uppercase tracking-wide">
+              <div className="px-5 pt-4 pb-1.5 text-[12px] font-medium text-label-secondary uppercase tracking-wide">
                 {t('tasks.list.paused')}
               </div>
-              <div className="px-4 space-y-3 opacity-60">{paused.map(renderCard)}</div>
+              <div className="px-4 space-y-3">{paused.map(renderCard)}</div>
             </>
           )}
         </>

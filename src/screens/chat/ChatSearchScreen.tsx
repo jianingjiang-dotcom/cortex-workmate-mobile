@@ -64,18 +64,18 @@ export function ChatSearchScreen({ onBack }: OverlayScreenProps) {
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder={t('chat.search.placeholder')}
-            className="w-full h-9 bg-surface border border-input rounded-[12px] pl-9 pr-8 text-[15px] outline-none placeholder:text-label-tertiary"
+            className="w-full h-9 bg-surface border border-input rounded-[12px] pl-9 pr-8 text-[16px] outline-none placeholder:text-label-tertiary"
           />
           {query && (
             <button
               onClick={() => setQuery('')}
               className="absolute right-2 top-1/2 -translate-y-1/2 w-5 h-5 rounded-full bg-ios-gray3 text-white flex items-center justify-center"
             >
-              <X size={12} strokeWidth={3} />
+              <X size={12} />
             </button>
           )}
         </div>
-        <button onClick={onBack} className="text-[15px] text-label-secondary px-1 active:opacity-50 shrink-0">
+        <button onClick={onBack} className="text-[16px] text-label-secondary px-1 active:opacity-50 shrink-0">
           {t('common.cancel')}
         </button>
       </div>
@@ -92,7 +92,7 @@ export function ChatSearchScreen({ onBack }: OverlayScreenProps) {
           </div>
         ) : (
           <div>
-            <div className="px-4 pt-2 pb-1 text-[13px] text-label-secondary">{t('chat.search.count', { n: results.length })}</div>
+            <div className="px-4 pt-2 pb-1 text-[14px] text-label-secondary">{t('chat.search.count', { n: results.length })}</div>
             <div className="list-group mx-4 divide-y divide-divider">
               {results.map(({ m, text }) => (
                 <button
@@ -109,7 +109,7 @@ export function ChatSearchScreen({ onBack }: OverlayScreenProps) {
                   )}
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center justify-between gap-2 mb-0.5">
-                      <span className="text-[13px] font-semibold text-label-primary">
+                      <span className="text-[14px] font-semibold text-label-primary">
                         {m.role === 'assistant' ? persona.name : t('chat.search.you')}
                       </span>
                       <span className="text-[12px] text-label-tertiary shrink-0">{formatRelative(m.createdAt, lang)}</span>

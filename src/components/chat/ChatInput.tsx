@@ -106,7 +106,7 @@ export function ChatInput({
           ) : (
             <div className="w-16 h-16 rounded-ios bg-ios-gray6 flex flex-col items-center justify-center px-1">
               <FileText size={20} className="text-label-secondary" />
-              <span className="text-[9px] text-label-secondary truncate max-w-full mt-0.5">{a.name}</span>
+              <span className="text-[12px] text-label-secondary truncate max-w-full mt-0.5">{a.name}</span>
             </div>
           )}
           <button
@@ -114,7 +114,7 @@ export function ChatInput({
             className="absolute top-1 right-1 w-5 h-5 rounded-full bg-black/55 text-white flex items-center justify-center"
             aria-label="remove attachment"
           >
-            <X size={11} strokeWidth={3} />
+            <X size={11} />
           </button>
         </div>
       ))}
@@ -129,14 +129,14 @@ export function ChatInput({
         <div className="flex items-center gap-1.5 text-[12px] font-semibold text-brand-primary">
           <span className="truncate">{quote.taskName}</span>
         </div>
-        <div className="text-[12.5px] text-label-secondary leading-snug line-clamp-2 mt-0.5 whitespace-pre-wrap break-words">{quote.summary}</div>
+        <div className="text-[12px] text-label-secondary leading-snug line-clamp-2 mt-0.5 whitespace-pre-wrap break-words">{quote.summary}</div>
       </div>
       <button
         onClick={onClearQuote}
         className="absolute top-2 right-2 w-6 h-6 flex items-center justify-center text-label-tertiary active:opacity-50"
         aria-label="remove quote"
       >
-        <X size={15} strokeWidth={2.2} />
+        <X size={15} />
       </button>
     </div>
   )
@@ -166,7 +166,7 @@ export function ChatInput({
         canSend ? 'press bg-brand-primary text-white' : 'bg-ios-gray6 text-label-tertiary cursor-default',
       )}
     >
-      <ArrowUp size={19} strokeWidth={2.6} />
+      <ArrowUp size={19} />
     </button>
   )
 

@@ -39,7 +39,7 @@ export function ChatFavoritesScreen({ onBack }: OverlayScreenProps) {
   }
   const unfav = (m: Message) => {
     patchMessage({ mode: 'workmate' }, m.id, { favoritedAt: undefined })
-    toast(t('chat.fav.removed'), 'success')
+    toast(t('chat.fav.removed'), 'delete')
   }
   const closeSearch = () => {
     setSearching(false)
@@ -56,7 +56,7 @@ export function ChatFavoritesScreen({ onBack }: OverlayScreenProps) {
               <Avatar src={persona.avatarImage} gradient={persona.avatarGradient} size={30} shape="circle" icon={<Sparkles size={14} />} />
               <div className="flex-1 min-w-0">
                 <div className="flex items-center justify-between gap-2 mb-0.5">
-                  <span className="text-[13px] font-semibold text-label-primary truncate">{persona.name}</span>
+                  <span className="text-[14px] font-semibold text-label-primary truncate">{persona.name}</span>
                   <span className="text-[12px] text-label-tertiary shrink-0">{formatRelative(m.favoritedAt ?? m.createdAt, lang)}</span>
                 </div>
                 <div className="text-[14px] text-label-secondary leading-snug line-clamp-2">
@@ -93,7 +93,9 @@ export function ChatFavoritesScreen({ onBack }: OverlayScreenProps) {
     >
       {favs.length === 0 ? (
         // also catches unfavoriting the last item while a search session is open
-        <EmptyState icon={<Bookmark size={30} />} title={t('favorites.empty')} subtitle={t('favorites.emptyHint')} />
+        <div className="flex items-center justify-center" style={{ minHeight: 600 }}>
+          <EmptyState icon={<Bookmark size={30} />} title={t('favorites.empty')} subtitle={t('favorites.emptyHint')} />
+        </div>
       ) : searching ? (
         <>
           <SearchField

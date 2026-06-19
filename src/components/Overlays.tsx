@@ -9,7 +9,6 @@ import { MeetingDetailScreen } from '../screens/meetings/MeetingDetailScreen'
 import { RecordingScreen } from '../screens/meetings/RecordingScreen'
 import { PersonaScreen } from '../screens/persona/PersonaScreen'
 import { ProfileScreen } from '../screens/me/ProfileScreen'
-import { AboutScreen } from '../screens/me/AboutScreen'
 import { ConversationScreen } from '../screens/chat/ConversationScreen'
 import { HistoryScreen } from '../screens/chat/HistoryScreen'
 import { ChatSearchScreen } from '../screens/chat/ChatSearchScreen'
@@ -29,7 +28,6 @@ const REGISTRY: Record<ScreenName, (p: OverlayScreenProps) => JSX.Element> = {
   recording: RecordingScreen,
   persona: PersonaScreen,
   profile: ProfileScreen,
-  about: AboutScreen,
   history: HistoryScreen,
   chatSearch: ChatSearchScreen,
   chatFavorites: ChatFavoritesScreen,

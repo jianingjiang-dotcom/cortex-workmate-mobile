@@ -39,7 +39,7 @@ export function MemoryListScreen({ onBack }: OverlayScreenProps) {
 
   const removeToTrash = (m: MemoryItem) => {
     deleteMemory(m.id)
-    toast(t('memory.movedToTrash'), 'success')
+    toast(t('memory.movedToTrash'), 'delete')
   }
 
   const activeEmpty = active.length === 0
@@ -76,12 +76,14 @@ export function MemoryListScreen({ onBack }: OverlayScreenProps) {
       )}
 
       {activeEmpty && !searching ? (
-        <EmptyState
-          icon={<Brain size={30} />}
-          title={t('memory.empty')}
-          subtitle={t('memory.emptyHint')}
-          action={<Button onClick={addViaChat}>{t('memory.add')}</Button>}
-        />
+        <div className="flex items-center justify-center" style={{ minHeight: 560 }}>
+          <EmptyState
+            icon={<Brain size={30} />}
+            title={t('memory.empty')}
+            subtitle={t('memory.emptyHint')}
+            action={<Button onClick={addViaChat}>{t('memory.add')}</Button>}
+          />
+        </div>
       ) : q && filtered.length === 0 ? (
         <div className="text-center text-[14px] text-label-tertiary pt-16">{t('memory.noResults')}</div>
       ) : (
@@ -89,7 +91,7 @@ export function MemoryListScreen({ onBack }: OverlayScreenProps) {
           <div className="list-group divide-y divide-divider">
             {filtered.map((m) => (
               <div key={m.id} className="flex items-start gap-2 px-4 py-3.5">
-                <p className="flex-1 text-[15px] leading-relaxed text-label-primary">
+                <p className="flex-1 text-[16px] leading-relaxed text-label-primary">
                   {q ? <Highlight text={m.text} query={query} /> : m.text}
                 </p>
                 <button

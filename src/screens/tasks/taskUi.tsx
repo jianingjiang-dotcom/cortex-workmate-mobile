@@ -36,7 +36,7 @@ export function TaskStatusPill({ status }: { status: TaskStatus }) {
   const t = useT()
   const meta: Record<TaskStatus, { color: string; bg: string }> = {
     idle: { color: 'text-label-secondary', bg: 'bg-black/[0.06] dark:bg-white/[0.1]' },
-    running: { color: 'text-ios-blue', bg: 'bg-ios-blue/10' },
+    running: { color: 'text-ios-purple', bg: 'bg-ios-purple/10' },
     success: { color: 'text-ios-green', bg: 'bg-ios-green/12' },
     failed: { color: 'text-ios-red', bg: 'bg-ios-red/10' },
     paused: { color: 'text-ios-orange', bg: 'bg-ios-orange/12' },
@@ -62,7 +62,7 @@ export function RunRecordRow({ run, last }: { run: RunRecord; last?: boolean }) 
         ) : run.status === 'failed' ? (
           <XCircle size={20} className="text-ios-red" />
         ) : (
-          <Spinner size={18} className="text-ios-blue" />
+          <Spinner size={18} className="text-ios-purple" />
         )}
       </div>
       <div className="flex-1 min-w-0">
@@ -77,7 +77,7 @@ export function RunRecordRow({ run, last }: { run: RunRecord; last?: boolean }) 
           <div className="text-[12px] text-label-tertiary shrink-0">{formatDateTime(run.startedAt, lang)}</div>
         </div>
         {(run.resultSummary || run.failureReason) && (
-          <div className={cn('text-[13px] mt-0.5 leading-snug', run.failureReason ? 'text-ios-red' : 'text-label-secondary')}>
+          <div className={cn('text-[14px] mt-0.5 leading-snug', run.failureReason ? 'text-ios-red' : 'text-label-secondary')}>
             {run.failureReason || run.resultSummary}
           </div>
         )}
@@ -90,7 +90,7 @@ export function RunRecordRow({ run, last }: { run: RunRecord; last?: boolean }) 
           {run.conversationId && (
             <button
               onClick={() => push('conversation', { id: run.conversationId })}
-              className="text-[12.5px] font-medium text-ios-blue flex items-center active:opacity-60"
+              className="text-[12px] font-medium text-ios-purple flex items-center active:opacity-60"
             >
               {t('tasks.run.openConversation')}
               <ChevronRight size={13} />

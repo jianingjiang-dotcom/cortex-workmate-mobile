@@ -5,6 +5,7 @@ import { useStore } from '../../store/useStore'
 import { useT } from '../../i18n'
 import { Page } from '../../components/Page'
 import { Avatar, Highlight, IconButton, SearchField, Switch } from '../../components/ui/atoms'
+import { identityColorAt } from '../../lib/util'
 
 export function SkillListScreen({ onBack }: OverlayScreenProps) {
   const t = useT()
@@ -51,14 +52,14 @@ export function SkillListScreen({ onBack }: OverlayScreenProps) {
       ) : (
         <div className="px-4 mt-1">
           <div className="list-group divide-y divide-divider">
-            {filtered.map((sk) => (
+            {filtered.map((sk, i) => (
               <div key={sk.id} className="flex items-center gap-3 px-4 py-3">
-                <Avatar gradient={sk.gradient} name={sk.letter || sk.name} size={38} />
+                <Avatar color={identityColorAt(i)} name={sk.letter || sk.name} size={38} />
                 <div className="flex-1 min-w-0">
                   <div className="text-[16px] font-medium truncate">
                     {q ? <Highlight text={sk.name} query={query} /> : sk.name}
                   </div>
-                  <div className="text-[13px] text-label-secondary truncate mt-0.5">{sk.desc}</div>
+                  <div className="text-[14px] text-label-secondary truncate mt-0.5">{sk.desc}</div>
                 </div>
                 <Switch checked={sk.enabled} onChange={() => toggleSkill(sk.id)} />
               </div>

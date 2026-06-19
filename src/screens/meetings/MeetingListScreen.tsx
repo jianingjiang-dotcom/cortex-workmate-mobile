@@ -1,14 +1,12 @@
 import { useRef, useState } from 'react'
-import { AudioLines, Search, Upload } from 'lucide-react'
+import { AudioLines, Import, Search, Upload } from 'lucide-react'
 import type { Meeting, OverlayScreenProps } from '../../lib/types'
 import { useStore } from '../../store/useStore'
 import { useLang, useT } from '../../i18n'
 import { Page } from '../../components/Page'
 import { EmptyState, Highlight, IconButton, SearchField } from '../../components/ui/atoms'
 import { dayBucket, formatDuration, formatTimeOnly } from '../../lib/time'
-import { solidFor } from '../../lib/util'
 import { MeetingStatusPill } from './meetingUi'
-import { NameRecordingModal } from './NameRecordingModal'
 
 export function MeetingListScreen({ onBack }: OverlayScreenProps) {
   const t = useT()
@@ -23,27 +21,18 @@ export function MeetingListScreen({ onBack }: OverlayScreenProps) {
   const [query, setQuery] = useState('')
   const q = query.trim().toLowerCase()
 
-  // imported file awaiting the name + 转译 dialog (same dialog the recording flow uses)
-  const [pendingImport, setPendingImport] = useState<{ name: string; durationMs: number } | null>(null)
-
   const onImport = (file: File) => {
     const url = URL.createObjectURL(file)
     const audio = new Audio()
     audio.preload = 'metadata'
     const finish = (durationMs: number) => {
-      setPendingImport({ name: file.name.replace(/\.[^.]+$/, ''), durationMs })
+      createRecording({ title: file.name.replace(/\.[^.]+$/, ''), durationMs, source: 'import' })
       URL.revokeObjectURL(url)
+      toast(t('meet.imported'), 'success')
     }
     audio.onloadedmetadata = () => finish(isFinite(audio.duration) ? Math.round(audio.duration * 1000) : 60000)
     audio.onerror = () => finish(60000)
     audio.src = url
-  }
-
-  const saveImport = (name: string, transcribe: boolean) => {
-    if (!pendingImport) return
-    createRecording({ title: name, durationMs: pendingImport.durationMs, source: 'import', transcribe })
-    setPendingImport(null)
-    toast(t('meet.imported'), 'success')
   }
 
   const sorted = [...meetings].sort((a, b) => b.createdAt - a.createdAt)
@@ -63,16 +52,19 @@ export function MeetingListScreen({ onBack }: OverlayScreenProps) {
       className="w-full flex items-center gap-3 px-4 py-3 text-left active:bg-black/[0.03]"
     >
       <div
-        className="w-11 h-11 rounded-[13px] flex items-center justify-center text-white shrink-0"
-        style={{ background: solidFor(m.source === 'import' ? 'mint' : 'violet') }}
+        className={`w-11 h-11 rounded-[12px] flex items-center justify-center shrink-0 ${
+          m.source === 'import'
+            ? 'bg-black/[0.06] dark:bg-white/[0.1] text-label-secondary'
+            : 'bg-brand-primary/10 text-brand-primary'
+        }`}
       >
-        <AudioLines size={20} />
+        {m.source === 'import' ? <Import size={20} /> : <AudioLines size={20} />}
       </div>
       <div className="flex-1 min-w-0">
         <div className="text-[16px] font-semibold truncate">
           {q ? <Highlight text={m.title} query={query} /> : m.title}
         </div>
-        <div className="text-[13px] text-label-secondary tabular-nums">
+        <div className="text-[14px] text-label-secondary tabular-nums">
           {formatTimeOnly(m.createdAt)} · {formatDuration(m.durationMs, lang)}
         </div>
       </div>
@@ -125,12 +117,14 @@ export function MeetingListScreen({ onBack }: OverlayScreenProps) {
             <p className="px-4 pt-0.5 pb-2 text-[14px] text-label-secondary leading-snug">{t('meet.subtitle')}</p>
 
             {meetings.length === 0 ? (
-              <EmptyState icon={<AudioLines size={30} />} title={t('meet.empty')} subtitle={t('meet.emptyHint')} />
+              <div className="flex items-center justify-center" style={{ minHeight: 560 }}>
+                <EmptyState icon={<AudioLines size={30} />} title={t('meet.empty')} subtitle={t('meet.emptyHint')} />
+              </div>
             ) : (
               <div className="mt-1">
                 {grouped.map((g) => (
                   <div key={g.b} className="px-4 mb-4">
-                    <div className="px-1 pb-1.5 text-[13px] font-medium text-label-secondary">{t(`meet.group.${g.b}`)}</div>
+                    <div className="px-1 pb-1.5 text-[14px] font-medium text-label-secondary">{t(`meet.group.${g.b}`)}</div>
                     <div className="list-group divide-y divide-divider">
                       {g.items.map((m) => (
                         <Row key={m.id} m={m} />
@@ -156,13 +150,6 @@ export function MeetingListScreen({ onBack }: OverlayScreenProps) {
           }}
         />
       </Page>
-
-      <NameRecordingModal
-        open={!!pendingImport}
-        initialName={pendingImport?.name ?? ''}
-        onCancel={() => setPendingImport(null)}
-        onSave={saveImport}
-      />
 
       {/* bottom action bar — centered camcorder-style start-record button */}
       {!searching && (
