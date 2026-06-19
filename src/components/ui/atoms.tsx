@@ -24,6 +24,7 @@ export function Spinner({ size = 18, className, color }: { size?: number; classN
 
 export function Avatar({
   gradient,
+  color,
   name,
   size = 40,
   shape = 'squircle',
@@ -32,6 +33,7 @@ export function Avatar({
   className,
 }: {
   gradient?: string
+  color?: string // explicit fill — overrides gradient (e.g. identityColor() for letter avatars)
   name?: string
   size?: number
   shape?: 'circle' | 'squircle'
@@ -66,7 +68,7 @@ export function Avatar({
         width: size,
         height: size,
         borderRadius: radius,
-        background: solidFor(gradient),
+        background: color || solidFor(gradient),
         fontSize: size * 0.4,
       }}
     >
@@ -254,11 +256,11 @@ export function Switch({ checked, onChange }: { checked: boolean; onChange: (v: 
       className="relative w-[51px] h-[31px] rounded-full shrink-0"
       style={{ backgroundColor: 'rgba(120,120,128,0.24)' }} // constant gray track
     >
-      {/* green fill fades in/out via opacity (always interpolates smoothly — unlike a
-          background-color transition between var() and rgba, which can snap) */}
+      {/* accent (purple) fill fades in/out via opacity (always interpolates smoothly —
+          unlike a background-color transition between var() and rgba, which can snap) */}
       <span
         className="absolute inset-0 rounded-full transition-opacity duration-300 ease-in-out"
-        style={{ backgroundColor: 'var(--blue)', opacity: checked ? 1 : 0 }}
+        style={{ backgroundColor: 'var(--purple)', opacity: checked ? 1 : 0 }}
       />
       {/* knob slides via a GPU transform */}
       <span

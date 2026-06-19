@@ -77,6 +77,21 @@ export function speakerColor(index: number) {
   return SPEAKER_COLORS[index % SPEAKER_COLORS.length]
 }
 
+/** Deterministic identity color for letter-avatars / categorical tiles — drawn from the
+ *  non-accent palette (blue/green/orange/teal), NEVER the purple accent, so distinct
+ *  identities stay scannable and purple keeps meaning "active/primary" (DS §1). */
+const IDENTITY_COLORS = ['#407CFF', '#22C55E', '#FFA03B', '#14B8A6']
+/** Hash a stable key → a non-accent identity color (when there's no list index). */
+export function identityColor(key: string): string {
+  let h = 0
+  for (let i = 0; i < key.length; i++) h = (h * 31 + key.charCodeAt(i)) >>> 0
+  return IDENTITY_COLORS[h % IDENTITY_COLORS.length]
+}
+/** Cycle by list index → adjacent rows never share a color, even spread. */
+export function identityColorAt(index: number): string {
+  return IDENTITY_COLORS[index % IDENTITY_COLORS.length]
+}
+
 /** Downscale an image File to a JPEG data URL (aspect-ratio preserved), so it
  *  persists in localStorage and stays lightweight. Used for chat attachments. */
 export function resizeImageToDataUrl(file: File, maxDim = 1280, quality = 0.82): Promise<string> {
