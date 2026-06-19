@@ -80,8 +80,10 @@ export function ProfileScreen({ onBack }: OverlayScreenProps) {
       <div className="flex flex-col items-center pt-4 pb-5">
         <button onClick={() => setAvatarSheet(true)} className="relative active:opacity-90" aria-label={t('profile.avatar')}>
           <Avatar src={avatarImage} gradient={account.avatarGradient} name={name} size={92} shape="circle" />
-          <div className="absolute -bottom-0.5 -right-0.5 w-7 h-7 rounded-full bg-ios-purple ring-2 ring-grouped flex items-center justify-center">
-            <Camera size={14} className="text-white" />
+          {/* White badge + purple glyph: the gradient-fallback avatar is brand purple,
+              so a purple badge/white icon blends in. Inverting pops on any avatar. */}
+          <div className="absolute -bottom-0.5 -right-0.5 w-7 h-7 rounded-full bg-surface ring-2 ring-grouped shadow-sm flex items-center justify-center">
+            <Camera size={14} className="text-ios-purple" />
           </div>
         </button>
       </div>
