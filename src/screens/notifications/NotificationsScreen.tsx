@@ -86,7 +86,7 @@ function NotifIcon({ n }: { n: AppNotification }) {
     return <ServerLogo logo={server?.logo} gradient={server?.gradient} name={server?.letter || server?.name} size={36} />
   }
   if (n.type === 'contact_request') {
-    return <Avatar gradient={n.requesterGradient} name={n.requesterName} size={36} shape="circle" />
+    return <Avatar gradient="neutral" name={n.requesterName} size={36} shape="circle" />
   }
   const Icon = n.type === 'approval' ? ShieldCheck : n.type === 'meeting' ? Mic : CalendarClock
   return (

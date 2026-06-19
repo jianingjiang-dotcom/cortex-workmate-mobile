@@ -57,6 +57,9 @@ export const SOLIDS: Record<string, string> = {
   violet: '#CC79FF',
   mint: '#22C55E',
   amber: '#FFA03B',
+  // Neutral identity fill for teammate/person avatars (initials on grey, never a
+  // brand hue) — iOS systemGray, white initial. Reserve color for brand/actions.
+  neutral: '#8E8E93',
 }
 
 export function solidFor(key: string | undefined): string {

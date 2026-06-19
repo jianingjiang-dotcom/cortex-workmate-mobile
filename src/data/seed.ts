@@ -890,12 +890,12 @@ export function buildSeed(lang: Lang = _seedLang): SeedData {
     {
       id: uid('ntf_'), type: 'contact_request', createdAt: now - 1 * DAY + 3 * HR, read: false,
       title: L('junwei 的 Workmate 想与你建立连接', "junwei's Workmate wants to connect"),
-      requesterName: 'junwei', requesterGradient: 'ocean', approvalStatus: 'pending',
+      requesterName: 'junwei', approvalStatus: 'pending',
     },
     {
       id: uid('ntf_'), type: 'contact_request', createdAt: now - 2 * DAY, read: true,
       title: L('Mia 的 Workmate 想与你建立连接', "Mia's Workmate wants to connect"),
-      requesterName: 'Mia', requesterGradient: 'sunset', approvalStatus: 'approved',
+      requesterName: 'Mia', approvalStatus: 'approved',
     },
   ]
 

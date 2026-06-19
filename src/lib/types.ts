@@ -163,7 +163,6 @@ export interface AppNotification {
 
   // contact-request-specific (another person's Workmate wants to connect)
   requesterName?: string
-  requesterGradient?: string
 }
 
 // ---- Scheduled tasks (6.4) -------------------------------------------------
