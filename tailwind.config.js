@@ -4,14 +4,15 @@ export default {
   darkMode: 'class',
   theme: {
     extend: {
-      // /12 alpha steps (bg-ios-green/12 …) aren't in Tailwind's default 5-step scale
+      // /12 alpha step (bg-ios-green/12 …) isn't in Tailwind's default 5-step scale
       opacity: { 12: '0.12' },
       colors: {
         // iOS system palette — gray5/6 + accents are theme-aware (CSS vars)
         ios: {
-          // rgb(<channels> / <alpha-value>) so opacity modifiers (bg-ios-blue/10 …)
-          // actually compile — a plain var(--blue) color silently drops every /N utility
-          blue: 'rgb(var(--blue-rgb) / <alpha-value>)',
+          // rgb(<channels> / <alpha-value>) so opacity modifiers (bg-ios-purple/10 …)
+          // actually compile — a plain var(--purple) color silently drops every /N utility
+          purple: 'rgb(var(--purple-rgb) / <alpha-value>)', // the accent (#CC79FF)
+          blue: 'rgb(var(--blue-rgb) / <alpha-value>)', // real blue (#407CFF) — links / agent
           green: 'rgb(var(--green-rgb) / <alpha-value>)',
           red: 'rgb(var(--red-rgb) / <alpha-value>)',
           orange: 'rgb(var(--orange-rgb) / <alpha-value>)',

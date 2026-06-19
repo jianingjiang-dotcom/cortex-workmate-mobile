@@ -30,17 +30,18 @@
     --glass-border: rgba(255, 255, 255, 0.6);
     --stage: #e9e9ee; /* desktop backdrop behind the phone */
 
-    /* DS palette: single purple accent (#CC79FF). The "blue" tokens drive the app's
-       accent (back / selection / toggle / active state), so they resolve to PURPLE.
-       Genuine links use --link. */
-    --blue: #cc79ff;
-    --link: #407cff;
+    /* DS palette: single PURPLE accent (#CC79FF) — back / selection / toggle /
+       active state. BLUE (#407CFF) is links / agent icons only. */
+    --purple: #cc79ff;
+    --blue: #407cff;
+    --link: var(--blue);
     --green: #22c55e;
     --red: #ef4444;
     --orange: #ffa03b;
-    /* RGB channel triplets of the accents — Tailwind alpha modifiers (bg-ios-blue/10 …)
-       need an <alpha-value> slot, which plain hex vars can't provide */
-    --blue-rgb: 204 121 255;
+    /* RGB channel triplets — Tailwind alpha modifiers (bg-ios-purple/10 …) need an
+       <alpha-value> slot, which plain hex vars can't provide */
+    --purple-rgb: 204 121 255;
+    --blue-rgb: 64 124 255;
     --green-rgb: 34 197 94;
     --red-rgb: 239 68 68;
     --orange-rgb: 255 160 59;
@@ -64,13 +65,15 @@
     --glass: rgba(28, 28, 30, 0.78);
     --glass-border: rgba(255, 255, 255, 0.1);
     --stage: #08080a;
-    /* dark-mode accents read brighter for contrast */
-    --blue: #cc79ff;
-    --link: #6fa0ff;
+    /* dark-mode accents read brighter for contrast; purple already pops, stays put */
+    --purple: #cc79ff;
+    --blue: #6fa0ff;
+    --link: var(--blue);
     --green: #3dd68c;
     --red: #ff6166;
     --orange: #ffb45e;
-    --blue-rgb: 204 121 255;
+    --purple-rgb: 204 121 255;
+    --blue-rgb: 111 160 255;
     --green-rgb: 61 214 140;
     --red-rgb: 255 97 102;
     --orange-rgb: 255 180 94;
@@ -80,11 +83,6 @@
 
   * {
     -webkit-tap-highlight-color: transparent;
-  }
-
-  /* Cortex iconography: line icons render at 1.5px stroke (overrides Lucide's 2px attr) */
-  svg.lucide {
-    stroke-width: 1.5px;
   }
 
   html,
@@ -126,6 +124,7 @@
     -webkit-user-select: text;
     user-select: text;
   }
+
 }
 
 @layer components {
@@ -202,7 +201,7 @@
 
   /* Markdown rendering scope for AI replies / summaries */
   .md {
-    @apply text-[15px] leading-[1.55] text-label-primary;
+    @apply text-[16px] leading-[1.55] text-label-primary;
   }
   .md > *:first-child {
     margin-top: 0;
@@ -211,13 +210,13 @@
     margin-bottom: 0;
   }
   .md h1 {
-    @apply text-[19px] font-bold mt-4 mb-2;
+    @apply text-[18px] font-bold mt-4 mb-2;
   }
   .md h2 {
-    @apply text-[17px] font-bold mt-4 mb-1.5;
+    @apply text-[16px] font-bold mt-4 mb-1.5;
   }
   .md h3 {
-    @apply text-[15px] font-semibold mt-3 mb-1;
+    @apply text-[16px] font-semibold mt-3 mb-1;
   }
   .md p {
     @apply my-2;
@@ -242,11 +241,11 @@
     @apply font-semibold;
   }
   .md code {
-    @apply font-mono text-[13px] px-1.5 py-0.5 rounded-md;
+    @apply font-mono text-[14px] px-1.5 py-0.5 rounded-md;
     background: var(--fill);
   }
   .md pre {
-    @apply font-mono text-[13px] p-3 rounded-ios my-2 overflow-x-auto;
+    @apply font-mono text-[14px] p-3 rounded-ios my-2 overflow-x-auto;
     background: var(--fill);
   }
   .md pre code {
@@ -277,7 +276,7 @@
     @apply text-white text-[11px] flex items-center justify-center h-full leading-none;
   }
   .md table {
-    @apply my-2 w-full text-[13px] border-collapse;
+    @apply my-2 w-full text-[14px] border-collapse;
   }
   .md th,
   .md td {
@@ -313,4 +312,13 @@
   height: 1px;
   background: var(--divider);
   pointer-events: none;
+}
+
+/* DS [LOCKED]: line icons are a single 1.5px stroke — never mixed weights.
+   Top-level (not @layer base, which didn't take effect) so it reliably
+   overrides Lucide's default 2px attribute and any per-icon strokeWidth.
+   Filled glyphs (fill=currentColor — the AI sparkle, solid toast pause/play)
+   are excluded so they stay solid rather than gaining an outline. */
+svg.lucide:not([fill='currentColor']) {
+  stroke-width: 1.5px;
 }

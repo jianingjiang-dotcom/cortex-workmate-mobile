@@ -54,9 +54,9 @@ export const SAMPLE_FILES: SampleFile[] = [
 export const EXT_COLOR: Record<string, string> = {
   pdf: '#EF4444',
   xlsx: '#22C55E',
-  docx: '#407CFF',
+  docx: 'var(--blue)',
   md: '#8E8E93',
-  fig: '#CC79FF',
-  ppt: '#FFA03B',
-  pptx: '#FFA03B',
+  fig: 'var(--purple)',
+  ppt: 'var(--orange)',
+  pptx: 'var(--orange)',
 }

@@ -17,10 +17,10 @@ export function SourceBanner({ conversationId }: { conversationId: string }) {
     >
       <CalendarClock size={20} className="text-brand-primary shrink-0" />
       <div className="flex-1 min-w-0">
-        <div className="text-[15px] font-semibold text-label-primary leading-tight truncate">
+        <div className="text-[16px] font-semibold text-label-primary leading-tight truncate">
           {task?.name || conv.title}
         </div>
-        <div className="text-[13px] text-label-secondary leading-tight mt-px truncate">
+        <div className="text-[14px] text-label-secondary leading-tight mt-px truncate">
           {t('chat.sourceBanner.meta', { time: formatDateTime(conv.sourceTriggeredAt, lang) })}
         </div>
       </div>

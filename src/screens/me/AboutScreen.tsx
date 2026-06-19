@@ -47,18 +47,18 @@ export function AboutScreen({ onBack }: OverlayScreenProps) {
       {phase === 'checking' && (
         <div className="flex flex-col items-center gap-3 mt-10 text-label-secondary">
           <Spinner size={22} />
-          <div className="text-[15px]">{t('about.checking')}</div>
+          <div className="text-[16px]">{t('about.checking')}</div>
         </div>
       )}
 
       {phase === 'latest' && (
         <div className="flex flex-col items-center text-center mt-10 px-8">
           <div className="w-[56px] h-[56px] rounded-full bg-ios-green/10 flex items-center justify-center">
-            <Check size={30} className="text-ios-green" strokeWidth={2.5} />
+            <Check size={30} className="text-ios-green" />
           </div>
-          <div className="text-[17px] font-semibold mt-3">{t('about.upToDate')}</div>
+          <div className="text-[16px] font-semibold mt-3">{t('about.upToDate')}</div>
           <div className="text-[14px] text-label-secondary mt-1">{t('about.upToDateBody', { v: CURRENT_VERSION })}</div>
-          <button onClick={runCheck} className="mt-5 text-[15px] text-ios-blue font-medium active:opacity-60">
+          <button onClick={runCheck} className="mt-5 text-[16px] text-ios-purple font-medium active:opacity-60">
             {t('about.recheck')}
           </button>
         </div>
@@ -67,15 +67,15 @@ export function AboutScreen({ onBack }: OverlayScreenProps) {
       {phase === 'update' && (
         <div className="px-4 mt-6">
           <div className="card px-4 py-4">
-            <div className="flex items-center gap-2">
+            <div className="flex items-center justify-between gap-2">
               <Pill color="brand">{t('about.newVersion', { v: LATEST_VERSION })}</Pill>
-              <span className="text-[13px] text-label-tertiary">{t('about.releasedOn', { date: RELEASE_DATE })}</span>
+              <span className="text-[14px] text-label-secondary">{t('about.releasedOn', { date: RELEASE_DATE })}</span>
             </div>
             <div className="text-[14px] font-semibold mt-3.5">{t('about.whatsNew')}</div>
             <ul className="mt-2 space-y-2">
               {CHANGELOG_KEYS.map((k) => (
                 <li key={k} className="flex gap-2.5 text-[14px] text-label-primary leading-snug">
-                  <span className="mt-[7px] w-[5px] h-[5px] rounded-full bg-ios-blue shrink-0" />
+                  <span className="mt-[7px] w-[5px] h-[5px] rounded-full bg-ios-purple shrink-0" />
                   <span>{t(k)}</span>
                 </li>
               ))}
@@ -97,7 +97,7 @@ export function AboutScreen({ onBack }: OverlayScreenProps) {
           </div>
           <button
             onClick={runCheck}
-            className="w-full mt-3 text-center text-[15px] text-ios-blue font-medium active:opacity-60"
+            className="w-full mt-3 text-center text-[16px] text-ios-purple font-medium active:opacity-60"
           >
             {t('about.recheck')}
           </button>

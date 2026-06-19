@@ -1,12 +1,12 @@
 import { useEffect, useRef, useState } from 'react'
-import { Mic, Pause, Upload } from 'lucide-react'
+import { Mic, Pause, Play, Upload } from 'lucide-react'
 import type { OverlayScreenProps } from '../../lib/types'
 import { useStore } from '../../store/useStore'
 import { useLang, useT } from '../../i18n'
+import { CenterModal } from '../../components/ui/Sheet'
 import { BackButton } from '../../components/Page'
 import { formatDateTime } from '../../lib/time'
-import { gradientFor, solidFor } from '../../lib/util'
-import { NameRecordingModal } from './NameRecordingModal'
+import { gradientFor } from '../../lib/util'
 
 // waveform geometry
 const BAR_W = 3
@@ -208,15 +208,15 @@ export function RecordingScreen({ onBack }: OverlayScreenProps) {
   // 结束 = finish: pause (if needed) and prompt for a name to save
   const end = () => {
     if (!paused) pauseRecording()
-    setName(`${t('meet.record')} · ${formatDateTime(Date.now(), lang)}`)
+    setName((n) => (n.trim() ? n : `${t('meet.record')} · ${formatDateTime(Date.now(), lang)}`))
     setNaming(true)
   }
 
   // back out of the name prompt → stay on the (paused) recording screen; not a discard
   const cancelNaming = () => setNaming(false)
 
-  const save = (title: string, transcribe: boolean) => {
-    createRecording({ title: title.trim() || t('meet.record'), durationMs: elapsed, source: 'recording', transcribe })
+  const save = () => {
+    createRecording({ title: name.trim() || t('meet.record'), durationMs: elapsed, source: 'recording' })
     toast(t('meet.saved'), 'success')
     setNaming(false) // close the name modal so it doesn't linger during the overlay's exit
     cleanup()
@@ -260,10 +260,10 @@ export function RecordingScreen({ onBack }: OverlayScreenProps) {
 
       {phase === 'intro' && (
         <div className="absolute inset-0 flex flex-col items-center justify-center px-9 text-center">
-          <div className="w-20 h-20 rounded-[24px] flex items-center justify-center mb-6" style={{ background: solidFor('sunset') }}>
-            <Mic size={36} className="text-white" />
+          <div className="w-[72px] h-[72px] rounded-[20px] bg-ios-gray6 flex items-center justify-center mb-6">
+            <Mic size={30} className="text-label-secondary" />
           </div>
-          <h2 className="text-[22px] font-bold text-label-primary">{t('meet.rec.permTitle')}</h2>
+          <h2 className="text-[20px] font-bold text-label-primary">{t('meet.rec.permTitle')}</h2>
           <p className="text-[14px] text-label-secondary mt-2.5 leading-relaxed">{t('meet.rec.permBody')}</p>
           <button onClick={requestMic} className="w-full h-13 mt-8 rounded-ios-lg bg-brand-primary text-white font-semibold text-[16px] py-3.5 press">
             {t('meet.rec.permAllow')}
@@ -273,15 +273,15 @@ export function RecordingScreen({ onBack }: OverlayScreenProps) {
 
       {phase === 'denied' && (
         <div className="absolute inset-0 flex flex-col items-center justify-center px-9 text-center">
-          <div className="w-20 h-20 rounded-[24px] bg-ios-gray6 flex items-center justify-center mb-6">
-            <Mic size={36} className="text-label-tertiary" />
+          <div className="w-[72px] h-[72px] rounded-[20px] bg-ios-gray6 flex items-center justify-center mb-6">
+            <Mic size={30} className="text-label-tertiary" />
           </div>
-          <h2 className="text-[22px] font-bold text-label-primary">{t('meet.rec.permDenied')}</h2>
+          <h2 className="text-[20px] font-bold text-label-primary">{t('meet.rec.permDenied')}</h2>
           <p className="text-[14px] text-label-secondary mt-2.5 leading-relaxed">{t('meet.rec.permDeniedBody')}</p>
           <button onClick={() => startRecording(true)} className="w-full h-13 mt-8 rounded-ios-lg bg-brand-primary text-white font-semibold text-[16px] py-3.5 press">
             {t('meet.rec.useDemo')}
           </button>
-          <button onClick={onBack} className="mt-3 text-[15px] text-label-secondary font-medium active:opacity-60 flex items-center gap-1.5">
+          <button onClick={onBack} className="mt-3 text-[16px] text-label-secondary font-medium active:opacity-60 flex items-center gap-1.5">
             <Upload size={15} />
             {t('meet.rec.importInstead')}
           </button>
@@ -292,7 +292,7 @@ export function RecordingScreen({ onBack }: OverlayScreenProps) {
         <div className="absolute inset-0 flex flex-col pt-[84px] pb-12">
           {/* timer + status */}
           <div className="text-center">
-            <div className="text-[56px] font-light tabular-nums tracking-tight leading-none">
+            <div className="text-[32px] font-light tabular-nums tracking-tight leading-none">
               <span className="text-label-tertiary">{mm}:</span>
               <span className="text-label-primary">
                 {ss}.{tenth}
@@ -313,38 +313,57 @@ export function RecordingScreen({ onBack }: OverlayScreenProps) {
             <canvas ref={canvasRef} className="block w-full h-[210px]" />
           </div>
 
-          {/* centered controls: [·] [pause/record toggle] [end] */}
+          {/* controls (iOS Voice Memos model): primary STOP centered (red square in a
+              white ring), pause/resume as a quiet secondary. Stop ends → names the recording. */}
           <div className="grid grid-cols-3 items-center px-12">
             <div />
             <div className="flex justify-center">
-              {paused ? (
-                <button
-                  onClick={resumeRecording}
-                  aria-label="resume recording"
-                  className="w-[76px] h-[76px] rounded-full bg-surface shadow-ios-lg ring-1 ring-black/[0.06] flex items-center justify-center active:scale-95 transition-transform"
-                >
-                  <span className="w-[56px] h-[56px] rounded-full bg-ios-red" />
-                </button>
-              ) : (
-                <button
-                  onClick={pauseRecording}
-                  aria-label="pause recording"
-                  className="w-[76px] h-[76px] rounded-full bg-surface shadow-ios-lg ring-1 ring-black/[0.06] flex items-center justify-center active:scale-95 transition-transform"
-                >
-                  <Pause size={30} fill="currentColor" className="text-ios-red" />
-                </button>
-              )}
+              <button
+                onClick={end}
+                aria-label="stop recording"
+                className="w-[76px] h-[76px] rounded-full bg-surface shadow-ios-lg ring-1 ring-black/[0.06] flex items-center justify-center active:scale-95 transition-transform"
+              >
+                <span className="w-[28px] h-[28px] rounded-[7px] bg-ios-red" />
+              </button>
             </div>
             <div className="flex justify-end">
-              <button onClick={end} aria-label="end recording" className="w-12 h-12 flex items-center justify-center active:opacity-50">
-                <span className="w-[24px] h-[24px] rounded-[6px] bg-label-primary" />
+              <button
+                onClick={paused ? resumeRecording : pauseRecording}
+                aria-label={paused ? 'resume recording' : 'pause recording'}
+                className="w-12 h-12 rounded-full bg-ios-gray6 flex items-center justify-center active:opacity-60"
+              >
+                {paused ? (
+                  <Play size={20} fill="currentColor" className="text-label-primary translate-x-[1px]" />
+                ) : (
+                  <Pause size={20} fill="currentColor" className="text-label-primary" />
+                )}
               </button>
             </div>
           </div>
         </div>
       )}
 
-      <NameRecordingModal open={naming} initialName={name} onCancel={cancelNaming} onSave={save} />
+      <CenterModal open={naming} onClose={cancelNaming}>
+        <div className="p-4">
+          <div className="text-[16px] font-semibold text-center mb-3">{t('meet.name.title')}</div>
+          <input
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            onKeyDown={(e) => e.key === 'Enter' && save()}
+            placeholder={t('meet.name.ph')}
+            autoFocus
+            className="w-full h-11 px-3.5 rounded-ios bg-ios-gray6 text-[16px] outline-none"
+          />
+          <div className="grid grid-cols-2 gap-2.5 mt-3.5">
+            <button onClick={cancelNaming} className="h-11 rounded-ios-lg bg-ios-gray6 font-semibold text-[16px] press">
+              {t('common.cancel')}
+            </button>
+            <button onClick={save} className="h-11 rounded-ios-lg text-white font-semibold text-[16px] press bg-brand-primary">
+              {t('common.save')}
+            </button>
+          </div>
+        </div>
+      </CenterModal>
     </div>
   )
 }

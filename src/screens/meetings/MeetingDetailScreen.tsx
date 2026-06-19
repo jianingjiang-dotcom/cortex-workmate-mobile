@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { AudioLines, Check, Copy, MoreHorizontal, Pause, Play, RotateCcw, RotateCw, Search } from 'lucide-react'
+import { AudioLines, Check, CloudOff, Copy, MoreHorizontal, Pause, Play, RotateCcw, RotateCw, Search } from 'lucide-react'
 import type { Meeting, OverlayScreenProps, SummaryTemplate } from '../../lib/types'
 import { useStore } from '../../store/useStore'
 import { useLang, useT } from '../../i18n'
@@ -7,13 +7,18 @@ import { BackButton } from '../../components/Page'
 import { Button, EmptyState, Highlight, IconButton, Pill, SearchField, Segmented, Spinner, Switch } from '../../components/ui/atoms'
 import { ActionSheet, CenterModal, Sheet } from '../../components/ui/Sheet'
 import { Markdown } from '../../components/chat/parts'
-import { guessTemplate, SUMMARY_TEMPLATES } from '../../data/seed'
+import { SUMMARY_TEMPLATES } from '../../data/seed'
 import { formatClock, formatDateTime, formatDuration } from '../../lib/time'
 import { clamp, cn, solidFor, speakerColor } from '../../lib/util'
 
-// Suggest a template: re-transcribe keeps the current one; first transcribe guesses by title.
+// Suggest a template: re-transcribe keeps the current one; first transcribe guesses by title
+// (mirrors analysisFor's keyword routing so the suggestion tends to match the scenario).
 function defaultTemplate(m: Meeting): SummaryTemplate {
-  return m.template ?? guessTemplate(m.title)
+  if (m.template) return m.template
+  if (/面试|访谈|interview/i.test(m.title)) return 'interview'
+  if (/客户|customer|client/i.test(m.title)) return 'customer'
+  if (/评审|会议|周会|review|meeting/i.test(m.title)) return 'meeting'
+  return 'generic'
 }
 
 export function MeetingDetailScreen({ params, onBack }: OverlayScreenProps) {
@@ -21,6 +26,7 @@ export function MeetingDetailScreen({ params, onBack }: OverlayScreenProps) {
   const lang = useLang()
   const meeting = useStore((s) => s.meetings.find((m) => m.id === params?.id))
   const transcribe = useStore((s) => s.transcribeMeeting)
+  const uploadMeeting = useStore((s) => s.uploadMeeting)
   const renameMeeting = useStore((s) => s.renameMeeting)
   const deleteMeeting = useStore((s) => s.deleteMeeting)
   const askConfirm = useStore((s) => s.askConfirm)
@@ -120,13 +126,15 @@ export function MeetingDetailScreen({ params, onBack }: OverlayScreenProps) {
 
   const copyTranscript = () => {
     const txt = segments.map((s) => `${s.speaker}: ${s.text}`).join('\n')
-    navigator.clipboard?.writeText(txt).catch(() => {})
-    toast(t('meet.copied'), 'success')
+    const p = navigator.clipboard?.writeText(txt)
+    if (p) p.then(() => toast(t('meet.copied'), 'neutral')).catch(() => toast(t('common.copyFailed'), 'error'))
+    else toast(t('common.copyFailed'), 'error')
   }
 
   const copySummary = () => {
-    navigator.clipboard?.writeText(meeting.summaryMarkdown || '').catch(() => {})
-    toast(t('meet.copiedSummary'), 'success')
+    const p = navigator.clipboard?.writeText(meeting.summaryMarkdown || '')
+    if (p) p.then(() => toast(t('meet.copiedSummary'), 'neutral')).catch(() => toast(t('common.copyFailed'), 'error'))
+    else toast(t('common.copyFailed'), 'error')
   }
 
   const openTranscribe = (mode: 'first' | 're') => {
@@ -186,24 +194,24 @@ export function MeetingDetailScreen({ params, onBack }: OverlayScreenProps) {
           </div>
 
           <div className="flex items-center justify-center gap-8 mt-2">
-            <button onClick={() => setPos((p) => clamp(p - 15000, 0, duration))} className="text-label-primary active:opacity-50 flex flex-col items-center">
+            <button onClick={() => setPos((p) => clamp(p - 15000, 0, duration))} className="text-label-secondary active:opacity-50 flex flex-col items-center">
               <RotateCcw size={26} />
-              <span className="text-[9px] -mt-0.5">15</span>
+              <span className="text-[12px] mt-1 text-label-secondary">15</span>
             </button>
             <button
               onClick={() => setPlaying((p) => !p)}
-              className="w-14 h-14 rounded-full flex items-center justify-center text-white press bg-brand-primary"
+              className="w-14 h-14 rounded-full flex items-center justify-center text-label-primary press bg-ios-gray5"
             >
               {playing ? <Pause size={26} fill="currentColor" /> : <Play size={26} fill="currentColor" className="ml-0.5" />}
             </button>
-            <button onClick={() => setPos((p) => clamp(p + 15000, 0, duration))} className="text-label-primary active:opacity-50 flex flex-col items-center">
+            <button onClick={() => setPos((p) => clamp(p + 15000, 0, duration))} className="text-label-secondary active:opacity-50 flex flex-col items-center">
               <RotateCw size={26} />
-              <span className="text-[9px] -mt-0.5">15</span>
+              <span className="text-[12px] mt-1 text-label-secondary">15</span>
             </button>
           </div>
 
-          <div className="flex items-center justify-center gap-3 mt-2.5">
-            <span className="text-[12px] text-label-tertiary tabular-nums">
+          <div className="flex items-center justify-center gap-4 mt-4">
+            <span className="text-[12px] text-label-secondary tabular-nums">
               {formatDateTime(meeting.createdAt, lang)} · {formatDuration(meeting.durationMs, lang)}
             </span>
             <button
@@ -261,9 +269,9 @@ export function MeetingDetailScreen({ params, onBack }: OverlayScreenProps) {
                             <span className="text-[12px] font-semibold" style={{ color: c.text }}>
                               {seg.speaker}
                             </span>
-                            <span className="text-[11px] text-label-tertiary tabular-nums">{formatClock(seg.startMs)}</span>
+                            <span className="text-[12px] text-label-tertiary tabular-nums">{formatClock(seg.startMs)}</span>
                           </div>
-                          <div className={cn('text-[15px] leading-relaxed', active ? 'text-label-primary font-medium' : 'text-label-primary/85')}>
+                          <div className={cn('text-[16px] leading-normal', active ? 'text-label-primary font-medium' : 'text-label-primary/85')}>
                             {qd ? <Highlight text={seg.text} query={query} /> : seg.text}
                           </div>
                         </button>
@@ -277,7 +285,7 @@ export function MeetingDetailScreen({ params, onBack }: OverlayScreenProps) {
                     <div className="flex items-center gap-2 px-1 pt-1.5 pb-1">
                       {meeting.template && <Pill color="brand">{t('meet.template.' + meeting.template)}</Pill>}
                       {meeting.summaryUpdatedAt && (
-                        <span className="text-[12px] text-label-tertiary truncate">
+                        <span className="text-[12px] text-label-secondary truncate">
                           {t('meet.summary.updatedAt', { time: formatDateTime(meeting.summaryUpdatedAt, lang) })}
                         </span>
                       )}
@@ -298,8 +306,13 @@ export function MeetingDetailScreen({ params, onBack }: OverlayScreenProps) {
             </div>
           </>
         ) : (
-          <div className="flex-1 min-h-0">
-            <NonDone meeting={meeting} failure={failureText} onTranscribe={() => openTranscribe('first')} />
+          <div className="flex-1 min-h-0 pb-12">
+            <NonDone
+              meeting={meeting}
+              failure={failureText}
+              onTranscribe={() => openTranscribe('first')}
+              onRetryUpload={() => uploadMeeting(meeting.id)}
+            />
           </div>
         )}
       </div>
@@ -329,7 +342,7 @@ export function MeetingDetailScreen({ params, onBack }: OverlayScreenProps) {
                 danger: true,
                 onConfirm: () => {
                   deleteMeeting(meeting.id)
-                  toast(t('meet.deleted'))
+                  toast(t('meet.deleted'), 'delete')
                   onBack()
                 },
               }),
@@ -344,21 +357,21 @@ export function MeetingDetailScreen({ params, onBack }: OverlayScreenProps) {
             value={renameText}
             onChange={(e) => setRenameText(e.target.value)}
             autoFocus
-            className="w-full h-11 px-3.5 rounded-ios bg-ios-gray6 text-[15px] outline-none"
+            className="w-full h-11 px-3.5 rounded-ios bg-ios-gray6 text-[16px] outline-none"
           />
           <div className="grid grid-cols-2 gap-2.5 mt-3.5">
-            <button onClick={() => setRenameOpen(false)} className="h-10 rounded-ios-lg bg-ios-gray6 font-semibold text-[15px]">
+            <button onClick={() => setRenameOpen(false)} className="h-10 rounded-ios-lg bg-ios-gray6 font-semibold text-[16px]">
               {t('common.cancel')}
             </button>
             <button
               onClick={() => {
                 if (renameText.trim()) {
                   renameMeeting(meeting.id, renameText.trim())
-                  toast(t('meet.renamed'))
+                  toast(t('meet.renamed'), 'neutral')
                 }
                 setRenameOpen(false)
               }}
-              className="h-10 rounded-ios-lg text-white font-semibold text-[15px] bg-brand-primary"
+              className="h-10 rounded-ios-lg text-white font-semibold text-[16px] bg-brand-primary"
             >
               {t('common.save')}
             </button>
@@ -385,13 +398,13 @@ export function MeetingDetailScreen({ params, onBack }: OverlayScreenProps) {
                 <button
                   key={key}
                   onClick={() => setTpl(key)}
-                  className="w-full flex items-center gap-3 px-4 py-3 text-left active:bg-black/[0.04]"
+                  className="w-full flex items-center gap-3 py-3 text-left active:bg-black/[0.04]"
                 >
                   <div className="flex-1 min-w-0">
                     <div className="text-[16px] text-label-primary">{t('meet.template.' + key)}</div>
-                    <div className="text-[13px] text-label-secondary mt-0.5">{t('meet.template.' + key + '.desc')}</div>
+                    <div className="text-[14px] text-label-secondary mt-0.5">{t('meet.template.' + key + '.desc')}</div>
                   </div>
-                  {on && <Check size={20} className="text-ios-blue shrink-0" strokeWidth={2.5} />}
+                  {on && <Check size={20} className="text-ios-purple shrink-0" />}
                 </button>
               )
             })}
@@ -400,7 +413,7 @@ export function MeetingDetailScreen({ params, onBack }: OverlayScreenProps) {
           {transcribeMode === 're' && (
             <div className="card mt-3 px-4 py-3 flex items-center gap-3">
               <div className="flex-1 min-w-0">
-                <div className="text-[15px] text-label-primary">{t('meet.retranscribe.regenTranscript')}</div>
+                <div className="text-[16px] text-label-primary">{t('meet.retranscribe.regenTranscript')}</div>
                 <div className="text-[12px] text-label-tertiary mt-0.5 leading-snug">{t('meet.retranscribe.regenHint')}</div>
               </div>
               <Switch checked={regenTranscript} onChange={setRegenTranscript} />
@@ -408,14 +421,14 @@ export function MeetingDetailScreen({ params, onBack }: OverlayScreenProps) {
           )}
 
           {/* optional background note — gives the AI more context for the summary */}
-          <div className="mt-3 px-1">
-            <div className="px-1 pb-1.5 text-[13px] font-medium text-label-secondary">{t('meet.template.note')}</div>
+          <div className="mt-3">
+            <div className="pb-1.5 text-[14px] font-medium text-label-secondary">{t('meet.template.note')}</div>
             <textarea
               value={note}
               onChange={(e) => setNote(e.target.value)}
               placeholder={t('meet.template.note.ph')}
               rows={2}
-              className="w-full rounded-ios-lg bg-ios-gray6 px-3 py-2.5 text-[15px] leading-snug outline-none resize-none placeholder:text-label-tertiary"
+              className="w-full rounded-ios-lg bg-surface border border-input px-3 py-2.5 text-[16px] leading-snug outline-none resize-none placeholder:text-label-tertiary"
             />
           </div>
         </div>
@@ -428,41 +441,79 @@ function NonDone({
   meeting,
   failure,
   onTranscribe,
+  onRetryUpload,
 }: {
   meeting: Meeting
-  failure?: string // resolved 转译-failure text (from the parent)
+  failure?: string // resolved transcription-failure text (from the parent)
   onTranscribe: () => void
+  onRetryUpload: () => void
 }) {
   const t = useT()
   const { status, analyzeProgress: progress, analyzeStage: stage } = meeting
 
-  // 转译中 — the unified upload + transcribe flow (blue, matching the list pill).
-  // The stage text starts with 正在上传到云端… then moves through the transcribe stages.
+  // ---- cloud-upload stage (gates everything below) ----
+  if (meeting.uploadStatus === 'uploading') {
+    return (
+      <div className="flex flex-col items-center justify-center h-full px-10 text-center">
+        <Spinner size={34} className="text-ios-purple" />
+        <div className="text-[16px] font-semibold mt-4">
+          {t('meet.upload.uploading')} {meeting.uploadProgress ?? 0}%
+        </div>
+        <div className="w-full max-w-[240px] h-1.5 rounded-full bg-ios-gray5 overflow-hidden mt-4">
+          <div
+            className="h-full rounded-full bg-ios-purple transition-all duration-300"
+            style={{ width: `${meeting.uploadProgress ?? 0}%` }}
+          />
+        </div>
+      </div>
+    )
+  }
+  if (meeting.uploadStatus === 'failed') {
+    const reason = meeting.uploadFailReason
+    return (
+      <div className="flex flex-col items-center justify-center h-full px-10 text-center">
+        <div className="w-[72px] h-[72px] rounded-[20px] flex items-center justify-center mb-4 bg-ios-gray5 text-label-secondary">
+          <CloudOff size={30} />
+        </div>
+        <div className="text-[16px] font-semibold">{t('meet.upload.failed')}</div>
+        {reason && (
+          <div className="text-[14px] text-ios-red mt-1.5">{reason.startsWith('meet.') ? t(reason) : reason}</div>
+        )}
+        <button
+          onClick={onRetryUpload}
+          className="mt-6 h-11 px-6 rounded-ios-lg text-white font-semibold text-[16px] press bg-brand-primary"
+        >
+          {t('meet.upload.retry')}
+        </button>
+      </div>
+    )
+  }
+
   if (status === 'analyzing') {
     return (
       <div className="flex flex-col items-center justify-center h-full px-10 text-center">
-        <Spinner size={34} className="text-ios-blue" />
+        <Spinner size={34} className="text-brand-violet" />
         <div className="text-[16px] font-semibold mt-4">{stage ? t(stage) : t('meet.status.analyzing')}</div>
         <div className="w-full max-w-[240px] h-1.5 rounded-full bg-ios-gray5 overflow-hidden mt-4">
-          <div className="h-full rounded-full bg-ios-blue transition-all duration-300" style={{ width: `${progress ?? 0}%` }} />
+          <div className="h-full rounded-full bg-brand-violet transition-all duration-300" style={{ width: `${progress ?? 0}%` }} />
         </div>
       </div>
     )
   }
   return (
     <div className="flex flex-col items-center justify-center h-full px-10 text-center">
-      <div className="w-[72px] h-[72px] rounded-[20px] flex items-center justify-center text-white mb-4" style={{ background: solidFor(status === 'failed' ? 'sunset' : 'violet') }}>
+      <div className="w-[72px] h-[72px] rounded-[20px] flex items-center justify-center mb-4 bg-ios-gray5 text-label-secondary">
         <AudioLines size={30} />
       </div>
-      <div className="text-[17px] font-semibold">
+      <div className="text-[16px] font-semibold">
         {status === 'failed' ? t('meet.status.failed') : t('meet.transcript.empty')}
       </div>
       {status === 'failed' && failure && <div className="text-[14px] text-ios-red mt-1.5">{failure}</div>}
       <button
         onClick={onTranscribe}
-        className="mt-6 h-11 px-6 rounded-ios-lg text-white font-semibold text-[15px] press bg-brand-primary"
+        className="mt-6 h-11 px-6 rounded-ios-lg text-white font-semibold text-[16px] press bg-brand-primary"
       >
-        {status === 'failed' ? t('meet.transcribe.retry') : t('meet.transcribe')}
+        {status === 'failed' ? t('meet.retranscribe') : t('meet.transcribe')}
       </button>
     </div>
   )

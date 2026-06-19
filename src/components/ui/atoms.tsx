@@ -12,7 +12,7 @@ export function Spinner({ size = 18, className, color }: { size?: number; classN
       height={size}
       viewBox="0 0 24 24"
       className={cn('animate-spin', className)}
-      style={{ color: color || 'currentColor' }}
+      style={color ? { color } : undefined}
     >
       <circle cx="12" cy="12" r="9" stroke="currentColor" strokeOpacity="0.2" strokeWidth="3" fill="none" />
       <path d="M21 12a9 9 0 0 0-9-9" stroke="currentColor" strokeWidth="3" strokeLinecap="round" fill="none" />
@@ -24,6 +24,7 @@ export function Spinner({ size = 18, className, color }: { size?: number; classN
 
 export function Avatar({
   gradient,
+  color,
   name,
   size = 40,
   shape = 'squircle',
@@ -32,6 +33,7 @@ export function Avatar({
   className,
 }: {
   gradient?: string
+  color?: string // explicit fill — overrides gradient (e.g. identityColor() for letter avatars)
   name?: string
   size?: number
   shape?: 'circle' | 'squircle'
@@ -66,7 +68,7 @@ export function Avatar({
         width: size,
         height: size,
         borderRadius: radius,
-        background: solidFor(gradient),
+        background: color || solidFor(gradient),
         fontSize: size * 0.4,
       }}
     >
@@ -145,12 +147,12 @@ export function Button({
   const sizes = {
     sm: 'h-9 px-4 text-[14px] rounded-ios',
     md: 'h-11 px-5 text-[16px] rounded-ios-lg',
-    lg: 'h-[52px] px-6 text-[17px] rounded-ios-lg',
+    lg: 'h-[52px] px-6 text-[16px] rounded-ios-lg',
   }
   const variants: Record<BtnVariant, string> = {
     primary: 'bg-brand-primary text-white shadow-ios-md active:brightness-95',
     secondary: 'bg-ios-gray6 text-label-primary active:bg-ios-gray5',
-    ghost: 'text-ios-blue active:bg-black/[0.04]',
+    ghost: 'text-ios-purple active:bg-black/[0.04]',
     destructive: 'bg-ios-gray6 text-ios-red active:bg-ios-gray5',
   }
   return (
@@ -254,11 +256,11 @@ export function Switch({ checked, onChange }: { checked: boolean; onChange: (v: 
       className="relative w-[51px] h-[31px] rounded-full shrink-0"
       style={{ backgroundColor: 'rgba(120,120,128,0.24)' }} // constant gray track
     >
-      {/* green fill fades in/out via opacity (always interpolates smoothly — unlike a
-          background-color transition between var() and rgba, which can snap) */}
+      {/* accent (purple) fill fades in/out via opacity (always interpolates smoothly —
+          unlike a background-color transition between var() and rgba, which can snap) */}
       <span
         className="absolute inset-0 rounded-full transition-opacity duration-300 ease-in-out"
-        style={{ backgroundColor: 'var(--blue)', opacity: checked ? 1 : 0 }}
+        style={{ backgroundColor: 'var(--purple)', opacity: checked ? 1 : 0 }}
       />
       {/* knob slides via a GPU transform */}
       <span
@@ -289,7 +291,7 @@ export function Section({
       {title && (
         <div
           className={cn(
-            'px-3 pb-1.5 pt-1 text-[13px] font-medium text-label-secondary',
+            'px-3 pb-1.5 pt-1 text-[14px] font-medium text-label-secondary',
             !noUppercase && 'uppercase tracking-wide',
           )}
         >
@@ -297,7 +299,7 @@ export function Section({
         </div>
       )}
       <div className="list-group divide-y divide-divider">{children}</div>
-      {footer && <div className="px-3 pt-1.5 text-[13px] text-label-secondary leading-snug">{footer}</div>}
+      {footer && <div className="px-3 pt-1.5 text-[14px] text-label-secondary leading-snug">{footer}</div>}
     </div>
   )
 }
@@ -347,9 +349,9 @@ export function Row({
       )}
       <div className="flex-1 min-w-0">
         <div className={cn('text-[16px] truncate', danger ? 'text-ios-red' : 'text-label-primary')}>{title}</div>
-        {subtitle && <div className="text-[13px] text-label-secondary truncate mt-0.5">{subtitle}</div>}
+        {subtitle && <div className="text-[14px] text-label-secondary truncate mt-0.5">{subtitle}</div>}
       </div>
-      {value && <div className="text-[15px] text-label-secondary shrink-0 max-w-[55%] truncate">{value}</div>}
+      {value && <div className="text-[16px] text-label-secondary shrink-0 max-w-[55%] truncate">{value}</div>}
       {right}
       {chevron && (
         <ChevronRight size={18} className="text-ios-gray2 shrink-0" />
@@ -373,10 +375,10 @@ export function EmptyState({
 }) {
   return (
     <div className="flex flex-col items-center justify-center text-center px-10 py-16">
-      <div className="w-[72px] h-[72px] rounded-[20px] flex items-center justify-center mb-4 bg-ios-gray6 text-label-secondary">
+      <div className="w-[72px] h-[72px] rounded-[20px] flex items-center justify-center mb-4 bg-ios-gray5 text-label-secondary">
         {icon}
       </div>
-      <div className="text-[17px] font-semibold text-label-primary">{title}</div>
+      <div className="text-[16px] font-semibold text-label-primary">{title}</div>
       {subtitle && <div className="text-[14px] text-label-secondary mt-1.5 leading-relaxed max-w-[260px]">{subtitle}</div>}
       {action && <div className="mt-5">{action}</div>}
     </div>
@@ -396,7 +398,7 @@ export function Pill({
 }) {
   const colors: Record<string, string> = {
     gray: 'bg-black/[0.06] dark:bg-white/[0.1] text-label-secondary',
-    blue: 'bg-ios-blue/10 text-ios-blue',
+    blue: 'bg-ios-purple/10 text-ios-purple',
     green: 'bg-ios-green/12 text-ios-green',
     red: 'bg-ios-red/10 text-ios-red',
     orange: 'bg-ios-orange/12 text-ios-orange',
@@ -466,7 +468,7 @@ export function SearchField({
           value={value}
           onChange={(e) => onChange(e.target.value)}
           placeholder={placeholder}
-          className="w-full h-9 bg-surface border border-input rounded-[12px] pl-9 pr-8 text-[15px] outline-none placeholder:text-label-tertiary"
+          className="w-full h-9 bg-surface border border-input rounded-[12px] pl-9 pr-8 text-[16px] outline-none placeholder:text-label-tertiary"
         />
         {value && (
           <button
@@ -474,12 +476,12 @@ export function SearchField({
             className="absolute right-2 top-1/2 -translate-y-1/2 w-5 h-5 rounded-full bg-ios-gray3 text-white flex items-center justify-center"
             aria-label="clear"
           >
-            <X size={12} strokeWidth={3} />
+            <X size={12} />
           </button>
         )}
       </div>
       {onClose && (
-        <button onClick={onClose} className="text-[15px] text-label-secondary active:opacity-60 shrink-0">
+        <button onClick={onClose} className="text-[16px] text-label-secondary active:opacity-60 shrink-0">
           {closeLabel}
         </button>
       )}

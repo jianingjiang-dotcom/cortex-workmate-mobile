@@ -56,7 +56,7 @@ export function Calendar({
         <button
           disabled={!canPrev}
           onClick={() => setView(startOfMonth(new Date(year, month - 1, 1).getTime()))}
-          className="w-9 h-9 flex items-center justify-center rounded-full text-ios-blue disabled:opacity-30 active:bg-ios-gray6"
+          className="w-9 h-9 flex items-center justify-center rounded-full text-ios-purple disabled:opacity-30 active:bg-ios-gray6"
           aria-label="previous month"
         >
           <ChevronLeft size={20} />
@@ -64,7 +64,7 @@ export function Calendar({
         <div className="text-[16px] font-semibold">{title}</div>
         <button
           onClick={() => setView(startOfMonth(new Date(year, month + 1, 1).getTime()))}
-          className="w-9 h-9 flex items-center justify-center rounded-full text-ios-blue active:bg-ios-gray6"
+          className="w-9 h-9 flex items-center justify-center rounded-full text-ios-purple active:bg-ios-gray6"
           aria-label="next month"
         >
           <ChevronRight size={20} />
@@ -92,13 +92,13 @@ export function Calendar({
             >
               <span
                 className={cn(
-                  'w-9 h-9 flex items-center justify-center rounded-full text-[15px]',
+                  'w-9 h-9 flex items-center justify-center rounded-full text-[16px]',
                   isSel
-                    ? 'bg-ios-blue text-white font-semibold'
+                    ? 'bg-ios-purple text-white font-semibold'
                     : disabled
                       ? 'text-label-tertiary'
                       : isToday
-                        ? 'text-ios-blue font-semibold'
+                        ? 'text-ios-purple font-semibold'
                         : 'text-label-primary active:bg-ios-gray6',
                 )}
               >

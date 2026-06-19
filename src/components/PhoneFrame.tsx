@@ -19,7 +19,7 @@ export function StatusBar({ variant = 'dark' }: { variant?: 'dark' | 'light' }) 
       className="absolute top-0 left-0 right-0 z-[60] h-[54px] flex items-end justify-between px-7 pb-2 pointer-events-none select-none"
       style={{ color }}
     >
-      <div className="text-[15px] font-semibold tracking-tight tabular-nums">{time}</div>
+      <div className="text-[16px] font-semibold tracking-tight tabular-nums">{time}</div>
       {/* Dynamic Island */}
       <div className="absolute left-1/2 top-[11px] -translate-x-1/2 w-[120px] h-[34px] rounded-full bg-black" />
       <div className="flex items-center gap-1.5">
@@ -92,11 +92,11 @@ export function PhoneFrame({ children }: { children: ReactNode }) {
       {/* ambient brand glow */}
       <div
         className="absolute w-[520px] h-[520px] rounded-full blur-[120px] opacity-25 pointer-events-none"
-        style={{ background: 'radial-gradient(circle, #CC79FF 0%, #407CFF 40%, transparent 70%)' }}
+        style={{ background: 'radial-gradient(circle, var(--purple) 0%, var(--blue) 40%, transparent 70%)' }}
       />
       <div
         className="absolute w-[420px] h-[420px] rounded-full blur-[120px] opacity-20 pointer-events-none translate-x-40 translate-y-40"
-        style={{ background: 'radial-gradient(circle, #FFA03B 0%, #CC79FF 50%, transparent 70%)' }}
+        style={{ background: 'radial-gradient(circle, var(--orange) 0%, var(--purple) 50%, transparent 70%)' }}
       />
       <div style={{ transform: `scale(${scale})` }} className="relative">
         {/* bezel */}

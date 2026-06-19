@@ -42,7 +42,7 @@ export function NameRecordingModal({
           onKeyDown={(e) => e.key === 'Enter' && submit()}
           placeholder={t('meet.name.ph')}
           autoFocus
-          className="w-full h-11 px-3.5 rounded-ios bg-ios-gray6 text-[15px] outline-none"
+          className="w-full h-11 px-3.5 rounded-ios border border-input bg-transparent text-[16px] outline-none focus:border-brand-primary"
         />
 
         {/* opt-in 转译 checkbox */}
@@ -51,7 +51,7 @@ export function NameRecordingModal({
           role="checkbox"
           aria-checked={transcribe}
           onClick={() => setTranscribe((v) => !v)}
-          className="w-full mt-3 flex items-center gap-3 rounded-ios bg-ios-gray6 px-3.5 py-3 text-left active:opacity-80"
+          className="w-full mt-3 flex items-center gap-3 rounded-ios border border-input px-3.5 py-3 text-left active:bg-ios-gray6"
         >
           <span
             className={cn(
@@ -59,10 +59,10 @@ export function NameRecordingModal({
               transcribe ? 'bg-brand-primary' : 'border-[1.5px] border-ios-gray3',
             )}
           >
-            {transcribe && <Check size={15} className="text-white" strokeWidth={3} />}
+            {transcribe && <Check size={15} className="text-white" />}
           </span>
           <span className="flex-1 min-w-0">
-            <span className="block text-[15px] text-label-primary">{t('meet.name.transcribe')}</span>
+            <span className="block text-[16px] text-label-primary">{t('meet.name.transcribe')}</span>
             <span className="block text-[12px] text-label-secondary mt-0.5 leading-snug">
               {t('meet.name.transcribeHint')}
             </span>
@@ -70,10 +70,10 @@ export function NameRecordingModal({
         </button>
 
         <div className="grid grid-cols-2 gap-2.5 mt-3.5">
-          <button onClick={onCancel} className="h-11 rounded-ios-lg bg-ios-gray6 font-semibold text-[15px] press">
+          <button onClick={onCancel} className="h-11 rounded-ios-lg bg-ios-gray6 font-semibold text-[16px] press">
             {t('common.cancel')}
           </button>
-          <button onClick={submit} className="h-11 rounded-ios-lg text-white font-semibold text-[15px] press bg-brand-primary">
+          <button onClick={submit} className="h-11 rounded-ios-lg text-white font-semibold text-[16px] press bg-brand-primary">
             {t('common.save')}
           </button>
         </div>

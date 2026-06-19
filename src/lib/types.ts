@@ -124,7 +124,7 @@ export interface Agent {
 
 // ---- Notifications (6.3) ---------------------------------------------------
 
-export type NotificationType = 'approval' | 'task_status' | 'mcp_connect'
+export type NotificationType = 'approval' | 'task_status' | 'mcp_connect' | 'meeting' | 'contact_request'
 export type ApprovalStatus = 'pending' | 'approved' | 'rejected'
 export type ValidityPeriod = '1d' | '7d' | 'never' | 'custom'
 export type TaskStatusKind = 'created' | 'completed' | 'failed' | 'started'
@@ -157,6 +157,14 @@ export interface AppNotification {
 
   // mcp-connect-specific (oauth connection request)
   relatedServerId?: string // -> McpServer.id; pill reflects that server's live enabled state
+
+  // meeting-specific (a recording finished transcribing / notes are ready)
+  relatedMeetingId?: string // -> Meeting.id
+  meetingStatusKind?: 'ready' | 'failed'
+
+  // contact-request-specific (another person's Workmate wants to connect)
+  requesterName?: string
+  requesterGradient?: string
 }
 
 // ---- Scheduled tasks (6.4) -------------------------------------------------
@@ -244,10 +252,6 @@ export interface Meeting {
   uploadProgress?: number // 0–100 while uploading
   uploadFailReason?: string // i18n key (e.g. 'meet.upload.interrupted')
 }
-// NOTE: 转译 ("transcribe") is one unified action that internally does cloud-upload +
-// transcription. Its whole lifecycle rides the single `status` field — 'analyzing' is
-// shown as 转译中 (with analyzeProgress), 'failed' as 转译失败. There is no separate
-// upload status: upload is just the first stage of an 'analyzing' run.
 
 // ---- Account ---------------------------------------------------------------
 
@@ -261,7 +265,19 @@ export interface Account {
 
 // ---- Ephemeral UI ----------------------------------------------------------
 
-export type ToastKind = 'success' | 'error' | 'info'
+export type ToastKind =
+  | 'success' // green check-circle — completions that took time / could fail
+  | 'neutral' // grey check — saved / copied / renamed (default)
+  | 'delete' // grey trash — deleted & removed
+  | 'purge' // grey trash — permanently deleted
+  | 'pause' // grey pause
+  | 'resume' // grey play
+  | 'run' // grey lightning — started a run
+  | 'readAll' // grey double-check — all marked as read
+  | 'loading' // blue spinner — in-progress
+  | 'info' // blue info — static info (reserved)
+  | 'error' // red x-circle — failures
+  | 'warning' // amber triangle — done, but heads up (reserved)
 export interface Toast {
   id: string
   message: string
@@ -326,7 +342,6 @@ export type ScreenName =
   | 'recording'
   | 'persona'
   | 'profile' // personal info center (account id + edit name/avatar)
-  | 'about' // app version / check-for-update
   | 'history' // normal-mode chat history (projects + sessions)
   | 'chatSearch' // search the Workmate continuous history
   | 'chatFavorites' // saved/bookmarked Workmate replies
