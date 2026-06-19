@@ -1,13 +1,52 @@
 import { useRef, useState } from 'react'
-import { Camera, Check } from 'lucide-react'
+import { Camera, Check, Clock } from 'lucide-react'
 import type { OverlayScreenProps } from '../../lib/types'
 import { useStore } from '../../store/useStore'
-import { useT } from '../../i18n'
+import { useLang, useT } from '../../i18n'
 import { Page } from '../../components/Page'
 import { Avatar } from '../../components/ui/atoms'
 import { ActionSheet, Sheet } from '../../components/ui/Sheet'
 import { VendorLogo } from '../../components/chat/parts'
 import { cn } from '../../lib/util'
+
+// Curated common time zones for the picker (an IANA id + bilingual city label).
+const COMMON_TIMEZONES: { id: string; zh: string; en: string }[] = [
+  { id: 'Asia/Shanghai', zh: '北京 / 上海', en: 'Beijing / Shanghai' },
+  { id: 'Asia/Hong_Kong', zh: '香港', en: 'Hong Kong' },
+  { id: 'Asia/Tokyo', zh: '东京 / 首尔', en: 'Tokyo / Seoul' },
+  { id: 'Asia/Singapore', zh: '新加坡', en: 'Singapore' },
+  { id: 'Asia/Kolkata', zh: '印度', en: 'India' },
+  { id: 'Asia/Dubai', zh: '迪拜', en: 'Dubai' },
+  { id: 'Europe/London', zh: '伦敦', en: 'London' },
+  { id: 'Europe/Paris', zh: '巴黎 / 柏林', en: 'Paris / Berlin' },
+  { id: 'America/New_York', zh: '纽约', en: 'New York' },
+  { id: 'America/Los_Angeles', zh: '洛杉矶', en: 'Los Angeles' },
+  { id: 'UTC', zh: '协调世界时', en: 'Coordinated Universal Time' },
+]
+
+// The host/system time zone (what "follow system" resolves to).
+const SYSTEM_TZ = (() => {
+  try {
+    return Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC'
+  } catch {
+    return 'UTC'
+  }
+})()
+
+// Current UTC offset for a zone, e.g. "UTC+8" (DST-aware via Intl).
+function tzOffsetLabel(tz: string): string {
+  try {
+    const parts = new Intl.DateTimeFormat('en-US', { timeZone: tz, timeZoneName: 'shortOffset' }).formatToParts(new Date())
+    return (parts.find((p) => p.type === 'timeZoneName')?.value || '').replace('GMT', 'UTC')
+  } catch {
+    return ''
+  }
+}
+const tzSub = (tz: string) => `${tz}${tzOffsetLabel(tz) ? ` · ${tzOffsetLabel(tz)}` : ''}`
+const tzCity = (id: string, lang: 'zh' | 'en') => {
+  const z = COMMON_TIMEZONES.find((t) => t.id === id)
+  return z ? (lang === 'zh' ? z.zh : z.en) : id
+}
 
 function SparkleIcon() {
   return (
@@ -45,6 +84,7 @@ function resizeImageToDataUrl(file: File, size = 256): Promise<string> {
 
 export function PersonaScreen({ onBack }: OverlayScreenProps) {
   const t = useT()
+  const lang = useLang()
   const persona = useStore((s) => s.persona)
   const models = useStore((s) => s.models)
   const setPersona = useStore((s) => s.setPersona)
@@ -56,7 +96,9 @@ export function PersonaScreen({ onBack }: OverlayScreenProps) {
   const [avatarImage, setAvatarImage] = useState<string | undefined>(persona.avatarImage)
   const [systemPrompt, setSystemPrompt] = useState(persona.systemPrompt)
   const [modelId, setModelId] = useState(persona.modelId)
+  const [timezone, setTimezone] = useState<string | undefined>(persona.timezone)
   const [modelOpen, setModelOpen] = useState(false)
+  const [tzOpen, setTzOpen] = useState(false)
   const [avatarSheet, setAvatarSheet] = useState(false)
   const fileRef = useRef<HTMLInputElement>(null)
 
@@ -68,6 +110,7 @@ export function PersonaScreen({ onBack }: OverlayScreenProps) {
     description !== persona.description ||
     systemPrompt !== persona.systemPrompt ||
     modelId !== persona.modelId ||
+    (timezone ?? '') !== (persona.timezone ?? '') ||
     (avatarImage ?? '') !== (persona.avatarImage ?? '')
 
   const handleBack = () => {
@@ -84,7 +127,7 @@ export function PersonaScreen({ onBack }: OverlayScreenProps) {
 
   const save = () => {
     if (!dirty) return
-    setPersona({ name: name.trim() || persona.name, description, avatarImage, systemPrompt, modelId })
+    setPersona({ name: name.trim() || persona.name, description, avatarImage, systemPrompt, modelId, timezone })
     toast(t('persona.saved'), 'success')
     onBack()
   }
@@ -170,6 +213,27 @@ export function PersonaScreen({ onBack }: OverlayScreenProps) {
             </svg>
           </button>
         </div>
+
+        <div>
+          <div className="px-1 pb-1.5 text-[13px] font-medium text-label-secondary">{t('persona.timezone')}</div>
+          <button
+            onClick={() => setTzOpen(true)}
+            className="w-full bg-surface rounded-ios-lg px-3.5 py-3 flex items-center gap-3 active:bg-ios-gray6"
+          >
+            <div className="w-[34px] h-[34px] rounded-[9px] bg-ios-gray6 flex items-center justify-center shrink-0">
+              <Clock size={18} className="text-label-secondary" />
+            </div>
+            <div className="flex-1 text-left min-w-0">
+              <div className="text-[15px] font-medium">
+                {timezone ? tzCity(timezone, lang) : t('persona.timezone.system')}
+              </div>
+              <div className="text-[12px] text-label-secondary truncate">{tzSub(timezone || SYSTEM_TZ)}</div>
+            </div>
+            <svg width="8" height="14" viewBox="0 0 8 14" className="text-ios-gray3" fill="none">
+              <path d="M1 1l6 6-6 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+          </button>
+        </div>
       </div>
 
       <input ref={fileRef} type="file" accept="image/*" className="hidden" onChange={onFile} />
@@ -211,6 +275,50 @@ export function PersonaScreen({ onBack }: OverlayScreenProps) {
                   </div>
                 </div>
                 {active && <Check size={20} className="text-ios-blue" />}
+              </button>
+            )
+          })}
+        </div>
+      </Sheet>
+
+      <Sheet open={tzOpen} onClose={() => setTzOpen(false)} title={t('persona.timezone.title')}>
+        <div className="px-4 space-y-2 pt-1 pb-2">
+          {/* follow-system option (the default) */}
+          <button
+            onClick={() => {
+              setTimezone(undefined)
+              setTzOpen(false)
+            }}
+            className={cn(
+              'w-full flex items-center gap-3 px-3.5 py-3 rounded-ios-lg border text-left',
+              !timezone ? 'border-ios-blue bg-ios-blue/[0.05]' : 'border-divider bg-surface',
+            )}
+          >
+            <div className="flex-1 min-w-0">
+              <div className="text-[15px] font-medium">{t('persona.timezone.system')}</div>
+              <div className="text-[12px] text-label-secondary truncate">{tzSub(SYSTEM_TZ)}</div>
+            </div>
+            {!timezone && <Check size={20} className="text-ios-blue shrink-0" />}
+          </button>
+          {COMMON_TIMEZONES.map((z) => {
+            const active = timezone === z.id
+            return (
+              <button
+                key={z.id}
+                onClick={() => {
+                  setTimezone(z.id)
+                  setTzOpen(false)
+                }}
+                className={cn(
+                  'w-full flex items-center gap-3 px-3.5 py-3 rounded-ios-lg border text-left',
+                  active ? 'border-ios-blue bg-ios-blue/[0.05]' : 'border-divider bg-surface',
+                )}
+              >
+                <div className="flex-1 min-w-0">
+                  <div className="text-[15px] font-medium">{lang === 'zh' ? z.zh : z.en}</div>
+                  <div className="text-[12px] text-label-secondary truncate">{tzSub(z.id)}</div>
+                </div>
+                {active && <Check size={20} className="text-ios-blue shrink-0" />}
               </button>
             )
           })}
