@@ -105,6 +105,7 @@ export interface Persona {
   avatarImage?: string // user-uploaded avatar (downscaled data URL)
   systemPrompt: string
   modelId: string
+  timezone?: string // IANA tz id (e.g. 'Asia/Shanghai'); absent = follow the system timezone
 }
 
 // ---- Agents (Agents-mode switcher, grouped by organization/team) -----------
