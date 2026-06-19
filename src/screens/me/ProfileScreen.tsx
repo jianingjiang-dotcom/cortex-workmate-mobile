@@ -70,7 +70,7 @@ export function ProfileScreen({ onBack }: OverlayScreenProps) {
         <button
           onClick={save}
           disabled={!dirty}
-          className={cn('text-[16px] font-semibold px-2', dirty ? 'text-ios-blue active:opacity-50' : 'text-label-tertiary')}
+          className={cn('text-[16px] font-semibold px-2', dirty ? 'text-ios-purple active:opacity-50' : 'text-label-tertiary')}
         >
           {t('common.save')}
         </button>
@@ -80,7 +80,7 @@ export function ProfileScreen({ onBack }: OverlayScreenProps) {
       <div className="flex flex-col items-center pt-4 pb-5">
         <button onClick={() => setAvatarSheet(true)} className="relative active:opacity-90" aria-label={t('profile.avatar')}>
           <Avatar src={avatarImage} gradient={account.avatarGradient} name={name} size={92} shape="circle" />
-          <div className="absolute -bottom-0.5 -right-0.5 w-7 h-7 rounded-full bg-ios-blue ring-2 ring-grouped flex items-center justify-center">
+          <div className="absolute -bottom-0.5 -right-0.5 w-7 h-7 rounded-full bg-ios-purple ring-2 ring-grouped flex items-center justify-center">
             <Camera size={14} className="text-white" />
           </div>
         </button>

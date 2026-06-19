@@ -58,7 +58,7 @@ export function AboutScreen({ onBack }: OverlayScreenProps) {
           </div>
           <div className="text-[16px] font-semibold mt-3">{t('about.upToDate')}</div>
           <div className="text-[14px] text-label-secondary mt-1">{t('about.upToDateBody', { v: CURRENT_VERSION })}</div>
-          <button onClick={runCheck} className="mt-5 text-[16px] text-ios-blue font-medium active:opacity-60">
+          <button onClick={runCheck} className="mt-5 text-[16px] text-ios-purple font-medium active:opacity-60">
             {t('about.recheck')}
           </button>
         </div>
@@ -75,7 +75,7 @@ export function AboutScreen({ onBack }: OverlayScreenProps) {
             <ul className="mt-2 space-y-2">
               {CHANGELOG_KEYS.map((k) => (
                 <li key={k} className="flex gap-2.5 text-[14px] text-label-primary leading-snug">
-                  <span className="mt-[7px] w-[5px] h-[5px] rounded-full bg-ios-blue shrink-0" />
+                  <span className="mt-[7px] w-[5px] h-[5px] rounded-full bg-ios-purple shrink-0" />
                   <span>{t(k)}</span>
                 </li>
               ))}
@@ -97,7 +97,7 @@ export function AboutScreen({ onBack }: OverlayScreenProps) {
           </div>
           <button
             onClick={runCheck}
-            className="w-full mt-3 text-center text-[16px] text-ios-blue font-medium active:opacity-60"
+            className="w-full mt-3 text-center text-[16px] text-ios-purple font-medium active:opacity-60"
           >
             {t('about.recheck')}
           </button>

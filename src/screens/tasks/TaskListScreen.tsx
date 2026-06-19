@@ -47,7 +47,7 @@ export function TaskListScreen({ onBack }: OverlayScreenProps) {
           <div className="flex items-center gap-2">
             <span className="text-[16px] font-semibold truncate flex-1">{task.name}</span>
             {task.status === 'running' && (
-              <span className="flex items-center gap-1 text-[12px] text-ios-blue shrink-0">
+              <span className="flex items-center gap-1 text-[12px] text-ios-purple shrink-0">
                 <Spinner size={12} className="text-current" />
                 {t('tasks.status.running')}
               </span>

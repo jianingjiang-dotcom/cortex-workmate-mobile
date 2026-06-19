@@ -430,7 +430,7 @@ function TaskEditSheet({ open, onClose, taskId }: { open: boolean; onClose: () =
               )}
               <button
                 onClick={() => setPicker('add')}
-                className="flex items-center gap-1.5 h-9 px-3 text-[16px] font-medium text-ios-blue active:opacity-60"
+                className="flex items-center gap-1.5 h-9 px-3 text-[16px] font-medium text-ios-purple active:opacity-60"
               >
                 <Plus size={18} /> {t('tasks.edit.addDate')}
               </button>

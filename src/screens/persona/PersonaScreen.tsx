@@ -109,7 +109,7 @@ export function PersonaScreen({ onBack }: OverlayScreenProps) {
         <button
           onClick={save}
           disabled={!dirty}
-          className={cn('text-[16px] font-semibold px-2', dirty ? 'text-ios-blue active:opacity-50' : 'text-label-tertiary')}
+          className={cn('text-[16px] font-semibold px-2', dirty ? 'text-ios-purple active:opacity-50' : 'text-label-tertiary')}
         >
           {t('common.save')}
         </button>
@@ -119,7 +119,7 @@ export function PersonaScreen({ onBack }: OverlayScreenProps) {
       <div className="flex flex-col items-center pt-4 pb-6">
         <button onClick={() => setAvatarSheet(true)} className="relative active:opacity-90">
           <Avatar src={avatarImage} gradient={persona.avatarGradient} size={88} shape="circle" icon={<SparkleIcon />} />
-          <div className="absolute -bottom-0.5 -right-0.5 w-7 h-7 rounded-full bg-ios-blue ring-2 ring-ios-gray6 flex items-center justify-center">
+          <div className="absolute -bottom-0.5 -right-0.5 w-7 h-7 rounded-full bg-ios-purple ring-2 ring-ios-gray6 flex items-center justify-center">
             <Camera size={14} className="text-white" />
           </div>
         </button>
@@ -199,7 +199,7 @@ export function PersonaScreen({ onBack }: OverlayScreenProps) {
                 }}
                 className={cn(
                   'w-full flex items-center gap-3 px-3.5 py-3 rounded-ios-lg border text-left',
-                  active ? 'border-ios-blue bg-ios-blue/[0.05]' : 'border-divider bg-surface',
+                  active ? 'border-ios-purple bg-ios-purple/[0.05]' : 'border-divider bg-surface',
                 )}
               >
                 <VendorLogo vendor={m.vendor} size={38} />
@@ -210,7 +210,7 @@ export function PersonaScreen({ onBack }: OverlayScreenProps) {
                     {m.desc ? ` · ${m.desc}` : ''}
                   </div>
                 </div>
-                {active && <Check size={20} className="text-ios-blue" />}
+                {active && <Check size={20} className="text-ios-purple" />}
               </button>
             )
           })}

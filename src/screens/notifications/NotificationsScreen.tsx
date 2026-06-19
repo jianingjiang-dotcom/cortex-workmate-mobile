@@ -200,7 +200,7 @@ export function NotificationsScreen({ onBack }: OverlayScreenProps) {
       <div className="relative shrink-0">
         <NotifIcon n={n} />
         {!n.read && (
-          <span className="absolute -top-1 -left-1 w-2.5 h-2.5 rounded-full bg-ios-blue ring-2 ring-surface" />
+          <span className="absolute -top-1 -left-1 w-2.5 h-2.5 rounded-full bg-ios-purple ring-2 ring-surface" />
         )}
       </div>
       <div className="flex-1 min-w-0">

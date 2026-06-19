@@ -30,17 +30,18 @@
     --glass-border: rgba(255, 255, 255, 0.6);
     --stage: #e9e9ee; /* desktop backdrop behind the phone */
 
-    /* DS palette: single purple accent (#CC79FF). The "blue" tokens drive the app's
-       accent (back / selection / toggle / active state), so they resolve to PURPLE.
-       Genuine links use --link. */
-    --blue: #cc79ff;
-    --link: #407cff;
+    /* DS palette: single PURPLE accent (#CC79FF) — back / selection / toggle /
+       active state. BLUE (#407CFF) is links / agent icons only. */
+    --purple: #cc79ff;
+    --blue: #407cff;
+    --link: var(--blue);
     --green: #22c55e;
     --red: #ef4444;
     --orange: #ffa03b;
-    /* RGB channel triplets of the accents — Tailwind alpha modifiers (bg-ios-blue/10 …)
-       need an <alpha-value> slot, which plain hex vars can't provide */
-    --blue-rgb: 204 121 255;
+    /* RGB channel triplets — Tailwind alpha modifiers (bg-ios-purple/10 …) need an
+       <alpha-value> slot, which plain hex vars can't provide */
+    --purple-rgb: 204 121 255;
+    --blue-rgb: 64 124 255;
     --green-rgb: 34 197 94;
     --red-rgb: 239 68 68;
     --orange-rgb: 255 160 59;
@@ -64,13 +65,15 @@
     --glass: rgba(28, 28, 30, 0.78);
     --glass-border: rgba(255, 255, 255, 0.1);
     --stage: #08080a;
-    /* dark-mode accents read brighter for contrast */
-    --blue: #cc79ff;
-    --link: #6fa0ff;
+    /* dark-mode accents read brighter for contrast; purple already pops, stays put */
+    --purple: #cc79ff;
+    --blue: #6fa0ff;
+    --link: var(--blue);
     --green: #3dd68c;
     --red: #ff6166;
     --orange: #ffb45e;
-    --blue-rgb: 204 121 255;
+    --purple-rgb: 204 121 255;
+    --blue-rgb: 111 160 255;
     --green-rgb: 61 214 140;
     --red-rgb: 255 97 102;
     --orange-rgb: 255 180 94;

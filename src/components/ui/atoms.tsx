@@ -150,7 +150,7 @@ export function Button({
   const variants: Record<BtnVariant, string> = {
     primary: 'bg-brand-primary text-white shadow-ios-md active:brightness-95',
     secondary: 'bg-ios-gray6 text-label-primary active:bg-ios-gray5',
-    ghost: 'text-ios-blue active:bg-black/[0.04]',
+    ghost: 'text-ios-purple active:bg-black/[0.04]',
     destructive: 'bg-ios-gray6 text-ios-red active:bg-ios-gray5',
   }
   return (
@@ -396,7 +396,7 @@ export function Pill({
 }) {
   const colors: Record<string, string> = {
     gray: 'bg-black/[0.06] dark:bg-white/[0.1] text-label-secondary',
-    blue: 'bg-ios-blue/10 text-ios-blue',
+    blue: 'bg-ios-purple/10 text-ios-purple',
     green: 'bg-ios-green/12 text-ios-green',
     red: 'bg-ios-red/10 text-ios-red',
     orange: 'bg-ios-orange/12 text-ios-orange',

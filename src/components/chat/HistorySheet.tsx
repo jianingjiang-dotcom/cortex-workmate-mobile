@@ -141,7 +141,7 @@ export function HistorySheet({ target, onClose }: { target: HistoryTarget; onClo
                 <span className="w-[29px] h-[29px] flex items-center justify-center text-label-secondary">
                   <FolderPlus size={17} />
                 </span>
-                <span className="text-[16px] text-ios-blue">{t('chat.project.newAndMove')}</span>
+                <span className="text-[16px] text-ios-purple">{t('chat.project.newAndMove')}</span>
               </button>
             )}
           </>

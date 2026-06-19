@@ -224,7 +224,7 @@ function CodeBlock({ code, clampable, tone }: { code: string; clampable?: boolea
       {long && (
         <button
           onClick={() => setExpanded((e) => !e)}
-          className="mt-1.5 text-[12px] font-medium text-ios-blue flex items-center gap-1 active:opacity-60"
+          className="mt-1.5 text-[12px] font-medium text-ios-purple flex items-center gap-1 active:opacity-60"
         >
           {expanded ? t('chat.toolcall.showLess') : t('chat.toolcall.showMore')}
           <ChevronDown size={13} className={cn('transition-transform', expanded && 'rotate-180')} />
@@ -261,7 +261,7 @@ export function ToolCallCardView({ card }: { card: ToolCallCard }) {
 
   const statusIcon =
     card.status === 'running' ? (
-      <Spinner size={15} className="text-ios-blue" />
+      <Spinner size={15} className="text-ios-purple" />
     ) : card.status === 'success' ? (
       <CheckCircle2 size={17} className="text-ios-green" />
     ) : card.status === 'error' ? (

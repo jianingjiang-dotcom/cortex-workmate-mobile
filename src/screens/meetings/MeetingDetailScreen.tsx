@@ -404,7 +404,7 @@ export function MeetingDetailScreen({ params, onBack }: OverlayScreenProps) {
                     <div className="text-[16px] text-label-primary">{t('meet.template.' + key)}</div>
                     <div className="text-[14px] text-label-secondary mt-0.5">{t('meet.template.' + key + '.desc')}</div>
                   </div>
-                  {on && <Check size={20} className="text-ios-blue shrink-0" strokeWidth={2.5} />}
+                  {on && <Check size={20} className="text-ios-purple shrink-0" strokeWidth={2.5} />}
                 </button>
               )
             })}
@@ -455,13 +455,13 @@ function NonDone({
   if (meeting.uploadStatus === 'uploading') {
     return (
       <div className="flex flex-col items-center justify-center h-full px-10 text-center">
-        <Spinner size={34} className="text-ios-blue" />
+        <Spinner size={34} className="text-ios-purple" />
         <div className="text-[16px] font-semibold mt-4">
           {t('meet.upload.uploading')} {meeting.uploadProgress ?? 0}%
         </div>
         <div className="w-full max-w-[240px] h-1.5 rounded-full bg-ios-gray5 overflow-hidden mt-4">
           <div
-            className="h-full rounded-full bg-ios-blue transition-all duration-300"
+            className="h-full rounded-full bg-ios-purple transition-all duration-300"
             style={{ width: `${meeting.uploadProgress ?? 0}%` }}
           />
         </div>

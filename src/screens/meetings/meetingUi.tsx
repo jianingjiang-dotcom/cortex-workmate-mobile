@@ -10,7 +10,7 @@ export function MeetingStatusPill({ meeting }: { meeting: Meeting }) {
   if (meeting.uploadStatus === 'uploading') {
     return (
       <span
-        className="relative overflow-hidden inline-flex items-center px-2 py-0.5 rounded-full text-[12px] font-medium shrink-0 text-ios-blue bg-ios-blue/10"
+        className="relative overflow-hidden inline-flex items-center px-2 py-0.5 rounded-full text-[12px] font-medium shrink-0 text-ios-purple bg-ios-purple/10"
         role="progressbar"
         aria-label={t('meet.upload.uploading')}
         aria-valuenow={meeting.uploadProgress ?? 0}
@@ -19,7 +19,7 @@ export function MeetingStatusPill({ meeting }: { meeting: Meeting }) {
       >
         {/* fill layer — square edges; the pill's overflow-hidden rounds the clip */}
         <span
-          className="absolute inset-y-0 left-0 bg-ios-blue/20 transition-[width] duration-300 ease-linear"
+          className="absolute inset-y-0 left-0 bg-ios-purple/20 transition-[width] duration-300 ease-linear"
           style={{ width: `${meeting.uploadProgress ?? 0}%` }}
         />
         <span className="relative">{t('meet.upload.uploading')}</span>

@@ -70,11 +70,11 @@ export function AttachmentPicker({
             return (
               <button key={p.id} onClick={() => toggle(p.id)} className="relative aspect-square rounded-ios-lg overflow-hidden active:opacity-90">
                 <img src={p.previewUrl} className="w-full h-full object-cover" alt={p.name} />
-                {on && <div className="absolute inset-0 rounded-ios-lg ring-[3px] ring-inset ring-ios-blue" />}
+                {on && <div className="absolute inset-0 rounded-ios-lg ring-[3px] ring-inset ring-ios-purple" />}
                 <div
                   className={cn(
                     'absolute top-1.5 right-1.5 w-5 h-5 rounded-full flex items-center justify-center border',
-                    on ? 'bg-ios-blue border-ios-blue' : 'bg-black/25 border-white/80',
+                    on ? 'bg-ios-purple border-ios-purple' : 'bg-black/25 border-white/80',
                   )}
                 >
                   {on && <Check size={13} strokeWidth={3} className="text-white" />}
@@ -104,7 +104,7 @@ export function AttachmentPicker({
                 <div
                   className={cn(
                     'w-5 h-5 rounded-full flex items-center justify-center border shrink-0',
-                    on ? 'bg-ios-blue border-ios-blue' : 'border-ios-gray3',
+                    on ? 'bg-ios-purple border-ios-purple' : 'border-ios-gray3',
                   )}
                 >
                   {on && <Check size={13} strokeWidth={3} className="text-white" />}
