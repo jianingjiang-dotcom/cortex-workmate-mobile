@@ -62,7 +62,7 @@ function NotifStatusPill({ n }: { n: AppNotification }) {
     color = serverEnabled ? 'green' : 'orange'
     key = serverEnabled ? 'notif.st.connected' : 'notif.st.toConnect'
   }
-  const COLORS: Record<PillColor, string | null> = { gray: null, blue: '#407CFF', green: 'var(--green)', red: 'var(--red)', orange: 'var(--orange)' }
+  const COLORS: Record<PillColor, string | null> = { gray: null, blue: 'var(--blue)', green: 'var(--green)', red: 'var(--red)', orange: 'var(--orange)' }
   const c = COLORS[color]
   return (
     <span

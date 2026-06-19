@@ -195,7 +195,7 @@ export function MeetingDetailScreen({ params, onBack }: OverlayScreenProps) {
 
           <div className="flex items-center justify-center gap-8 mt-2">
             <button onClick={() => setPos((p) => clamp(p - 15000, 0, duration))} className="text-label-secondary active:opacity-50 flex flex-col items-center">
-              <RotateCcw size={26} strokeWidth={1.75} />
+              <RotateCcw size={26} />
               <span className="text-[12px] mt-1 text-label-secondary">15</span>
             </button>
             <button
@@ -205,7 +205,7 @@ export function MeetingDetailScreen({ params, onBack }: OverlayScreenProps) {
               {playing ? <Pause size={26} fill="currentColor" /> : <Play size={26} fill="currentColor" className="ml-0.5" />}
             </button>
             <button onClick={() => setPos((p) => clamp(p + 15000, 0, duration))} className="text-label-secondary active:opacity-50 flex flex-col items-center">
-              <RotateCw size={26} strokeWidth={1.75} />
+              <RotateCw size={26} />
               <span className="text-[12px] mt-1 text-label-secondary">15</span>
             </button>
           </div>
@@ -404,7 +404,7 @@ export function MeetingDetailScreen({ params, onBack }: OverlayScreenProps) {
                     <div className="text-[16px] text-label-primary">{t('meet.template.' + key)}</div>
                     <div className="text-[14px] text-label-secondary mt-0.5">{t('meet.template.' + key + '.desc')}</div>
                   </div>
-                  {on && <Check size={20} className="text-ios-purple shrink-0" strokeWidth={2.5} />}
+                  {on && <Check size={20} className="text-ios-purple shrink-0" />}
                 </button>
               )
             })}

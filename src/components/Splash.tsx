@@ -25,7 +25,7 @@ export function Splash() {
     <div
       className="absolute inset-0 z-[80] flex items-center justify-center"
       style={{
-        background: 'linear-gradient(150deg, #407CFF 0%, #CC79FF 52%, #FFA03B 100%)',
+        background: 'linear-gradient(150deg, var(--blue) 0%, var(--purple) 52%, var(--orange) 100%)',
         opacity: phase === 'out' ? 0 : 1,
         transition: 'opacity 0.45s ease-in-out',
         pointerEvents: phase === 'out' ? 'none' : 'auto',

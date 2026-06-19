@@ -114,7 +114,7 @@ export function ChatInput({
             className="absolute top-1 right-1 w-5 h-5 rounded-full bg-black/55 text-white flex items-center justify-center"
             aria-label="remove attachment"
           >
-            <X size={11} strokeWidth={3} />
+            <X size={11} />
           </button>
         </div>
       ))}
@@ -136,7 +136,7 @@ export function ChatInput({
         className="absolute top-2 right-2 w-6 h-6 flex items-center justify-center text-label-tertiary active:opacity-50"
         aria-label="remove quote"
       >
-        <X size={15} strokeWidth={2.2} />
+        <X size={15} />
       </button>
     </div>
   )
@@ -166,7 +166,7 @@ export function ChatInput({
         canSend ? 'press bg-brand-primary text-white' : 'bg-ios-gray6 text-label-tertiary cursor-default',
       )}
     >
-      <ArrowUp size={19} strokeWidth={2.6} />
+      <ArrowUp size={19} />
     </button>
   )
 

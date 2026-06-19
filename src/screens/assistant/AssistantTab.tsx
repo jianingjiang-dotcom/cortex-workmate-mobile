@@ -38,13 +38,13 @@ export function AssistantTab() {
         <button
           onClick={() => setTab('chat')}
           className="w-full rounded-ios-lg shadow-ios flex items-center gap-4 p-5 text-left active:opacity-90 press"
-          style={{ background: '#CC79FF' }}
+          style={{ background: 'var(--purple)' }}
         >
           <div className="w-16 h-16 rounded-full bg-white flex items-center justify-center shrink-0 overflow-hidden">
             {persona.avatarImage ? (
               <Avatar src="/workmate-avatar-white.png" size={64} shape="circle" />
             ) : (
-              <SparkleGlyph fill="#CC79FF" size={30} />
+              <SparkleGlyph fill="var(--purple)" size={30} />
             )}
           </div>
           <div className="flex-1 min-w-0">
@@ -80,7 +80,7 @@ export function AssistantTab() {
 
 function SparkleGlyph({ fill = 'white', size = 26 }: { fill?: string; size?: number }) {
   return (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill={fill}>
+    <svg width={size} height={size} viewBox="0 0 24 24" style={{ fill }}>
       <path d="M12 2l1.8 5.5L19.5 9l-5.7 1.5L12 16l-1.8-5.5L4.5 9l5.7-1.5L12 2z" />
     </svg>
   )

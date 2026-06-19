@@ -364,7 +364,7 @@ export function ApprovalControls({ notif }: { notif: AppNotification }) {
           approved ? 'text-ios-green' : 'text-ios-red',
         )}
       >
-        {approved ? <Check size={15} strokeWidth={3} /> : <X size={15} strokeWidth={3} />}
+        {approved ? <Check size={15} /> : <X size={15} />}
         {approved ? t('notif.approved', { validity: validityHuman(notif, t) }) : t('notif.rejected')}
       </div>
     )
@@ -385,7 +385,7 @@ export function ApprovalControls({ notif }: { notif: AppNotification }) {
       <button onClick={reject} className="flex-1 h-10 rounded-ios-lg bg-ios-gray6 text-label-primary font-semibold text-[16px] press">
         {t('notif.reject')}
       </button>
-      <button onClick={approve} className="flex-1 h-10 rounded-ios-lg text-white font-semibold text-[16px] press" style={{ background: '#CC79FF' }}>
+      <button onClick={approve} className="flex-1 h-10 rounded-ios-lg text-white font-semibold text-[16px] press" style={{ background: 'var(--purple)' }}>
         {t('notif.approve')}
       </button>
     </div>

@@ -8,7 +8,7 @@ import { cn } from '../lib/util'
 
 type Phase = 'scanning' | 'detected' | 'authorizing'
 
-const VIOLET = '#CC79FF'
+const VIOLET = 'var(--purple)'
 const GREEN = '#22C55E'
 const WINDOW = 248
 
@@ -162,7 +162,7 @@ export function ScanLogin() {
                 animate={{ opacity: 1 }}
               >
                 <motion.div initial={{ scale: 0.5, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} transition={{ type: 'spring', stiffness: 320, damping: 18 }}>
-                  <CheckCircle2 size={66} color={GREEN} strokeWidth={2} />
+                  <CheckCircle2 size={66} color={GREEN} />
                 </motion.div>
               </motion.div>
             )}

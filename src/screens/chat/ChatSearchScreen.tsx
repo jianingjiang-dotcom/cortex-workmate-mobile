@@ -71,7 +71,7 @@ export function ChatSearchScreen({ onBack }: OverlayScreenProps) {
               onClick={() => setQuery('')}
               className="absolute right-2 top-1/2 -translate-y-1/2 w-5 h-5 rounded-full bg-ios-gray3 text-white flex items-center justify-center"
             >
-              <X size={12} strokeWidth={3} />
+              <X size={12} />
             </button>
           )}
         </div>

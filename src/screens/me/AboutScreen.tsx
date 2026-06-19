@@ -54,7 +54,7 @@ export function AboutScreen({ onBack }: OverlayScreenProps) {
       {phase === 'latest' && (
         <div className="flex flex-col items-center text-center mt-10 px-8">
           <div className="w-[56px] h-[56px] rounded-full bg-ios-green/10 flex items-center justify-center">
-            <Check size={30} className="text-ios-green" strokeWidth={2.5} />
+            <Check size={30} className="text-ios-green" />
           </div>
           <div className="text-[16px] font-semibold mt-3">{t('about.upToDate')}</div>
           <div className="text-[14px] text-label-secondary mt-1">{t('about.upToDateBody', { v: CURRENT_VERSION })}</div>

@@ -77,7 +77,7 @@ export function AttachmentPicker({
                     on ? 'bg-ios-purple border-ios-purple' : 'bg-black/25 border-white/80',
                   )}
                 >
-                  {on && <Check size={13} strokeWidth={3} className="text-white" />}
+                  {on && <Check size={13} className="text-white" />}
                 </div>
               </button>
             )
@@ -107,7 +107,7 @@ export function AttachmentPicker({
                     on ? 'bg-ios-purple border-ios-purple' : 'border-ios-gray3',
                   )}
                 >
-                  {on && <Check size={13} strokeWidth={3} className="text-white" />}
+                  {on && <Check size={13} className="text-white" />}
                 </div>
               </button>
             )

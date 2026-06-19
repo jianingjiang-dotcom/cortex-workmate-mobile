@@ -59,7 +59,7 @@ export function NameRecordingModal({
               transcribe ? 'bg-brand-primary' : 'border-[1.5px] border-ios-gray3',
             )}
           >
-            {transcribe && <Check size={15} className="text-white" strokeWidth={3} />}
+            {transcribe && <Check size={15} className="text-white" />}
           </span>
           <span className="flex-1 min-w-0">
             <span className="block text-[16px] text-label-primary">{t('meet.name.transcribe')}</span>

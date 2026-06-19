@@ -24,7 +24,7 @@ export type HistoryTarget =
 
 type View = 'menu' | 'rename' | 'move' | 'delete'
 
-const TINT = { blue: '#407CFF', violet: '#CC79FF', red: '#EF4444', gray: '#8E8E93' }
+const TINT = { blue: 'var(--blue)', violet: 'var(--purple)', red: '#EF4444', gray: '#8E8E93' }
 
 export function HistorySheet({ target, onClose }: { target: HistoryTarget; onClose: () => void }) {
   const t = useT()

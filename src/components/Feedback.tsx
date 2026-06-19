@@ -22,7 +22,7 @@ import { useT } from '../i18n'
 // info/loading (NOT the purple accent), red error, amber warning, neutral grey for the
 // whole "neutral" family — which is differentiated by ICON, not colour.
 const TOAST_STYLE: Record<ToastKind, { color: string; Icon: typeof Check; spin?: boolean; sw?: number; fill?: boolean }> = {
-  success: { color: '#22c55e', Icon: Check, sw: 3 },
+  success: { color: 'var(--green)', Icon: Check, sw: 3 },
   neutral: { color: '#8e8e93', Icon: Info },
   delete: { color: '#8e8e93', Icon: Trash2 },
   purge: { color: '#8e8e93', Icon: Trash },
@@ -30,10 +30,10 @@ const TOAST_STYLE: Record<ToastKind, { color: string; Icon: typeof Check; spin?:
   resume: { color: '#8e8e93', Icon: Play, fill: true },
   run: { color: '#8e8e93', Icon: Zap },
   readAll: { color: '#8e8e93', Icon: CheckCheck, sw: 3 },
-  loading: { color: '#407cff', Icon: Loader2, spin: true },
-  info: { color: '#407cff', Icon: Info },
-  error: { color: '#ef4444', Icon: XCircle },
-  warning: { color: '#ffa03b', Icon: AlertTriangle },
+  loading: { color: 'var(--blue)', Icon: Loader2, spin: true },
+  info: { color: 'var(--blue)', Icon: Info },
+  error: { color: 'var(--red)', Icon: XCircle },
+  warning: { color: 'var(--orange)', Icon: AlertTriangle },
 }
 
 export function ToastHost() {

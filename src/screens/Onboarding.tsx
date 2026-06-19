@@ -141,7 +141,7 @@ export function Onboarding() {
     <div className="absolute inset-0 bg-surface overflow-hidden">
       <div
         className="absolute -top-20 right-0 w-64 h-64 rounded-full blur-[100px] opacity-25 pointer-events-none"
-        style={{ background: 'radial-gradient(circle,#CC79FF,#407CFF 60%,transparent)' }}
+        style={{ background: 'radial-gradient(circle,var(--purple),var(--blue) 60%,transparent)' }}
       />
 
       {/* skip */}

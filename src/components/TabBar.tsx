@@ -3,7 +3,7 @@ import { useStore } from '../store/useStore'
 import { useT } from '../i18n'
 import type { TabKey } from '../lib/types'
 
-const ACTIVE = '#CC79FF' // --accent
+const ACTIVE = 'var(--purple)' // --accent
 const INACTIVE = '#8E8E93' // --text-3
 
 export function TabBar() {
