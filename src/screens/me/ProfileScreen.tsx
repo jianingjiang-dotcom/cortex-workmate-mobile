@@ -83,7 +83,7 @@ export function ProfileScreen({ onBack }: OverlayScreenProps) {
           {/* White badge + purple glyph: the gradient-fallback avatar is brand purple,
               so a purple badge/white icon blends in. Inverting pops on any avatar. */}
           <div className="absolute -bottom-0.5 -right-0.5 w-7 h-7 rounded-full bg-surface ring-2 ring-grouped shadow-sm flex items-center justify-center">
-            <Camera size={14} className="text-ios-purple" />
+            <Camera size={14} className="text-label-secondary" />
           </div>
         </button>
       </div>
